@@ -1,0 +1,320 @@
+.container {
+  max-width: 402px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.header {
+  padding: 56px 24px 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.serviceTitle {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 1.1em;
+  color: #2b2b2b;
+}
+
+.bannerSection {
+  padding: 0 24px 16px;
+}
+
+.bannerCard {
+  position: relative;
+  width: 100%;
+  height: 176px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e9e9e9;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 18px 16px 10px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.bannerText {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.15em;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+}
+
+.bannerIndicator {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot {
+  width: 36px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+}
+
+.dotActive {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.searchRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.typeButton {
+  width: 110px;
+  height: 64px;
+  border-radius: 14px;
+  border: none;
+  background: #2b2b2b;
+  color: #ffffff;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  font-family: "Pretendard", sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.typeArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(1px);
+}
+
+.typeArrow svg path {
+  stroke: #ffffff;
+}
+
+.searchBox {
+  flex: 1;
+  height: 64px;
+  border-radius: 14px;
+  border: 2px solid #d0d0d0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  font-family: "Pretendard", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #2b2b2b;
+  padding-right: 40px;
+}
+
+.searchInput::placeholder {
+  color: #c0c0c0;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider {
+  width: 100%;
+  height: 10px;
+  background: #ececec;
+}
+
+.listHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 8px;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  color: #2b2b2b;
+  margin: 0;
+}
+
+.pills {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pill {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 2px solid #cfcfcf;
+  background: #ffffff;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-family: "Pretendard", sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: #8f8f8f;
+}
+
+/* 리스트: Ranking처럼 아래 여백/스크롤 처리 */
+.list {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 110px;
+  overflow-y: auto;
+  flex: 1;
+
+  /* 기존에 24px 좌우 패딩을 list에 줬다면 유지해도 되는데,
+     Ranking은 item에 24px을 줬으니 여기선 빼고 row에 주는 방식이 더 동일함 */
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* row = rankingItem */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px; /* ✅ Ranking: 10px 24px */
+  gap: 12px;
+}
+
+/* left = rankingInfo */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* ✅ Ranking: 12px */
+  min-width: 0;
+}
+
+/* thumb = rankingImage */
+.thumb {
+  width: 60px;          /* ✅ Ranking: 60 */
+  height: 60px;         /* ✅ Ranking: 60 */
+  border-radius: 4px;   /* ✅ Ranking: 4px */
+  object-fit: cover;
+  background: #e9e9e9;
+}
+
+/* text = rankingText */
+.text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px; /* ✅ Ranking: 4px */
+  min-width: 0;
+}
+
+/* name = rankingTitle */
+.name {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;     /* ✅ Ranking: 500 */
+  font-size: 20px;      /* ✅ Ranking: 20 */
+  line-height: 1.2em;   /* ✅ Ranking: 1.2 */
+  color: #252525;
+}
+
+/* meta = rankingMeta */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* ✅ Ranking: 4px */
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;     /* ✅ Ranking: 500 */
+  font-size: 16px;      /* ✅ Ranking: 16 */
+  line-height: 1.2em;   /* ✅ Ranking: 1.2 */
+  color: #a7a7a7;
+}
+
+.metaDot {
+  color: #a7a7a7;
+}
+
+/* actions = rankingActions */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* ✅ Ranking: 8px */
+}
+
+/* 아이콘 버튼은 그대로 */
+.iconBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* 바텀바 - 네가 준 스타일 그대로 */
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 402px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px 28px;
+  background: #ffffff;
+  border-top: 2px solid #d9d9d9;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
