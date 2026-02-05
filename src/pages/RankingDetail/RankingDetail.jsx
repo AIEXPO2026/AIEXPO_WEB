@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
-import styles from './Ranking.module.css'
+import styles from './RankingDetail.module.css'
 import machuPicchu from '../../assets/machu-picchu.png'
 
 // Figma 아이콘 에셋 URL
 const iconMap = "http://localhost:3845/assets/dc7663a251d2a960e1670c81af59b4d822fd0f25.svg"
 const iconStar = "http://localhost:3845/assets/473fa65f6bf25730dcbc77ac31955bd3768f4450.svg"
-const iconBack = "http://localhost:3845/assets/1262b017966f41834f5ec57b9813bc86c582d216.svg"
+const iconBack = "http://localhost:3845/assets/c1e8df364647065e420bc2e5a294f92d9321e018.svg"
+const iconArrow = "http://localhost:3845/assets/bd539d5d4fca8bbbafae20fa19b2a671f19b4071.svg"
 const iconHomeInactive = "http://localhost:3845/assets/9872fc521d567fff1381b2295e01f331f459464d.svg"
 const iconPostActive = "http://localhost:3845/assets/a06ff4fafbd2b64f1431b943be5c58136a4bb953.svg"
 const iconPen = "http://localhost:3845/assets/b684b03cfe3098d5db1f56026c0e91677c6247a8.svg"
@@ -16,33 +17,42 @@ const rankingData = [
   { id: 2, rank: 2, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
   { id: 3, rank: 3, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
   { id: 4, rank: 4, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
+  { id: 5, rank: 1, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
+  { id: 6, rank: 2, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
+  { id: 7, rank: 3, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
 ]
 
-const blogData = [
-  { id: 1, title: '푸바오 보러 중국으로', author: '오승윤', location: '중국', date: '2일 전' },
-  { id: 2, title: '25년 일본 여행기', author: '김경윤', location: '일본', date: '7일 전' },
-  { id: 3, title: '겨울 국내 여행', author: '조상철', location: '대한민국', date: '2일 전' },
-  { id: 4, title: '싱가포르 국외현장체험', author: '오승윤', location: '이탈리아', date: '2일 전' },
-]
-
-function Ranking() {
+function RankingDetail() {
   const navigate = useNavigate()
 
   return (
     <div className={styles.container}>
+      {/* Header */}
+      <header className={styles.header}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          <img src={iconBack} alt="back" className={styles.backIcon} />
+        </button>
+        <h1 className={styles.title}>여행지 랭킹</h1>
+      </header>
+
+      {/* Divider */}
+      <div className={styles.divider} />
+
       {/* Content Area */}
       <div className={styles.contentArea}>
-        {/* 여행지 랭킹 섹션 */}
-        <div className={styles.sectionHeader}>
-          <h1 className={styles.sectionTitle}>여행지 랭킹</h1>
-          <button className={styles.moreButton} onClick={() => navigate('/ranking-detail')}>
-            <span>더보기</span>
-            <div className={styles.arrowIcon}>
-              <img src={iconBack} alt="" className={styles.arrowImg} />
-            </div>
+        {/* Filters */}
+        <div className={styles.filters}>
+          <button className={styles.filterButton}>
+            <span>주요 국가별</span>
+            <img src={iconArrow} alt="" className={styles.filterArrow} />
+          </button>
+          <button className={styles.filterButton}>
+            <span>계절별</span>
+            <img src={iconArrow} alt="" className={styles.filterArrow} />
           </button>
         </div>
 
+        {/* Ranking List */}
         <div className={styles.rankingList}>
           {rankingData.map((item) => (
             <div key={item.id} className={styles.rankingItem}>
@@ -69,40 +79,9 @@ function Ranking() {
             </div>
           ))}
         </div>
-
-        {/* 구분선 */}
-        <div className={styles.divider} />
-
-        {/* 블로그 섹션 */}
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>블로그</h2>
-          <button className={styles.moreButton} onClick={() => navigate('/blog-detail')}>
-            <span>더보기</span>
-            <div className={styles.arrowIcon}>
-              <img src={iconBack} alt="" className={styles.arrowImg} />
-            </div>
-          </button>
-        </div>
-
-        <div className={styles.blogList}>
-          {blogData.map((item) => (
-            <div key={item.id} className={styles.blogItem}>
-              <div className={styles.blogText}>
-                <span className={styles.blogTitle}>{item.title}</span>
-                <div className={styles.blogMeta}>
-                  <span>{item.author}</span>
-                  <span className={styles.dot}>·</span>
-                  <span>{item.location}</span>
-                  <span className={styles.dot}>·</span>
-                  <span>{item.date}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
-      {/* 하단 네비게이션 */}
+      {/* Bottom Navigation */}
       <nav className={styles.bottomNav}>
         <button className={styles.navItem} onClick={() => navigate('/ranking')}>
           <div className={styles.navIconWrapper}>
@@ -134,4 +113,4 @@ function Ranking() {
   )
 }
 
-export default Ranking
+export default RankingDetail
