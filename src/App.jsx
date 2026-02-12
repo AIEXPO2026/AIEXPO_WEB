@@ -3,8 +3,9 @@ import Login from './pages/Login/Login'
 import Signup from './pages/Signup/Signup'
 import FindPassword from './pages/FindPassword/FindPassword'
 import Welcome from './pages/Welcome/Welcome'
-import Community from './pages/Community/Community'
 import Ranking from './pages/Ranking/Ranking'
+import RankingDetail from './pages/RankingDetail/RankingDetail'
+import BlogDetail from './pages/BlogDetail/BlogDetail'
 import Blog from './pages/Blog/Blog'
 import Home from './pages/Home/Home'
 
@@ -19,6 +20,8 @@ function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/community" element={<Community />} />
       <Route path="/ranking" element={<Ranking />} />
+      <Route path="/ranking-detail" element={<RankingDetail />} />
+      <Route path="/blog-detail" element={<BlogDetail />} />
       <Route path="/blog" element={<Blog />} />
     </Routes>
   )

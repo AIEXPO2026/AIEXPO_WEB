@@ -67,7 +67,7 @@ function Blog() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate('/community')}>
+        <button className={styles.backButton} onClick={() => navigate('/ranking')}>
           <BackIcon />
         </button>
         <h1 className={styles.title}>블로그</h1>
