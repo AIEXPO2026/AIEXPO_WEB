@@ -1,15 +1,43 @@
 import { useNavigate } from 'react-router-dom'
-import styles from './Ranking.module.css'
+import styles from './Community.module.css'
 import machuPicchu from '../../assets/machu-picchu.png'
+import BottomNav from '../../components/BottomNav/BottomNav'
 
-// Figma 아이콘 에셋 URL
-const iconMap = "http://localhost:3845/assets/dc7663a251d2a960e1670c81af59b4d822fd0f25.svg"
-const iconStar = "http://localhost:3845/assets/473fa65f6bf25730dcbc77ac31955bd3768f4450.svg"
-const iconBack = "http://localhost:3845/assets/1262b017966f41834f5ec57b9813bc86c582d216.svg"
-const iconHomeInactive = "http://localhost:3845/assets/9872fc521d567fff1381b2295e01f331f459464d.svg"
-const iconPostActive = "http://localhost:3845/assets/a06ff4fafbd2b64f1431b943be5c58136a4bb953.svg"
-const iconPen = "http://localhost:3845/assets/b684b03cfe3098d5db1f56026c0e91677c6247a8.svg"
-const iconProfile = "http://localhost:3845/assets/b48c86993d5210d5c60110b1d62770aa07ed3ec0.svg"
+function StarIcon({ active = true }) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M16 4.77L19.09 11.04L19.18 11.22L19.38 11.25L26.3 12.26L21.14 17.29L21 17.43L21.03 17.63L22.22 24.52L16.17 21.34L16 21.25L15.83 21.34L9.78 24.52L10.97 17.63L11 17.43L10.86 17.29L5.7 12.26L12.62 11.25L12.82 11.22L12.91 11.04L16 4.77Z"
+        fill={active ? "#FFC300" : "#D9D9D9"}
+      />
+    </svg>
+  )
+}
+
+function BookmarkIcon() {
+  return (
+    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M16 24.75L8 21.8625L1.8 24.3375C1.35556 24.5208 0.944444 24.4695 0.566667 24.1835C0.188889 23.8975 0 23.5134 0 23.0312V3.78125C0 3.48333 0.0835555 3.21979 0.250667 2.99063C0.417778 2.76146 0.645333 2.58958 0.933333 2.475L8 0L16 2.8875L22.2 0.4125C22.6444 0.229167 23.0556 0.280958 23.4333 0.567875C23.8111 0.854792 24 1.23842 24 1.71875V20.9688C24 21.2667 23.9169 21.5302 23.7507 21.7594C23.5844 21.9885 23.3564 22.1604 23.0667 22.275L16 24.75ZM14.6667 21.3812V5.29375L9.33333 3.36875V19.4562L14.6667 21.3812Z"
+        fill="#C2C2C2"
+      />
+    </svg>
+  )
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg width="8" height="16" viewBox="0 0 8 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M1 1L7 8L1 15"
+        stroke="#878787"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 const rankingData = [
   { id: 1, rank: 1, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
@@ -19,10 +47,14 @@ const rankingData = [
 ]
 
 const blogData = [
-  { id: 1, title: '푸바오 보러 중국으로', author: '오승윤', location: '중국', date: '2일 전' },
-  { id: 2, title: '25년 일본 여행기', author: '김경윤', location: '일본', date: '7일 전' },
+  { id: 1, title: '푸바오 보러 중국으로', author: '오승훈', location: '중국', date: '2일 전' },
+  { id: 2, title: '25년 일본 여행기', author: '김경훈', location: '일본', date: '7일 전' },
   { id: 3, title: '겨울 국내 여행', author: '조상철', location: '대한민국', date: '2일 전' },
-  { id: 4, title: '싱가포르 국외현장체험', author: '오승윤', location: '이탈리아', date: '2일 전' },
+  { id: 4, title: '싱가포르 국외현장체험', author: '오승훈', location: '이탈리아', date: '2일 전' },
+  { id: 5, title: '푸바오 보러 중국으로', author: '오승훈', location: '중국', date: '2일 전' },
+  { id: 6, title: '25년 일본 여행기', author: '김경훈', location: '일본', date: '7일 전' },
+  { id: 7, title: '겨울 국내 여행', author: '조상철', location: '대한민국', date: '2일 전' },
+  { id: 8, title: '싱가포르 국외현장체험', author: '오승훈', location: '이탈리아', date: '2일 전' },
 ]
 
 function Ranking() {
@@ -35,10 +67,10 @@ function Ranking() {
         {/* 여행지 랭킹 섹션 */}
         <div className={styles.sectionHeader}>
           <h1 className={styles.sectionTitle}>여행지 랭킹</h1>
-          <button className={styles.moreButton} onClick={() => navigate('/ranking-detail')}>
+          <button className={styles.moreButton} onClick={() => navigate('/community/ranking')}>
             <span>더보기</span>
             <div className={styles.arrowIcon}>
-              <img src={iconBack} alt="" className={styles.arrowImg} />
+              <ArrowRightIcon />
             </div>
           </button>
         </div>
@@ -59,12 +91,12 @@ function Ranking() {
                 </div>
               </div>
               <div className={styles.rankingActions}>
-                <div className={styles.iconWrapper}>
-                  <img src={iconStar} alt="star" className={styles.actionIcon} />
-                </div>
-                <div className={styles.iconWrapper}>
-                  <img src={iconMap} alt="map" className={styles.actionIcon} />
-                </div>
+                <button className={styles.iconBtn} type="button" aria-label="favorite">
+                  <StarIcon active={true} />
+                </button>
+                <button className={styles.iconBtn} type="button" aria-label="bookmark">
+                  <BookmarkIcon />
+                </button>
               </div>
             </div>
           ))}
@@ -76,10 +108,10 @@ function Ranking() {
         {/* 블로그 섹션 */}
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>블로그</h2>
-          <button className={styles.moreButton} onClick={() => navigate('/blog-detail')}>
+          <button className={styles.moreButton} onClick={() => navigate('/community/blog')}>
             <span>더보기</span>
             <div className={styles.arrowIcon}>
-              <img src={iconBack} alt="" className={styles.arrowImg} />
+              <ArrowRightIcon />
             </div>
           </button>
         </div>
@@ -103,33 +135,7 @@ function Ranking() {
       </div>
 
       {/* 하단 네비게이션 */}
-      <nav className={styles.bottomNav}>
-        <button className={styles.navItem} onClick={() => navigate('/ranking')}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconHomeInactive} alt="home" className={styles.navIcon} />
-          </div>
-        </button>
-        <button className={styles.navItem}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconPostActive} alt="post" className={styles.navIcon} />
-          </div>
-        </button>
-        <button className={styles.navItem}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconPen} alt="pen" className={styles.navIcon} />
-          </div>
-        </button>
-        <button className={styles.navItem}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconProfile} alt="profile" className={styles.navIcon} />
-          </div>
-        </button>
-      </nav>
-
-      {/* Home Indicator */}
-      <div className={styles.homeIndicator}>
-        <div className={styles.homeIndicatorBar} />
-      </div>
+      <BottomNav activePage="ranking" />
     </div>
   )
 }

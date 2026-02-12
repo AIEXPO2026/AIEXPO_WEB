@@ -11,6 +11,7 @@ function Signup() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
 
   const validatePassword = (value) => {
     const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
@@ -21,6 +22,10 @@ function Signup() {
     if (step === 4) {
       if (!validatePassword(password)) {
         setPasswordError(true);
+        return;
+      }
+      if (password !== confirmPassword) {
+        setConfirmPasswordError(true);
         return;
       }
       navigate('/welcome');
@@ -41,6 +46,15 @@ function Signup() {
       setPasswordError(true);
     } else {
       setPasswordError(false);
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+    if (e.target.value && password !== e.target.value) {
+      setConfirmPasswordError(true);
+    } else {
+      setConfirmPasswordError(false);
     }
   };
 
@@ -106,14 +120,21 @@ function Signup() {
               )}
             </div>
             <div className={styles.inputGroup}>
-              <label className={styles.label}>비밀번호 재확인</label>
+              <label className={`${styles.label} ${confirmPasswordError ? styles.labelError : ''}`}>
+                비밀번호 재확인
+              </label>
               <input
                 type="password"
-                className={styles.input}
+                className={`${styles.input} ${confirmPasswordError ? styles.inputError : ''}`}
                 placeholder="비밀번호를 다시 입력해주세요."
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={handleConfirmPasswordChange}
               />
+              {confirmPasswordError && (
+                <p className={styles.errorMessage}>
+                  비밀번호가 일치하지 않습니다.
+                </p>
+              )}
             </div>
           </>
         );

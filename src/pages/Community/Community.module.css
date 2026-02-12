@@ -128,6 +128,16 @@
   gap: 8px;
 }
 
+.iconBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .dot {
   font-size: 14px;
   line-height: 1.3;
@@ -228,18 +238,9 @@
 
 /* Arrow Icon */
 .arrowIcon {
-  width: 8px;
-  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: rotate(180deg) scaleY(-1);
-}
-
-.arrowImg {
-  width: 100%;
-  height: 100%;
-  display: block;
 }
 
 /* Icon Wrapper for Ranking Actions */

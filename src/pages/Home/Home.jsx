@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
+import BottomNav from "../../components/BottomNav/BottomNav";
 
 import singaporeBanner from "../../assets/singapore-banner.png";
 import machuPicchu from "../../assets/machu-picchu.png";
@@ -26,62 +27,15 @@ function StarIcon({ active }) {
 
 function BookmarkIcon() {
   return (
-    <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
-        d="M8 6.13V28.88L16 24.13L24 28.88V6.13C24 5.6 23.79 5.09 23.41 4.72C23.04 4.34 22.53 4.13 22 4.13H10C9.47 4.13 8.96 4.34 8.59 4.72C8.21 5.09 8 5.6 8 6.13Z"
-        stroke="#C2C2C2"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M16 24.75L8 21.8625L1.8 24.3375C1.35556 24.5208 0.944444 24.4695 0.566667 24.1835C0.188889 23.8975 0 23.5134 0 23.0312V3.78125C0 3.48333 0.0835555 3.21979 0.250667 2.99063C0.417778 2.76146 0.645333 2.58958 0.933333 2.475L8 0L16 2.8875L22.2 0.4125C22.6444 0.229167 23.0556 0.280958 23.4333 0.567875C23.8111 0.854792 24 1.23842 24 1.71875V20.9688C24 21.2667 23.9169 21.5302 23.7507 21.7594C23.5844 21.9885 23.3564 22.1604 23.0667 22.275L16 24.75ZM14.6667 21.3812V5.29375L9.33333 3.36875V19.4562L14.6667 21.3812Z"
+        fill="#C2C2C2"
       />
     </svg>
   );
 }
 
-function HomeIcon({ active }) {
-  return (
-    <svg width="26" height="29" viewBox="0 0 27 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M3.33 13.33V26.67C3.33 27.55 4.05 28.27 4.93 28.27H10V20H16.67V28.27H21.73C22.62 28.27 23.33 27.55 23.33 26.67V13.33"
-        stroke={active ? "#181818" : "#B8B8B8"}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M1 15L13.33 2.67L25.67 15"
-        stroke={active ? "#181818" : "#B8B8B8"}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function PostIcon({ active }) {
-  return (
-    <svg width="30" height="30" viewBox="0 0 30 30" fill={active ? "#181818" : "#B8B8B8"} xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 4H26V22H4V4ZM6 6V20H24V6H6ZM4 24H26V26H4V24Z" />
-    </svg>
-  );
-}
-
-function PenIcon({ active }) {
-  return (
-    <svg width="33" height="33" viewBox="0 0 34 34" fill={active ? "#181818" : "#B8B8B8"} xmlns="http://www.w3.org/2000/svg">
-      <path d="M24.5 4.5L29.5 9.5L10 29H5V24L24.5 4.5Z" />
-    </svg>
-  );
-}
-
-function ProfileIcon({ active }) {
-  return (
-    <svg width="33" height="33" viewBox="0 0 34 34" fill={active ? "#181818" : "#B8B8B8"} xmlns="http://www.w3.org/2000/svg">
-      <path d="M17 17C20.31 17 23 14.31 23 11C23 7.69 20.31 5 17 5C13.69 5 11 7.69 11 11C11 14.31 13.69 17 17 17ZM17 20C12.33 20 3 22.34 3 27V29H31V27C31 22.34 21.67 20 17 20Z" />
-    </svg>
-  );
-}
 
 function SearchIcon() {
   return (
@@ -102,6 +56,13 @@ const destinationData = [
   { id: 2, title: "에펠탑", location: "프랑스 파리", category: "랜드마크", image: machuPicchu, favorite: true },
   { id: 3, title: "그랜드 캐년", location: "미국 애리조나", category: "국립공원", image: machuPicchu, favorite: false },
   { id: 4, title: "산토리니", location: "그리스", category: "휴양", image: machuPicchu, favorite: false },
+  { id: 5, title: "경복궁", location: "대한민국 서울", category: "역사", image: machuPicchu, favorite: false },
+  { id: 6, title: "성산일출봉", location: "대한민국 제주", category: "자연", image: machuPicchu, favorite: false },
+  { id: 7, title: "해운대 해수욕장", location: "대한민국 부산", category: "휴양", image: machuPicchu, favorite: true },
+  { id: 8, title: "불국사", location: "대한민국 경북", category: "역사", image: machuPicchu, favorite: false },
+  { id: 9, title: "전주 한옥마을", location: "대한민국 전북", category: "문화", image: machuPicchu, favorite: false },
+  { id: 10, title: "설악산 국립공원", location: "대한민국 강원", category: "국립공원", image: machuPicchu, favorite: false },
+  { id: 11, title: "슬품이 집", location: "대한민국 서울", category: "랜드마크", image: machuPicchu, favorite: true },
 ];
 
 function Home() {
@@ -111,6 +72,7 @@ function Home() {
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState("테마");
   const [sort, setSort] = useState("기본 순");
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -137,12 +99,44 @@ function Home() {
         </div>
 
         <div className={styles.searchRow}>
-          <button className={styles.typeButton} type="button" onClick={() => setType((p) => (p === "일반" ? "프리미엄" : "일반"))}>
-            <span>{type}</span>
-            <span className={styles.typeArrow}>
-              <DropdownArrow />
-            </span>
-          </button>
+          <div className={styles.typeDropdownWrapper}>
+            <button
+              className={styles.typeButton}
+              type="button"
+              onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+            >
+              <span>{type}</span>
+              <span className={styles.typeArrow}>
+                <DropdownArrow />
+              </span>
+            </button>
+
+            {showTypeDropdown && (
+              <div className={styles.typeDropdown}>
+                <button
+                  className={styles.dropdownItem}
+                  type="button"
+                  onClick={() => {
+                    setType("일반");
+                    setShowTypeDropdown(false);
+                  }}
+                >
+                  일반 서치
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  type="button"
+                  onClick={() => {
+                    setType("슈퍼");
+                    setShowTypeDropdown(false);
+                  }}
+                >
+                  <span>슈퍼 서치</span>
+                  <span className={styles.dropdownCredit}>10 크레딧 소요</span>
+                </button>
+              </div>
+            )}
+          </div>
 
           <div className={styles.searchBox}>
             <input
@@ -202,20 +196,7 @@ function Home() {
         ))}
       </div>
 
-      <nav className={styles.bottomNav}>
-        <button className={styles.navItem} onClick={() => navigate("/")}>
-          <HomeIcon active={true} />
-        </button>
-        <button className={styles.navItem} onClick={() => navigate("/community")}>
-          <PostIcon active={false} />
-        </button>
-        <button className={styles.navItem} onClick={() => navigate("/write")}>
-          <PenIcon active={false} />
-        </button>
-        <button className={styles.navItem} onClick={() => navigate("/profile")}>
-          <ProfileIcon active={false} />
-        </button>
-      </nav>
+      <BottomNav activePage="home" />
     </div>
   );
 }

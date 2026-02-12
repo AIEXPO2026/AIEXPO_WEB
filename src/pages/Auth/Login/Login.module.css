@@ -32,6 +32,10 @@
   margin-bottom: 12px;
 }
 
+.labelError {
+  color: #ff3b30;
+}
+
 .input {
   width: 100%;
   border: none;
@@ -45,6 +49,16 @@
 
 .input::placeholder {
   color: #cccccc;
+}
+
+.inputError {
+  border-bottom-color: #ff3b30;
+}
+
+.errorMessage {
+  color: #ff3b30;
+  font-size: 13px;
+  margin-top: 8px;
 }
 
 .button {

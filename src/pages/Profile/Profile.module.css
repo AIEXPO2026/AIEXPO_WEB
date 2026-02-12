@@ -1,0 +1,298 @@
+.container {
+  width: 100%;
+  max-width: 402px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding-bottom: 110px;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* User Info Section */
+.userSection {
+  padding: 32px 28px 16px;
+}
+
+.userName {
+  font-size: 28px;
+  font-weight: 700;
+  color: #252525;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.userId {
+  font-size: 24px;
+  font-weight: 400;
+  color: #888888;
+}
+
+.userEmail {
+  font-size: 18px;
+  font-weight: 400;
+  color: #888888;
+  margin: 0;
+}
+
+/* Credit Section */
+.creditBox {
+  margin: 0 28px 20px;
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 2px solid #d9d9d9;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.creditInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.creditLabel {
+  font-size: 16px;
+  font-weight: 500;
+  color: #888888;
+}
+
+.creditAmount {
+  font-size: 32px;
+  font-weight: 700;
+  color: #252525;
+}
+
+.chargeButton {
+  padding: 12px 24px;
+  background: #2b2b2b;
+  border: none;
+  border-radius: 12px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chargeButton:hover {
+  background: #1a1a1a;
+}
+
+.chargeButton:active {
+  background: #000000;
+}
+
+/* Menu Section */
+.menuSection {
+  padding: 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menuItem {
+  width: 100%;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.menuItem:hover {
+  opacity: 0.7;
+}
+
+.menuText {
+  font-family: "Pretendard", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #252525;
+}
+
+.menuText.logout {
+  color: #ff4444;
+}
+
+/* Divider */
+.divider {
+  height: 10px;
+  background: #f5f5f5;
+  margin: 16px 0 20px;
+}
+
+/* Travel Records Section */
+.travelSection {
+  padding: 0 28px;
+}
+
+.travelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.travelTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #252525;
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+}
+
+.filterButton {
+  padding: 8px 16px;
+  background: #ffffff;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterButton:hover {
+  background: #f5f5f5;
+  border-color: #c0c0c0;
+}
+
+.filterButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Travel List */
+.travelList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.travelCard {
+  padding: 12px 0;
+  background: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.travelCard:hover {
+  opacity: 0.7;
+}
+
+.travelCardTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #252525;
+  margin: 0 0 6px 0;
+}
+
+.travelCardMeta {
+  font-size: 16px;
+  font-weight: 400;
+  color: #888888;
+  margin: 0;
+}
+
+/* Bookmark Section */
+.bookmarkSection {
+  padding: 0 28px 30px;
+}
+
+.bookmarkTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #252525;
+  margin: 0 0 16px 0;
+}
+
+.bookmarkList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bookmarkItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: #ffffff;
+  border: 2px solid #e8e8e8;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bookmarkItem:hover {
+  border-color: #d0d0d0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.bookmarkImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.bookmarkInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.bookmarkItemTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #252525;
+  margin: 0 0 6px 0;
+}
+
+.bookmarkItemMeta {
+  font-size: 14px;
+  font-weight: 400;
+  color: #888888;
+  margin: 0;
+}
+
+.bookmarkActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  transition: opacity 0.2s;
+}
+
+.iconBtn:hover {
+  opacity: 0.7;
+}
+
+.iconBtn:active {
+  opacity: 0.5;
+}

@@ -9,6 +9,7 @@ function FindPassword() {
   const [verificationCode, setVerificationCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
 
   const handleNext = () => {
     if (step === 1) {
@@ -18,6 +19,11 @@ function FindPassword() {
       // 인증번호 확인 후 다음 단계
       setStep(3);
     } else {
+      // 비밀번호 일치 확인
+      if (newPassword !== confirmPassword) {
+        setPasswordError(true);
+        return;
+      }
       // 비밀번호 변경 완료 후 로그인 페이지로 이동
       navigate('/login');
     }
@@ -33,6 +39,15 @@ function FindPassword() {
 
   const handleResend = () => {
     // 인증번호 재전송 로직
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+    if (e.target.value && newPassword !== e.target.value) {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+    }
   };
 
   const getButtonText = () => {
@@ -85,14 +100,21 @@ function FindPassword() {
               />
             </div>
             <div className={styles.inputGroup}>
-              <label className={styles.label}>비밀번호 재확인</label>
+              <label className={`${styles.label} ${passwordError ? styles.labelError : ''}`}>
+                비밀번호 재확인
+              </label>
               <input
                 type="password"
-                className={styles.input}
+                className={`${styles.input} ${passwordError ? styles.inputError : ''}`}
                 placeholder="비밀번호를 다시 입력해주세요."
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={handleConfirmPasswordChange}
               />
+              {passwordError && (
+                <p className={styles.errorMessage}>
+                  비밀번호가 일치하지 않습니다.
+                </p>
+              )}
             </div>
           </>
         )}

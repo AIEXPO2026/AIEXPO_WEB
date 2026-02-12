@@ -1,13 +1,27 @@
 import { useNavigate } from 'react-router-dom'
-import styles from './BlogDetail.module.css'
+import styles from './CommunityBlog.module.css'
+import BottomNav from '../../../components/BottomNav/BottomNav'
 
-// Figma 아이콘 에셋 URL
-const iconBack = "http://localhost:3845/assets/c1e8df364647065e420bc2e5a294f92d9321e018.svg"
-const iconArrow = "http://localhost:3845/assets/bd539d5d4fca8bbbafae20fa19b2a671f19b4071.svg"
-const iconHomeInactive = "http://localhost:3845/assets/9872fc521d567fff1381b2295e01f331f459464d.svg"
-const iconPostActive = "http://localhost:3845/assets/a06ff4fafbd2b64f1431b943be5c58136a4bb953.svg"
-const iconPen = "http://localhost:3845/assets/b684b03cfe3098d5db1f56026c0e91677c6247a8.svg"
-const iconProfile = "http://localhost:3845/assets/b48c86993d5210d5c60110b1d62770aa07ed3ec0.svg"
+function BackIcon() {
+  return (
+    <svg width="13" height="23" viewBox="0 0 13 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3.21838 11.3133L12.6464 20.7413L10.761 22.6267L0.390382 12.256C0.140421 12.006 0 11.6669 0 11.3133C0 10.9598 0.140421 10.6207 0.390382 10.3707L10.761 0L12.6464 1.88533L3.21838 11.3133Z"
+        fill="#252525"
+      />
+    </svg>
+  )
+}
+
+function DropdownArrow() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 4L6 8L10 4" stroke="#A6A6A6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 const blogData = [
   { id: 1, title: '푸바오 보러 중국으로', author: '오승윤', location: '중국', date: '2일 전' },
@@ -28,7 +42,7 @@ function BlogDetail() {
       {/* Header */}
       <header className={styles.header}>
         <button className={styles.backButton} onClick={() => navigate(-1)}>
-          <img src={iconBack} alt="back" className={styles.backIcon} />
+          <BackIcon />
         </button>
         <h1 className={styles.title}>블로그</h1>
       </header>
@@ -42,7 +56,7 @@ function BlogDetail() {
         <div className={styles.filters}>
           <button className={styles.filterButton}>
             <span className={styles.filterText}>조회수 많은 순</span>
-            <img src={iconArrow} alt="" className={styles.filterArrow} />
+            <DropdownArrow />
           </button>
         </div>
 
@@ -69,33 +83,7 @@ function BlogDetail() {
       </div>
 
       {/* Bottom Navigation */}
-      <nav className={styles.bottomNav}>
-        <button className={styles.navItem} onClick={() => navigate('/ranking')}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconHomeInactive} alt="home" className={styles.navIcon} />
-          </div>
-        </button>
-        <button className={styles.navItem}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconPostActive} alt="post" className={styles.navIcon} />
-          </div>
-        </button>
-        <button className={styles.navItem}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconPen} alt="pen" className={styles.navIcon} />
-          </div>
-        </button>
-        <button className={styles.navItem}>
-          <div className={styles.navIconWrapper}>
-            <img src={iconProfile} alt="profile" className={styles.navIcon} />
-          </div>
-        </button>
-      </nav>
-
-      {/* Home Indicator */}
-      <div className={styles.homeIndicator}>
-        <div className={styles.homeIndicatorBar} />
-      </div>
+      <BottomNav activePage="blog" />
     </div>
   )
 }
