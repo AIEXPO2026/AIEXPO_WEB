@@ -8,6 +8,7 @@ import CommunityRanking from './pages/Community/Ranking/CommunityRanking'
 import CommunityBlog from './pages/Community/Blog/CommunityBlog'
 import Home from './pages/Home/Home'
 import Profile from './pages/Profile/Profile'
+import Travel from './pages/Travel/Travel'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       <Route path="/community/ranking" element={<CommunityRanking />} />
       <Route path="/community/blog" element={<CommunityBlog />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/Travel" element={<Travel />}></Route>
     </Routes>
   )
 }

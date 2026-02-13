@@ -1,0 +1,349 @@
+.container {
+  max-width: 402px;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FAFAFA;
+  margin: 0 auto;
+  padding-bottom: 110px;
+  position: relative;
+}
+
+.header {
+  padding: 28px 0 0 24px;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.2;
+  color: #1A1A1A;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.banner {
+  position: relative;
+  width: 354px;
+  height: 76px;
+  margin: 20px auto 0;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8F8F8 100%);
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner:active {
+  transform: translateY(1px);
+  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.06);
+}
+
+.playIconWrapper {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  font-size: 18px;
+  margin-right: 14px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.bannerContent {
+  flex: 1;
+}
+
+.bannerTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.3;
+  color: #1A1A1A;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.3px;
+}
+
+.bannerSubtitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #6B6B6B;
+  margin: 0;
+}
+
+.arrowIcon {
+  width: 20px;
+  height: 20px;
+  color: #D0D0D0;
+  font-size: 20px;
+}
+
+.statsContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.statCard {
+  flex: 1;
+  height: 100px;
+  background: #FFFFFF;
+  border: 1px solid #F0F0F0;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.statIcon {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 8px;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.statNumber {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1;
+  color: #1A1A1A;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+
+.statLabel {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: #8B8B8B;
+}
+
+.section {
+  padding: 0 24px;
+  margin-top: 32px;
+}
+
+.sectionTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.3;
+  color: #1A1A1A;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.3px;
+}
+
+.travelList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.travelCard {
+  position: relative;
+  width: 100%;
+  background: #FFFFFF;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  display: flex;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  min-height: 110px;
+}
+
+.travelCard:active {
+  transform: scale(0.98);
+}
+
+.badgeWrapper {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #FF1493 0%, #FF4081 100%);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(255, 20, 147, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.travelImage {
+  width: 110px;
+  min-height: 110px;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.travelImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.travelInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  min-width: 0;
+  justify-content: space-between;
+}
+
+.travelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.travelTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  color: #1A1A1A;
+  margin: 0;
+  letter-spacing: -0.3px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editButton {
+  width: 28px;
+  height: 28px;
+  background: #F8F8F8;
+  border: 1px solid #E8E8E8;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.editButton img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+.editButton:hover {
+  background: #F0F0F0;
+  border-color: #D0D0D0;
+}
+
+.editButton:active {
+  background: #E8E8E8;
+  transform: scale(0.95);
+}
+
+.travelMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.metaIcon {
+  width: 11px;
+  height: 11px;
+  font-size: 11px;
+  color: #8B8B8B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metaIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.metaItem span:last-child {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 1;
+  color: #8B8B8B;
+  white-space: nowrap;
+}
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.tag {
+  padding: 3px 7px;
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 9px;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  color: #1A1A1A;
+  white-space: nowrap;
+}
+
+.dateRange {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 9px;
+  line-height: 1;
+  color: #A0A0A0;
+  text-align: right;
+  white-space: nowrap;
+  margin-top: auto;
+}

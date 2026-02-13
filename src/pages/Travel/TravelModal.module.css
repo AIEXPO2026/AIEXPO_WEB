@@ -1,0 +1,437 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: #FFFFFF;
+  border-radius: 16px;
+  max-width: 420px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  background: #FFFFFF;
+  padding: 20px 24px;
+  border-bottom: 1px solid #F0F0F0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #1A1A1A;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #F8F8F8;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #6B6B6B;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: #F0F0F0;
+  color: #1A1A1A;
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+.form {
+  padding: 24px;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.label {
+  display: block;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1A1A1A;
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+
+.input,
+.dateInput,
+.tagInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #1A1A1A;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input:focus,
+.dateInput:focus,
+.tagInput:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+.input::placeholder,
+.tagInput::placeholder {
+  color: #A0A0A0;
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dateInput {
+  flex: 1;
+}
+
+.dateSeparator {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #8B8B8B;
+  flex-shrink: 0;
+}
+
+.tagInputWrapper {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tagInput {
+  flex: 1;
+}
+
+.addTagButton {
+  padding: 12px 20px;
+  background: #F8F8F8;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1A1A1A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.addTagButton:hover {
+  background: #F0F0F0;
+}
+
+.addTagButton:active {
+  transform: scale(0.98);
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+  border-radius: 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: #1A1A1A;
+}
+
+.removeTagButton {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #666;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.removeTagButton:hover {
+  background: rgba(0, 0, 0, 0.2);
+  color: #1A1A1A;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #1A1A1A;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #FFD700;
+}
+
+.hint {
+  margin-top: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  color: #8B8B8B;
+  line-height: 1.5;
+}
+
+.thumbnailUpload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.thumbnailPreview {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #F8F8F8;
+  border: 2px dashed #E0E0E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbnailPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnailPlaceholder {
+  text-align: center;
+  color: #A0A0A0;
+}
+
+.thumbnailPlaceholder span {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.thumbnailPlaceholder p {
+  font-size: 12px;
+  margin: 0;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileLabel {
+  padding: 10px 20px;
+  background: #F8F8F8;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1A1A1A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fileLabel:hover {
+  background: #F0F0F0;
+}
+
+.companionWrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.companionCount {
+  width: 100px;
+  padding: 12px 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #1A1A1A;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.companionCount:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+.weatherGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.weatherButton {
+  padding: 10px 16px;
+  background: #F8F8F8;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #6B6B6B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.weatherButton:hover {
+  background: #F0F0F0;
+}
+
+.weatherActive {
+  background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+  border-color: #FFD700;
+  color: #1A1A1A;
+  font-weight: 600;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #1A1A1A;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+.textarea::placeholder {
+  color: #A0A0A0;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #F0F0F0;
+}
+
+.cancelButton,
+.saveButton {
+  flex: 1;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.cancelButton {
+  background: #F8F8F8;
+  color: #6B6B6B;
+  border: 1px solid #E0E0E0;
+}
+
+.cancelButton:hover {
+  background: #F0F0F0;
+  color: #1A1A1A;
+}
+
+.cancelButton:active {
+  transform: scale(0.98);
+}
+
+.saveButton {
+  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  color: #1A1A1A;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.saveButton:hover {
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.saveButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* 스크롤바 스타일 */
+.modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: #F8F8F8;
+  border-radius: 3px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: #D0D0D0;
+  border-radius: 3px;
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+  background: #B0B0B0;
+}
