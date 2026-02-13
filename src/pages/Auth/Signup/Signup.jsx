@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signup } from '../../../api/authApi';
 import styles from './Signup.module.css';
 
 function Signup() {
@@ -12,13 +13,15 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
   const validatePassword = (value) => {
     const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
     return regex.test(value);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 4) {
       if (!validatePassword(password)) {
         setPasswordError(true);
@@ -28,7 +31,20 @@ function Signup() {
         setConfirmPasswordError(true);
         return;
       }
-      navigate('/welcome');
+
+      // 회원가입 API 호출
+      setLoading(true);
+      setApiError('');
+
+      try {
+        await signup(id, password, email);
+        navigate('/welcome');
+      } catch (err) {
+        setApiError('회원가입에 실패했습니다. 다시 시도해주세요.');
+        console.error('회원가입 실패:', err);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setStep(step + 1);
     }
@@ -150,8 +166,14 @@ function Signup() {
       <div className={styles.form}>
         {renderStep()}
 
-        <button className={styles.button} onClick={handleNext}>
-          다음
+        {apiError && <p className={styles.errorMessage}>{apiError}</p>}
+
+        <button
+          className={styles.button}
+          onClick={handleNext}
+          disabled={loading}
+        >
+          {loading ? '처리 중...' : step === 4 ? '회원가입' : '다음'}
         </button>
 
         <div className={styles.links}>

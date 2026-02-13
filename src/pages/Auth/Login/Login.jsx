@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signin } from '../../../api/authApi';
 import styles from './Login.module.css';
 
 function Login() {
@@ -7,10 +8,31 @@ function Login() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // 로그인 로직 (임시로 에러 상태 표시)
-    setError(true);
+  const handleLogin = async () => {
+    if (!id || !password) {
+      setError(true);
+      return;
+    }
+
+    setLoading(true);
+    setError(false);
+
+    try {
+      const response = await signin(id, password);
+
+      // 토큰 저장
+      if (response.accessToken) {
+        localStorage.setItem('accessToken', response.accessToken);
+        navigate('/home');
+      }
+    } catch (err) {
+      setError(true);
+      console.error('로그인 실패:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,8 +71,12 @@ function Login() {
           )}
         </div>
 
-        <button className={styles.button} onClick={handleLogin}>
-          로그인
+        <button
+          className={styles.button}
+          onClick={handleLogin}
+          disabled={loading}
+        >
+          {loading ? '로그인 중...' : '로그인'}
         </button>
 
         <div className={styles.links}>
