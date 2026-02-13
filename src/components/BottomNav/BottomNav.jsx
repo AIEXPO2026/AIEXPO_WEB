@@ -58,7 +58,7 @@ function BottomNav({ activePage = 'home' }) {
       <button className={styles.navItem} onClick={() => navigate('/community')}>
         <PostIcon active={activePage === 'ranking'} />
       </button>
-      <button className={styles.navItem} onClick={() => navigate('/blog')}>
+      <button className={styles.navItem} onClick={() => navigate('/community/blog')}>
         <PenIcon active={activePage === 'blog'} />
       </button>
       <button className={styles.navItem} onClick={() => navigate('/profile')}>
