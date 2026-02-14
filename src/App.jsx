@@ -8,9 +8,12 @@ import CommunityRanking from './pages/Community/Ranking/CommunityRanking'
 import CommunityBlog from './pages/Community/Blog/CommunityBlog'
 import Home from './pages/Home/Home'
 import Profile from './pages/Profile/Profile'
+import ReloadPrompt from './components/ReloadPrompt/ReloadPrompt'
 
 function App() {
   return (
+    <>
+    <ReloadPrompt />
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
@@ -23,6 +26,7 @@ function App() {
       <Route path="/community/blog" element={<CommunityBlog />} />
       <Route path="/profile" element={<Profile />} />
     </Routes>
+    </>
   )
 }
 
