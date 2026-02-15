@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './Tracking.module.css';
 
-const Tracking = ({ onFinish, onClose }) => {
+const TravelTracking = ({ onFinish, onClose }) => {
   const [isTracking, setIsTracking] = useState(true);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [path, setPath] = useState([]);
