@@ -59,3 +59,18 @@ AIEXPO는 사용자에게 맞춤형 여행지를 추천하고, 여행 계획을 
 | `/community/ranking` | 랭킹 상세 | 전체 여행지 랭킹 |
 | `/community/blog` | 블로그 상세 | 전체 여행 블로그 |
 | `/profile` | 마이페이지 | 사용자 프로필 및 여행 기록 |
+
+## 🚀 배포 설정
+
+Docker 이미지 실행 시 백엔드 업스트림 주소를 지정해야 `/api/*` 요청이 정상 프록시됩니다.
+
+- `BACKEND_UPSTREAM`: 백엔드 서버 주소 (예: `http://backend:8080`, `http://10.0.0.12:8080`)
+
+예시:
+
+```bash
+docker run -d \
+  -p 80:80 \
+  -e BACKEND_UPSTREAM=http://backend:8080 \
+  aiexpo-web:latest
+```
