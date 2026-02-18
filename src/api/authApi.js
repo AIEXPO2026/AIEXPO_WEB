@@ -3,8 +3,8 @@ import apiClient from './axios';
 // 회원가입
 export const signup = async (username, password, email) => {
   const response = await apiClient.post('/auth/signup', {
-    username,
-    password,
+    nickname: username,
+    password_hash: password,
     email,
   });
   return response.data;
@@ -13,8 +13,8 @@ export const signup = async (username, password, email) => {
 // 로그인
 export const signin = async (username, password) => {
   const response = await apiClient.post('/auth/signin', {
-    username,
-    password,
+    nickname: username,
+    password_hash: password,
   });
   return response.data;
 };
