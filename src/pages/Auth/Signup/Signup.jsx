@@ -17,7 +17,7 @@ function Signup() {
   const [apiError, setApiError] = useState('');
 
   const validatePassword = (value) => {
-    const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
     return regex.test(value);
   };
 
@@ -131,7 +131,7 @@ function Signup() {
               />
               {passwordError && (
                 <p className={styles.errorMessage}>
-                  영문, 특수문자 포함 8자 이상이어야 합니다.
+                  영문 대소문자, 숫자, 특수문자 포함 8자 이상이어야 합니다.
                 </p>
               )}
             </div>

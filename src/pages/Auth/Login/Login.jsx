@@ -23,7 +23,7 @@ function Login() {
       const response = await signin(id, password);
 
       // 토큰 저장
-      if (response.accessToken) {
+      if (response?.accessToken) {
         localStorage.setItem('accessToken', response.accessToken);
         navigate('/home');
       }

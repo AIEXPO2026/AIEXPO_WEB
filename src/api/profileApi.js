@@ -1,10 +1,10 @@
-import apiClient from './axios';
+import apiClient, { unwrapApiResponse } from './axios';
 
 // 북마크 목록 조회 - GET /profile/bookmark
 // Response: { status, data: [{ bookmarkId, destinationId, name, city, latitude, longitude, baseScor }] }
 export const getBookmarks = async () => {
   const response = await apiClient.get('/profile/bookmark');
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 북마크 삭제 - DELETE /profile/bookmark/{destinationId}
@@ -35,7 +35,7 @@ export const updateUsername = async (newUsername, password) => {
     newUsername,
     password,
   });
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 비밀번호 변경 - PUT /auth/password
@@ -45,7 +45,7 @@ export const changePassword = async (username, oldPassword, newPassword) => {
     oldPassword,
     newPassword,
   });
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 내 여행 목록 조회 - GET /travel/my
