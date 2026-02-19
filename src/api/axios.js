@@ -33,12 +33,17 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     // 401 에러 처리 (인증 실패)
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       localStorage.removeItem('accessToken');
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
+
+// 서버 표준 응답(ApiResponse)을 앱에서 바로 쓰기 위한 헬퍼
+export const unwrapApiResponse = (response) => {
+  return response?.data?.data ?? response?.data;
+};
 
 export default apiClient;

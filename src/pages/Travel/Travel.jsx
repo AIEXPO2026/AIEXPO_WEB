@@ -161,20 +161,7 @@ const TravelRecordManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTrackingActive, setIsTrackingActive] = useState(false);
 
-  // 백엔드 연결 시: useEffect로 데이터 fetch
-  // useEffect(() => {
-  //   fetchTravelData();
-  // }, []);
-  
-  // const fetchTravelData = async () => {
-  //   try {
-  //     const response = await fetch('/api/travels');
-  //     const data = await response.json();
-  //     setTravelData(data);
-  //   } catch (error) {
-  //     console.error('Failed to fetch travel data:', error);
-  //   }
-  // };
+  // 백엔드 연결 시: useEffect로 데이터 fetch 로직 추가
 
   const handleEdit = (travel) => {
     setEditingTravel(travel);
@@ -188,17 +175,7 @@ const TravelRecordManagement = () => {
 
   const handleSave = async (updatedData) => {
     // 백엔드 연결 시: API 호출로 교체
-    // try {
-    //   await fetch(`/api/travels/${editingTravel.id}`, {
-    //     method: 'PUT',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(updatedData)
-    //   });
-    //   fetchTravelData(); // 데이터 새로고침
-    // } catch (error) {
-    //   console.error('Failed to update travel:', error);
-    // }
-    
+
     // 현재: 로컬 상태만 업데이트
     setTravelData(prev => 
       prev.map(travel => 
