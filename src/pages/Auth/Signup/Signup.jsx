@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup } from '../../../api/authApi';
+import { signup, sendVerificationEmail, verifyEmail } from '../../../api/authApi';
 import styles from './Signup.module.css';
 
 function Signup() {
@@ -11,8 +11,10 @@ function Signup() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [authCode, setAuthCode] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [authCodeError, setAuthCodeError] = useState('');
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState('');
 
@@ -32,21 +34,53 @@ function Signup() {
         return;
       }
 
-      // 회원가입 API 호출
+      // 회원가입 후 이메일 인증번호 전송
       setLoading(true);
       setApiError('');
 
       try {
         await signup(id, password, email);
-        navigate('/welcome');
+        await sendVerificationEmail(email);
+        setStep(5);
       } catch (err) {
         setApiError('회원가입에 실패했습니다. 다시 시도해주세요.');
         console.error('회원가입 실패:', err);
       } finally {
         setLoading(false);
       }
+    } else if (step === 5) {
+      // 이메일 인증코드 확인
+      if (!authCode) {
+        setAuthCodeError('인증번호를 입력해주세요.');
+        return;
+      }
+
+      setLoading(true);
+      setAuthCodeError('');
+
+      try {
+        await verifyEmail(email, authCode);
+        navigate('/welcome');
+      } catch (err) {
+        setAuthCodeError('인증번호가 올바르지 않습니다.');
+        console.error('이메일 인증 실패:', err);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setStep(step + 1);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    setLoading(true);
+    setAuthCodeError('');
+    try {
+      await sendVerificationEmail(email);
+    } catch (err) {
+      setAuthCodeError('재전송에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,6 +106,13 @@ function Signup() {
     } else {
       setConfirmPasswordError(false);
     }
+  };
+
+  const getButtonText = () => {
+    if (loading) return '처리 중...';
+    if (step === 4) return '회원가입';
+    if (step === 5) return '인증 완료';
+    return '다음';
   };
 
   const renderStep = () => {
@@ -154,6 +195,25 @@ function Signup() {
             </div>
           </>
         );
+      case 5:
+        return (
+          <div className={styles.inputGroup}>
+            <label className={`${styles.label} ${authCodeError ? styles.labelError : ''}`}>
+              인증번호
+            </label>
+            <p className={styles.emailHint}>{email}으로 발송된 인증번호를 입력해주세요.</p>
+            <input
+              type="text"
+              className={`${styles.input} ${authCodeError ? styles.inputError : ''}`}
+              placeholder="인증번호 6자리를 입력해주세요."
+              value={authCode}
+              onChange={(e) => setAuthCode(e.target.value)}
+            />
+            {authCodeError && (
+              <p className={styles.errorMessage}>{authCodeError}</p>
+            )}
+          </div>
+        );
       default:
         return null;
     }
@@ -173,14 +233,22 @@ function Signup() {
           onClick={handleNext}
           disabled={loading}
         >
-          {loading ? '처리 중...' : step === 4 ? '회원가입' : '다음'}
+          {getButtonText()}
         </button>
 
         <div className={styles.links}>
-          {step > 1 && (
+          {step > 1 && step < 5 && (
             <>
               <span className={styles.link} onClick={handleBack}>
                 이전으로
+              </span>
+              <span className={styles.divider}>|</span>
+            </>
+          )}
+          {step === 5 && (
+            <>
+              <span className={styles.link} onClick={handleResendEmail}>
+                재전송하기
               </span>
               <span className={styles.divider}>|</span>
             </>

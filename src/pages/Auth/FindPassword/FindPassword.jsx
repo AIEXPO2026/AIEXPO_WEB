@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { sendVerificationEmail, verifyEmail } from '../../../api/authApi';
 import styles from './FindPassword.module.css';
 
 function FindPassword() {
@@ -10,14 +11,36 @@ function FindPassword() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 1) {
-      // 이메일로 인증번호 전송 후 다음 단계
-      setStep(2);
+      // 이메일로 인증번호 전송
+      setLoading(true);
+      setApiError('');
+      try {
+        await sendVerificationEmail(email);
+        setStep(2);
+      } catch (err) {
+        setApiError('인증번호 전송에 실패했습니다. 이메일을 확인해주세요.');
+        console.error('인증번호 전송 실패:', err);
+      } finally {
+        setLoading(false);
+      }
     } else if (step === 2) {
-      // 인증번호 확인 후 다음 단계
-      setStep(3);
+      // 인증번호 확인
+      setLoading(true);
+      setApiError('');
+      try {
+        await verifyEmail(email, verificationCode);
+        setStep(3);
+      } catch (err) {
+        setApiError('인증번호가 올바르지 않습니다.');
+        console.error('인증번호 확인 실패:', err);
+      } finally {
+        setLoading(false);
+      }
     } else {
       // 비밀번호 일치 확인
       if (newPassword !== confirmPassword) {
@@ -33,12 +56,21 @@ function FindPassword() {
     if (step === 1) {
       navigate('/login');
     } else {
+      setApiError('');
       setStep(step - 1);
     }
   };
 
-  const handleResend = () => {
-    // 인증번호 재전송 로직
+  const handleResend = async () => {
+    setLoading(true);
+    setApiError('');
+    try {
+      await sendVerificationEmail(email);
+    } catch (err) {
+      setApiError('재전송에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleConfirmPasswordChange = (e) => {
@@ -51,6 +83,7 @@ function FindPassword() {
   };
 
   const getButtonText = () => {
+    if (loading) return '처리 중...';
     if (step === 1) return '인증번호 보내기';
     if (step === 2) return '다음';
     return '완료';
@@ -119,7 +152,9 @@ function FindPassword() {
           </>
         )}
 
-        <button className={styles.button} onClick={handleNext}>
+        {apiError && <p className={styles.errorMessage}>{apiError}</p>}
+
+        <button className={styles.button} onClick={handleNext} disabled={loading}>
           {getButtonText()}
         </button>
 
