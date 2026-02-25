@@ -4,9 +4,7 @@ import styles from './Travel.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import TravelModal from './TravelModal';
 import TravelTracking from './Tracking';
-/* [에러 수정] getTravels를 import에서 제거했습니다. 
-  나중에 API가 준비되면 다시 추가하세요.
-*/
+// [수정] getTravels는 좀 만들어주셈;
 import { startTravel, finishTravel, editTravel } from '../../api/travelApi'; 
 
 import MapIcon from '../../assets/map-icon.svg';
@@ -93,7 +91,6 @@ function TravelRecordManagement() {
     const loadGoogleMaps = () => {
       if (window.google) return;
       const script = document.createElement('script');
-      /* [에러 수정] 변수명을 GOOGLE_MAPS_API_KEY로 통일했습니다. */
       script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
       script.async = true;
       script.defer = true;
@@ -109,7 +106,8 @@ function TravelRecordManagement() {
       setLoading(true);
       setError(null);
       
-      /* [나중에 API 연결] const data = await getTravels(); setTravelData(data); */
+      // [주석 유지] API 미연결 상태이므로 임시 데이터 사용중
+      // const data = await getTravels();
       const mockData = [
         {
           id: 1,
@@ -122,7 +120,6 @@ function TravelRecordManagement() {
           thumbnailUrl: "https://images.unsplash.com/photo-1500835595353-b0ad2e58b431?w=400"
         }
       ];
-      
       setTravelData(mockData); 
     } catch (error) {
       console.error('Failed to fetch:', error);
@@ -153,6 +150,8 @@ function TravelRecordManagement() {
         publicTravel: updatedData.isPublic,
       });
       alert('여행 기록이 수정되었습니다.');
+      // API가 주석 처리되어 있으므로 리스트 갱신은 생략
+      await fetchTravelData();
       handleCloseModal();
     } catch (error) {
       alert('수정에 실패했습니다.');
@@ -161,9 +160,7 @@ function TravelRecordManagement() {
 
   const handleStartTracking = async () => {
     try {
-      /* [에러 수정] 서버가 꺼져 있을 경우(ERR_CONNECTION_REFUSED) 
-        화면 이동만 가능하도록 try-catch로 감싸져 있습니다. 
-      */
+      // 서버가 꺼져 있어도 화면은 넘어가도록 처리
       await startTravel({
         budget_min: 0, budget_max: 0,
         start_date: new Date().toISOString().split('T')[0],
@@ -172,8 +169,8 @@ function TravelRecordManagement() {
       });
       setIsTrackingActive(true);
     } catch (error) {
-      console.error('서버 연결 실패, 오프라인 모드로 추적을 시작합니다.');
-      setIsTrackingActive(true); // 서버가 없어도 일단 추적 화면은 띄웁니다.
+      console.warn('서버 연결 실패 - 오프라인 모드로 시작합니다.');
+      setIsTrackingActive(true); 
     }
   };
 
