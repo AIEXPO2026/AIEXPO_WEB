@@ -1,4 +1,4 @@
-import apiClient from './axios';
+import apiClient, { unwrapApiResponse } from './axios';
 
 // 회원가입
 export const signup = async (username, password, email) => {
@@ -7,7 +7,7 @@ export const signup = async (username, password, email) => {
     password_hash: password,
     email,
   });
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 로그인
@@ -16,7 +16,7 @@ export const signin = async (username, password) => {
     nickname: username,
     password_hash: password,
   });
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 인증 메일 전송
@@ -24,7 +24,7 @@ export const sendVerificationEmail = async (email) => {
   const response = await apiClient.post('/auth/email/send', {
     email,
   });
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 인증 메일 확인
@@ -33,15 +33,20 @@ export const verifyEmail = async (email, authNum) => {
     email,
     authNum,
   });
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 비밀번호 변경
-export const changePassword = async (username, oldPassword, newPassword) => {
+export const changePassword = async (oldPassword, newPassword) => {
   const response = await apiClient.put('/auth/password', {
-    username,
     oldPassword,
     newPassword,
   });
-  return response.data;
+  return unwrapApiResponse(response);
+};
+
+// 로그아웃
+export const signout = async () => {
+  const response = await apiClient.post('/auth/signout');
+  return unwrapApiResponse(response);
 };

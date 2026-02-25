@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Profile.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import machuPicchu from '../../assets/machu-picchu.png';
+import { signout } from '../../api/authApi';
 
 function ChevronRight() {
   return (
@@ -114,6 +115,16 @@ const bookmarkData = [
 function Profile() {
   const navigate = useNavigate();
 
+  const handleLogout = async () => {
+    try {
+      await signout();
+    } catch (e) {
+      // 이미 로그아웃 상태여도 로그인 페이지로 이동
+    }
+    localStorage.removeItem('accessToken');
+    navigate('/login');
+  };
+
   return (
     <div className={styles.container}>
       {/* User Info Section */}
@@ -147,7 +158,7 @@ function Profile() {
           <span className={styles.menuText}>탈퇴하기</span>
           <ChevronRight />
         </button>
-        <button className={styles.menuItem} onClick={() => navigate('/login')}>
+        <button className={styles.menuItem} onClick={handleLogout}>
           <span className={`${styles.menuText} ${styles.logout}`}>로그아웃</span>
           <ChevronRight />
         </button>
