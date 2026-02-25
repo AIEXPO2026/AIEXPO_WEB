@@ -1,6 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './Tracking.module.css';
 
+const IconClose = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+);
+
+const IconCamera = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+);
+
+const IconMap = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+);
+
 const TravelTracking = ({ onFinish, onClose }) => {
   const [isTracking, setIsTracking] = useState(true);
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -12,8 +24,8 @@ const TravelTracking = ({ onFinish, onClose }) => {
   
   const mapRef = useRef(null);
   const watchIdRef = useRef(null);
+  const googleMapRef = useRef(null);
 
-  // 실시간 위치 추적
   useEffect(() => {
     if (!isTracking) return;
 
@@ -25,170 +37,131 @@ const TravelTracking = ({ onFinish, onClose }) => {
             lng: position.coords.longitude,
             timestamp: Date.now()
           };
-          
           setCurrentLocation(newLocation);
           setPath(prev => [...prev, newLocation]);
         },
         (error) => {
-          console.error('위치 추적 오류:', error);
-          alert('위치 추적을 시작할 수 없습니다. 위치 권한을 확인해주세요.');
+          console.error(error);
+          alert('위치 정보를 가져올 수 없습니다.');
         },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 5000
-        }
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
       );
     }
 
     return () => {
-      if (watchIdRef.current) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
+      if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
     };
   }, [isTracking]);
 
-  // 지도 초기화 (Google Maps API 사용 예시)
   useEffect(() => {
-    if (!currentLocation || !mapRef.current) return;
+    if (!currentLocation || !mapRef.current || !window.google) return;
 
-    // Google Maps 초기화
-    // const map = new google.maps.Map(mapRef.current, {
-    //   center: currentLocation,
-    //   zoom: 15
-    // });
+    if (!googleMapRef.current) {
+      googleMapRef.current = new window.google.maps.Map(mapRef.current, {
+        center: currentLocation,
+        zoom: 16,
+        disableDefaultUI: true,
+      });
+    } else {
+      googleMapRef.current.setCenter(currentLocation);
+    }
 
-    // 경로 그리기
-    // const pathLine = new google.maps.Polyline({
-    //   path: path,
-    //   strokeColor: '#FF0000',
-    //   strokeWeight: 3
-    // });
-    // pathLine.setMap(map);
+    new window.google.maps.Polyline({
+      path: path,
+      strokeColor: '#4A90E2',
+      strokeOpacity: 0.8,
+      strokeWeight: 5,
+      map: googleMapRef.current
+    });
+
+    new window.google.maps.Marker({
+      position: currentLocation,
+      map: googleMapRef.current,
+    });
   }, [currentLocation, path]);
 
   const handleAddPlace = () => {
-    if (!currentLocation) {
-      alert('현재 위치를 확인할 수 없습니다.');
-      return;
-    }
-
-    setSelectedPlace({
-      location: currentLocation,
-      arrivalTime: Date.now()
-    });
+    if (!currentLocation) return alert('GPS 신호를 기다리는 중입니다.');
+    setSelectedPlace({ location: currentLocation, arrivalTime: Date.now() });
     setShowPlaceModal(true);
   };
 
   const handleSavePlace = (placeData) => {
-    const newPlace = {
-      ...placeData,
-      id: Date.now(),
-      location: selectedPlace.location,
-      arrivalTime: selectedPlace.arrivalTime,
-      departureTime: Date.now()
+    const newPlace = { 
+      ...placeData, 
+      id: Date.now(), 
+      location: selectedPlace.location, 
+      arrivalTime: selectedPlace.arrivalTime, 
+      departureTime: Date.now() 
     };
-
     setVisitedPlaces(prev => [...prev, newPlace]);
     setShowPlaceModal(false);
     setSelectedPlace(null);
   };
 
-  const handleFinish = () => {
-    setShowFinishConfirm(true);
-  };
-
   const handleConfirmFinish = () => {
     setIsTracking(false);
-    if (watchIdRef.current) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-    }
+    if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
     
-    // 여행 데이터 전달
-    onFinish({
-      path,
-      visitedPlaces,
-      startTime: path[0]?.timestamp,
-      endTime: Date.now()
+    onFinish({ 
+      path, 
+      visitedPlaces, 
+      startTime: path[0]?.timestamp || Date.now(), 
+      endTime: Date.now(),
+      title: `${new Date().toLocaleDateString()} 여행` 
     });
   };
 
   return (
     <div className={styles.container}>
-      {/* 지도 영역 */}
       <div className={styles.mapContainer} ref={mapRef}>
-        <div className={styles.mapPlaceholder}>
-          {/* 실제 구현 시 Google Maps / Kakao Maps / Naver Maps API 연동 */}
-          <p>🗺️ 지도가 여기에 표시됩니다</p>
-          <p className={styles.locationInfo}>
-            {currentLocation 
-              ? `위도: ${currentLocation.lat.toFixed(6)}, 경도: ${currentLocation.lng.toFixed(6)}`
-              : '위치 정보를 불러오는 중...'}
-          </p>
-        </div>
+        {!currentLocation && (
+          <div className={styles.mapPlaceholder}>
+            <IconMap />
+            <p>지도를 불러오는 중입니다</p>
+          </div>
+        )}
       </div>
 
-      {/* 상단 정보 */}
       <div className={styles.topBar}>
         <button className={styles.closeButton} onClick={onClose}>
-          ✕
+          <IconClose />
         </button>
         <div className={styles.trackingInfo}>
-          <span className={styles.trackingStatus}>
-            {isTracking ? '🔴 추적 중' : '⏸️ 일시정지'}
-          </span>
+          <div className={styles.statusBadge}>
+            <span className={isTracking ? styles.dotRed : styles.dotGray}></span>
+            {isTracking ? '기록 중' : '일시정지'}
+          </div>
           <span className={styles.placeCount}>
-            방문지: {visitedPlaces.length}개
+            방문지 <strong>{visitedPlaces.length}</strong>
           </span>
         </div>
       </div>
 
-      {/* 하단 컨트롤 */}
       <div className={styles.bottomControls}>
-        <button 
-          className={styles.addPlaceButton}
-          onClick={handleAddPlace}
-        >
-          + 방문지 추가
+        <button className={styles.addPlaceButton} onClick={handleAddPlace}>
+          방문지 추가
         </button>
-        <button 
-          className={styles.finishButton}
-          onClick={handleFinish}
-        >
-          여행 마치기
+        <button className={styles.finishButton} onClick={() => setShowFinishConfirm(true)}>
+          여행 종료
         </button>
       </div>
 
-      {/* 방문지 추가 모달 */}
       {showPlaceModal && (
         <PlaceModal
-          onClose={() => {
-            setShowPlaceModal(false);
-            setSelectedPlace(null);
-          }}
+          onClose={() => { setShowPlaceModal(false); setSelectedPlace(null); }}
           onSave={handleSavePlace}
         />
       )}
 
-      {/* 여행 종료 확인 모달 */}
       {showFinishConfirm && (
         <div className={styles.confirmOverlay} onClick={() => setShowFinishConfirm(false)}>
           <div className={styles.confirmModal} onClick={e => e.stopPropagation()}>
-            <h3>정말 여행을 마치시겠습니까?</h3>
-            <p>여행을 종료하면 위치 추적이 중단됩니다.</p>
+            <h3>여행을 마칠까요?</h3>
+            <p>종료 후에는 경로 기록이 중단됩니다.</p>
             <div className={styles.confirmButtons}>
-              <button 
-                className={styles.cancelButton}
-                onClick={() => setShowFinishConfirm(false)}
-              >
-                취소
-              </button>
-              <button 
-                className={styles.confirmFinishButton}
-                onClick={handleConfirmFinish}
-              >
-                여행 마치기
-              </button>
+              <button className={styles.cancelButton} onClick={() => setShowFinishConfirm(false)}>취소</button>
+              <button className={styles.confirmFinishButton} onClick={handleConfirmFinish}>종료하기</button>
             </div>
           </div>
         </div>
@@ -197,31 +170,18 @@ const TravelTracking = ({ onFinish, onClose }) => {
   );
 };
 
-// 방문지 추가 모달 컴포넌트
 const PlaceModal = ({ onClose, onSave }) => {
-  const [placeData, setPlaceData] = useState({
-    name: '',
-    duration: { hours: 0, minutes: 30 },
-    photos: [],
-    review: ''
-  });
+  const [placeData, setPlaceData] = useState({ name: '', photos: [], review: '' });
 
   const handlePhotoUpload = (e) => {
     const files = Array.from(e.target.files);
     const photoUrls = files.map(file => URL.createObjectURL(file));
-    
-    setPlaceData(prev => ({
-      ...prev,
-      photos: [...prev.photos, ...photoUrls]
-    }));
+    setPlaceData(prev => ({ ...prev, photos: [...prev.photos, ...photoUrls] }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!placeData.name.trim()) {
-      alert('장소 이름을 입력해주세요.');
-      return;
-    }
+    if (!placeData.name.trim()) return alert('장소명을 입력하세요.');
     onSave(placeData);
   };
 
@@ -230,85 +190,48 @@ const PlaceModal = ({ onClose, onSave }) => {
       <div className={styles.placeModal} onClick={e => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h3>방문지 기록</h3>
-          <button onClick={onClose}>✕</button>
+          <button onClick={onClose}><IconClose /></button>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.placeForm}>
           <div className={styles.formGroup}>
-            <label>장소 이름</label>
-            <input
-              type="text"
-              value={placeData.name}
-              onChange={(e) => setPlaceData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="예: 구지 초등학교"
-              required
+            <label>장소 명칭</label>
+            <input 
+              type="text" 
+              value={placeData.name} 
+              onChange={(e) => setPlaceData(prev => ({ ...prev, name: e.target.value }))} 
+              required 
             />
           </div>
 
           <div className={styles.formGroup}>
-            <label>머문 시간</label>
-            <div className={styles.durationInputs}>
-              <input
-                type="number"
-                min="0"
-                value={placeData.duration.hours}
-                onChange={(e) => setPlaceData(prev => ({
-                  ...prev,
-                  duration: { ...prev.duration, hours: parseInt(e.target.value) || 0 }
-                }))}
-                placeholder="시간"
-              />
-              <span>시간</span>
-              <input
-                type="number"
-                min="0"
-                max="59"
-                value={placeData.duration.minutes}
-                onChange={(e) => setPlaceData(prev => ({
-                  ...prev,
-                  duration: { ...prev.duration, minutes: parseInt(e.target.value) || 0 }
-                }))}
-                placeholder="분"
-              />
-              <span>분</span>
+            <label>사진 첨부</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              multiple 
+              onChange={handlePhotoUpload} 
+              id="placePhotos" 
+              className={styles.fileInput} 
+            />
+            <label htmlFor="placePhotos" className={styles.fileLabel}>
+              <IconCamera /> <span>사진 선택</span>
+            </label>
+            <div className={styles.photoPreview}>
+              {placeData.photos.map((photo, index) => <img key={index} src={photo} alt="preview" />)}
             </div>
           </div>
 
           <div className={styles.formGroup}>
-            <label>첨부 사진</label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handlePhotoUpload}
-              id="placePhotos"
-              className={styles.fileInput}
-            />
-            <label htmlFor="placePhotos" className={styles.fileLabel}>
-              📷 사진 추가
-            </label>
-            {placeData.photos.length > 0 && (
-              <div className={styles.photoPreview}>
-                {placeData.photos.map((photo, index) => (
-                  <img key={index} src={photo} alt={`사진 ${index + 1}`} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className={styles.formGroup}>
-            <label>자세한 기록</label>
-            <textarea
-              value={placeData.review}
-              onChange={(e) => setPlaceData(prev => ({ ...prev, review: e.target.value }))}
-              placeholder="여행 경험을 자세히 서술해보세요!"
-              rows="4"
+            <label>상세 기록</label>
+            <textarea 
+              value={placeData.review} 
+              onChange={(e) => setPlaceData(prev => ({ ...prev, review: e.target.value }))} 
+              rows="4" 
             />
           </div>
 
-          <button type="submit" className={styles.saveButton}>
-            저장
-          </button>
+          <button type="submit" className={styles.saveButton}>기록 저장</button>
         </form>
       </div>
     </div>
