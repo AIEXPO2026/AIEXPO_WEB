@@ -1,17 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Travel.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import TravelModal from './TravelModal';
-import Tracking from './Tracking';
-import Map from '../../assets/map-icon.svg';
-import Place from '../../assets/place-icon.svg';
-import Img from '../../assets/img-icon.svg';
-import Edit from '../../assets/edit-icon.svg';
-import Time from '../../assets/time-icon.svg';
-import People from '../../assets/people-icon.svg';
-import Splace from '../../assets/smollPlace-icon.svg';
+import TravelTracking from './Tracking';
+// [수정] getTravels는 좀 만들어주셈;
+import { startTravel, finishTravel, editTravel } from '../../api/travelApi'; 
 
-// Component Functions
+import MapIcon from '../../assets/map-icon.svg';
+import PlaceIcon from '../../assets/place-icon.svg';
+import ImgIcon from '../../assets/img-icon.svg';
+import EditIcon from '../../assets/edit-icon.svg';
+import TimeIcon from '../../assets/time-icon.svg';
+import PeopleIcon from '../../assets/people-icon.svg';
+import SplaceIcon from '../../assets/smollPlace-icon.svg';
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
 const StatCardComponent = ({ icon, number, label }) => (
   <div className={styles.statCard}>
     <div className={styles.statIcon}>
@@ -28,153 +33,102 @@ const TravelCardComponent = ({ travel, onEdit }) => {
       '힐링': { bg: '#E3F2FD', text: '#1976D2' },
       '자연': { bg: '#E8F5E9', text: '#388E3C' },
       '맛집': { bg: '#FFF3E0', text: '#F57C00' },
-      '지연': { bg: '#FCE4EC', text: '#C2185B' },
     };
     return colorMap[tag] || { bg: '#F3E5F5', text: '#7B1FA2' };
   };
 
   return (
     <div className={styles.travelCard}>
-      {travel.badge && <div className={styles.badgeWrapper}>{travel.badge}</div>}
       <div className={styles.travelImage}>
-        {/* 대충 여기에 이미지 */}
         {travel.thumbnailUrl && <img src={travel.thumbnailUrl} alt={travel.title} />}
       </div>
       <div className={styles.travelInfo}>
         <div className={styles.travelHeader}>
           <h3 className={styles.travelTitle}>{travel.title}</h3>
-          <button 
-            className={styles.editButton} 
-            type="button" 
-            aria-label="edit"
-            onClick={() => onEdit(travel)}
-          >
-            <img src={Edit} alt="edit" />
+          <button className={styles.editButton} type="button" onClick={() => onEdit(travel)}>
+            <img src={EditIcon} alt="edit" />
           </button>
         </div>
-        
         <div className={styles.travelMeta}>
           <div className={styles.metaItem}>
-            <span className={styles.metaIcon}>
-              <img src={Time} alt="time" />
-            </span>
+            <img src={TimeIcon} alt="time" className={styles.metaIcon} />
             <span>{travel.duration}</span>
           </div>
           <div className={styles.metaItem}>
-            <span className={styles.metaIcon}>
-              <img src={Splace} alt="place" />
-            </span>
-            <span>{travel.places}</span>
+            <img src={SplaceIcon} alt="place" className={styles.metaIcon} />
+            <span>{travel.places}곳</span>
           </div>
           <div className={styles.metaItem}>
-            <span className={styles.metaIcon}>
-              <img src={People} alt="people" />
-            </span>
-            <span>{travel.people}</span>
+            <img src={PeopleIcon} alt="people" className={styles.metaIcon} />
+            <span>{travel.people}명</span>
           </div>
         </div>
-        
         <div className={styles.tagContainer}>
-          {travel.tags.map((tag, index) => {
+          {travel.tags?.map((tag, index) => {
             const colors = getTagColors(tag);
             return (
-              <span 
-                key={index} 
-                className={styles.tag}
-                style={{ backgroundColor: colors.bg, color: colors.text }}
-              >
+              <span key={index} className={styles.tag} style={{ backgroundColor: colors.bg, color: colors.text }}>
                 #{tag}
               </span>
             );
           })}
         </div>
-        
         <div className={styles.dateRange}>{travel.dateRange}</div>
       </div>
     </div>
   );
 };
 
-// Main Component
-const TravelRecordManagement = () => {
-  // 백엔드 연결 시: API 호출로 교체
-  const [travelData, setTravelData] = useState([
-    {
-      id: 1,
-      title: '제주도 힐링 여행',
-      duration: '2박 3일',
-      places: '12개 장소',
-      people: '5인',
-      tags: ['힐링', '자연', '힐링', '자연', '힐링', '자연'],
-      dateRange: '2026.01.01 ~ 2026.01.03',
-      startDate: '2026-01-01',
-      endDate: '2026-01-03',
-      companions: '가족',
-      isPublic: true,
-      thumbnailUrl: null, // API에서 받은 이미지 URL
-    },
-    {
-      id: 2,
-      title: '제주도 힐링 여행',
-      duration: '2박 3일',
-      places: '12개 장소',
-      people: '5인',
-      tags: ['힐링', '자연', '힐링', '자연', '힐링', '자연'],
-      dateRange: '2026.01.01 ~ 2026.01.03',
-      startDate: '2026-01-01',
-      endDate: '2026-01-03',
-      companions: '친구',
-      isPublic: false,
-      thumbnailUrl: null,
-    },
-    {
-      id: 3,
-      title: '제주도 힐링 여행',
-      duration: '2박 3일',
-      places: '12개 장소',
-      people: '5인',
-      tags: ['힐링', '자연', '힐링', '자연', '힐링', '자연'],
-      dateRange: '2026.01.01 ~ 2026.01.03',
-      startDate: '2026-01-01',
-      endDate: '2026-01-03',
-      companions: '혼자',
-      isPublic: true,
-      thumbnailUrl: null,
-    },
-    {
-      id: 4,
-      title: '제주도 힐링 여행',
-      duration: '2박 3일',
-      places: '12개 장소',
-      people: '5인',
-      tags: ['힐링', '자연', '힐링', '자연', '힐링', '자연'],
-      dateRange: '2026.01.01 ~ 2026.01.03',
-      startDate: '2026-01-01',
-      endDate: '2026-01-03',
-      companions: '가족',
-      isPublic: false,
-      thumbnailUrl: null,
-    },
-  ]);
-
+function TravelRecordManagement() {
+  const [travelData, setTravelData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [editingTravel, setEditingTravel] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTrackingActive, setIsTrackingActive] = useState(false);
 
-  // 백엔드 연결 시: useEffect로 데이터 fetch
-  // useEffect(() => {
-  //   fetchTravelData();
-  // }, []);
+  useEffect(() => {
+    const loadGoogleMaps = () => {
+      if (window.google) return;
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    };
+
+    loadGoogleMaps();
+    fetchTravelData();
+  }, []);
   
-  // const fetchTravelData = async () => {
-  //   try {
-  //     const response = await fetch('/api/travels');
-  //     const data = await response.json();
-  //     setTravelData(data);
-  //   } catch (error) {
-  //     console.error('Failed to fetch travel data:', error);
-  //   }
-  // };
+  const fetchTravelData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // [주석 유지] API 미연결 상태이므로 임시 데이터 사용중
+      // const data = await getTravels();
+      const mockData = [
+        {
+          id: 1,
+          title: "제주도 푸른 밤 여행",
+          duration: "3일",
+          places: "12",
+          people: "2",
+          tags: ["힐링", "자연"],
+          dateRange: "2026.02.20 - 2026.02.22",
+          thumbnailUrl: "https://images.unsplash.com/photo-1500835595353-b0ad2e58b431?w=400"
+        }
+      ];
+      setTravelData(mockData); 
+    } catch (error) {
+      console.error('Failed to fetch:', error);
+      setError("데이터를 불러오지 못했습니다.");
+      setTravelData([]); 
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEdit = (travel) => {
     setEditingTravel(travel);
@@ -187,46 +141,51 @@ const TravelRecordManagement = () => {
   };
 
   const handleSave = async (updatedData) => {
-    // 백엔드 연결 시: API 호출로 교체
-    // try {
-    //   await fetch(`/api/travels/${editingTravel.id}`, {
-    //     method: 'PUT',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(updatedData)
-    //   });
-    //   fetchTravelData(); // 데이터 새로고침
-    // } catch (error) {
-    //   console.error('Failed to update travel:', error);
-    // }
-    
-    // 현재: 로컬 상태만 업데이트
-    setTravelData(prev => 
-      prev.map(travel => 
-        travel.id === editingTravel.id 
-          ? { ...travel, ...updatedData }
-          : travel
-      )
-    );
-    handleCloseModal();
+    try {
+      await editTravel({
+        travel_id: editingTravel.id,
+        people: updatedData.companionCount,
+        mood: updatedData.mood || 1,
+        weather_avg: updatedData.weather?.join(',') || '',
+        publicTravel: updatedData.isPublic,
+      });
+      alert('여행 기록이 수정되었습니다.');
+      // API가 주석 처리되어 있으므로 리스트 갱신은 생략
+      await fetchTravelData();
+      handleCloseModal();
+    } catch (error) {
+      alert('수정에 실패했습니다.');
+    }
   };
 
-  const handleStartTracking = () => {
-    setIsTrackingActive(true);
+  const handleStartTracking = async () => {
+    try {
+      // 서버가 꺼져 있어도 화면은 넘어가도록 처리
+      await startTravel({
+        budget_min: 0, budget_max: 0,
+        start_date: new Date().toISOString().split('T')[0],
+        end_date: new Date().toISOString().split('T')[0],
+        people_count: 1,
+      });
+      setIsTrackingActive(true);
+    } catch (error) {
+      console.warn('서버 연결 실패 - 오프라인 모드로 시작합니다.');
+      setIsTrackingActive(true); 
+    }
   };
 
-  const handleFinishTracking = (travelData) => {
-    setIsTrackingActive(false);
-    
-    // 여행 종료 후 수정 모달 열기
-    const newTravel = {
-      id: Date.now(),
-      title: '새로운 여행',
-      ...travelData,
-      // path, visitedPlaces 등 위치 데이터 포함
-    };
-    
-    setEditingTravel(newTravel);
-    setIsModalOpen(true);
+  const handleFinishTracking = async (data) => {
+    try {
+      await finishTravel(data.title || '새로운 여행', data.period || '1일');
+      setIsTrackingActive(false);
+      setEditingTravel({ id: Date.now(), ...data });
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error('종료 데이터 전송 실패');
+      setIsTrackingActive(false);
+      setEditingTravel({ id: Date.now(), ...data });
+      setIsModalOpen(true);
+    }
   };
 
   return (
@@ -245,42 +204,41 @@ const TravelRecordManagement = () => {
       </div>
 
       <div className={styles.statsContainer}>
-        <StatCardComponent icon={Map} number="3" label="총 여행" />
-        <StatCardComponent icon={Place} number="16" label="방문 장소" />
-        <StatCardComponent icon={Img} number="28" label="남긴 사진" />
+        <StatCardComponent icon={MapIcon} number={travelData.length} label="총 여행" />
+        <StatCardComponent icon={PlaceIcon} number="16" label="방문 장소" />
+        <StatCardComponent icon={ImgIcon} number="28" label="남긴 사진" />
       </div>
 
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>내 여행 기록</h2>
-        <div className={styles.travelList}>
-          {travelData.map((travel) => (
-            <TravelCardComponent 
-              key={travel.id} 
-              travel={travel}
-              onEdit={handleEdit}
-            />
-          ))}
-        </div>
+
+        {loading ? (
+          <div className={styles.statusContainer}><p>로딩 중...</p></div>
+        ) : travelData.length === 0 ? (
+          <div className={styles.emptyContainer}>
+            <p>아직 여행 기록이 없습니다.</p>
+            <p>새로운 여행을 시작해보세요!</p>
+          </div>
+        ) : (
+          <div className={styles.travelList}>
+            {travelData.map((travel) => (
+              <TravelCardComponent key={travel.id} travel={travel} onEdit={handleEdit} />
+            ))}
+          </div>
+        )}
       </div>
 
       {isModalOpen && (
-        <TravelModal
-          travel={editingTravel}
-          onClose={handleCloseModal}
-          onSave={handleSave}
-        />
+        <TravelModal travel={editingTravel} onClose={handleCloseModal} onSave={handleSave} />
       )}
 
       {isTrackingActive && (
-        <Tracking
-          onFinish={handleFinishTracking}
-          onClose={() => setIsTrackingActive(false)}
-        />
+        <TravelTracking onFinish={handleFinishTracking} onClose={() => setIsTrackingActive(false)} />
       )}
 
       <BottomNav activePage="travel" />
     </div>
   );
-};
+}
 
 export default TravelRecordManagement;
