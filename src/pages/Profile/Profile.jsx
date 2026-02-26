@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Profile.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
+import { getBookmarks, getCredit, getTravels } from '../../api/profileApi';
 import machuPicchu from '../../assets/machu-picchu.png';
 
 function ChevronRight() {
@@ -53,84 +55,132 @@ function BookmarkIcon() {
   );
 }
 
-const travelData = [
-  {
-    id: 1,
-    title: '첫 유럽 여행',
-    location: '이탈리아',
-    startDate: '2025. 10. 12.',
-    endDate: '2025. 10. 19.',
-  },
-  {
-    id: 2,
-    title: '2025 제주도 여행',
-    location: '대한민국',
-    startDate: '2025. 7. 4.',
-    endDate: '2025. 7. 9.',
-  },
-  {
-    id: 3,
-    title: '첫 유럽 여행',
-    location: '이탈리아',
-    startDate: '2025. 10. 12.',
-    endDate: '2025. 10. 19.',
-  },
-  {
-    id: 4,
-    title: '첫 유럽 여행',
-    location: '이탈리아',
-    startDate: '2025. 10. 12.',
-    endDate: '2025. 10. 19.',
-  },
-];
-
-const bookmarkData = [
-  {
-    id: 1,
-    title: '마추픽추',
-    location: '페루 쿠스코',
-    category: '역사',
-    image: machuPicchu,
-    favorite: true,
-  },
-  {
-    id: 2,
-    title: '에펠탑',
-    location: '프랑스 파리',
-    category: '역사',
-    image: machuPicchu,
-    favorite: true,
-  },
-  {
-    id: 3,
-    title: '해운대 해수욕장',
-    location: '대한민국 부산',
-    category: '역사',
-    image: machuPicchu,
-    favorite: true,
-  },
-];
-
 function Profile() {
   const navigate = useNavigate();
+  
+  // State
+  const [userInfo, setUserInfo] = useState({
+    name: '오승윤',
+    userId: 'osy09',
+    email: 'osy@dgsw.hs.kr',
+  });
+  const [credit, setCredit] = useState(0);
+  const [travelData, setTravelData] = useState([]);
+  const [bookmarkData, setBookmarkData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('recent'); // recent, oldest
+  const [filterBy, setFilterBy] = useState('all'); // all, public, private
+
+  // 데이터 로드
+  useEffect(() => {
+    loadProfileData();
+  }, []);
+
+  const loadProfileData = async () => {
+    try {
+      setLoading(true);
+      
+      // 병렬로 데이터 로드 (서버 다운 시 fallback)
+      const [creditData, travelsData, bookmarksData] = await Promise.all([
+        getCredit().catch(() => {
+          console.warn('Credit API failed - using fallback');
+          return { credit: 1450 };
+        }),
+        getTravels().catch(() => {
+          console.warn('Travels API failed - using fallback');
+          return [
+            {
+              id: 1,
+              title: '제주도 힐링 여행',
+              location: '대한민국',
+              startDate: '2025-10-12',
+              endDate: '2025-10-19',
+              isPublic: true,
+            },
+          ];
+        }),
+        getBookmarks().catch(() => {
+          console.warn('Bookmarks API failed - using fallback');
+          return [
+            {
+              id: 1,
+              title: '마추픽추',
+              location: '페루 쿠스코',
+              category: '역사',
+              image: machuPicchu,
+              favorite: true,
+            },
+          ];
+        }),
+      ]);
+
+      setCredit(creditData.credit || 0);
+      setTravelData(travelsData || []);
+      setBookmarkData(bookmarksData || []);
+    } catch (error) {
+      console.error('Failed to load profile data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 여행 정렬 및 필터링
+  const filteredTravels = travelData
+    .filter((travel) => {
+      if (filterBy === 'all') return true;
+      if (filterBy === 'public') return travel.isPublic;
+      if (filterBy === 'private') return !travel.isPublic;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'recent') {
+        return new Date(b.startDate) - new Date(a.startDate);
+      } else {
+        return new Date(a.startDate) - new Date(b.startDate);
+      }
+    });
+
+  const handleSortChange = () => {
+    setSortBy(sortBy === 'recent' ? 'oldest' : 'recent');
+  };
+
+  const handleFilterChange = () => {
+    const filters = ['all', 'public', 'private'];
+    const currentIndex = filters.indexOf(filterBy);
+    const nextIndex = (currentIndex + 1) % filters.length;
+    setFilterBy(filters[nextIndex]);
+  };
+
+  const handleChargeCredit = () => {
+    // TODO: 크레딧 충전 모달 또는 페이지로 이동
+    navigate('/credit/charge');
+  };
+
+  const handleTravelManagement = () => {
+    navigate('/travel');
+  };
 
   return (
     <div className={styles.container}>
       {/* User Info Section */}
       <div className={styles.userSection}>
         <h1 className={styles.userName}>
-          오승윤 <span className={styles.userId}>(osy09)</span>
+          {userInfo.name} <span className={styles.userId}>({userInfo.userId})</span>
         </h1>
-        <p className={styles.userEmail}>osy@dgsw.hs.kr</p>
+        <p className={styles.userEmail}>{userInfo.email}</p>
       </div>
 
       {/* Credit Section */}
       <div className={styles.creditBox}>
         <div className={styles.creditInfo}>
           <span className={styles.creditLabel}>보유 크레딧</span>
-          <span className={styles.creditAmount}>1,450</span>
+          <span className={styles.creditAmount}>
+            {loading ? '...' : credit.toLocaleString()}
+          </span>
         </div>
-        <button className={styles.chargeButton}>충전하기</button>
+        <button className={styles.chargeButton} onClick={handleChargeCredit}>
+          충전하기
+        </button>
       </div>
 
       {/* Menu Section */}
@@ -141,6 +191,10 @@ function Profile() {
         </button>
         <button className={styles.menuItem} onClick={() => navigate('/profile/change-password')}>
           <span className={styles.menuText}>비밀번호 변경</span>
+          <ChevronRight />
+        </button>
+        <button className={styles.menuItem} onClick={handleTravelManagement}>
+          <span className={styles.menuText}>여행기록 관리</span>
           <ChevronRight />
         </button>
         <button className={styles.menuItem} onClick={() => navigate('/profile/delete-account')}>
@@ -161,28 +215,45 @@ function Profile() {
         <div className={styles.travelHeader}>
           <h2 className={styles.travelTitle}>내 여행기록</h2>
           <div className={styles.filters}>
-            <button className={styles.filterButton}>
-              <span>최근 순</span>
+            <button className={styles.filterButton} onClick={handleSortChange}>
+              <span>{sortBy === 'recent' ? '최근 순' : '오래된 순'}</span>
               <DropdownArrow />
             </button>
-            <button className={styles.filterButton}>
-              <span>공개</span>
+            <button className={styles.filterButton} onClick={handleFilterChange}>
+              <span>
+                {filterBy === 'all' ? '전체' : filterBy === 'public' ? '공개' : '비공개'}
+              </span>
               <DropdownArrow />
             </button>
           </div>
         </div>
 
         {/* Travel List */}
-        <div className={styles.travelList}>
-          {travelData.map((travel) => (
-            <div key={travel.id} className={styles.travelCard}>
-              <h3 className={styles.travelCardTitle}>{travel.title}</h3>
-              <p className={styles.travelCardMeta}>
-                {travel.location} · {travel.startDate} ~{travel.endDate}
-              </p>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className={styles.loadingState}>
+            <p>로딩 중...</p>
+          </div>
+        ) : filteredTravels.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>여행 기록이 없습니다.</p>
+            <button onClick={handleTravelManagement}>여행 시작하기</button>
+          </div>
+        ) : (
+          <div className={styles.travelList}>
+            {filteredTravels.map((travel) => (
+              <div 
+                key={travel.id} 
+                className={styles.travelCard}
+                onClick={() => navigate(`/travel/${travel.id}`)}
+              >
+                <h3 className={styles.travelCardTitle}>{travel.title}</h3>
+                <p className={styles.travelCardMeta}>
+                  {travel.location} · {travel.startDate} ~ {travel.endDate}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Divider */}
@@ -192,27 +263,41 @@ function Profile() {
       <div className={styles.bookmarkSection}>
         <h2 className={styles.bookmarkTitle}>내 북마크</h2>
 
-        <div className={styles.bookmarkList}>
-          {bookmarkData.map((item) => (
-            <div key={item.id} className={styles.bookmarkItem}>
-              <img src={item.image} alt={item.title} className={styles.bookmarkImage} />
-              <div className={styles.bookmarkInfo}>
-                <h3 className={styles.bookmarkItemTitle}>{item.title}</h3>
-                <p className={styles.bookmarkItemMeta}>
-                  {item.location} · {item.category}
-                </p>
+        {loading ? (
+          <div className={styles.loadingState}>
+            <p>로딩 중...</p>
+          </div>
+        ) : bookmarkData.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>북마크한 장소가 없습니다.</p>
+          </div>
+        ) : (
+          <div className={styles.bookmarkList}>
+            {bookmarkData.map((item) => (
+              <div key={item.id} className={styles.bookmarkItem}>
+                <img 
+                  src={item.image || machuPicchu} 
+                  alt={item.title} 
+                  className={styles.bookmarkImage} 
+                />
+                <div className={styles.bookmarkInfo}>
+                  <h3 className={styles.bookmarkItemTitle}>{item.title}</h3>
+                  <p className={styles.bookmarkItemMeta}>
+                    {item.location} · {item.category}
+                  </p>
+                </div>
+                <div className={styles.bookmarkActions}>
+                  <button className={styles.iconBtn} type="button" aria-label="favorite">
+                    <StarIcon active={item.favorite} />
+                  </button>
+                  <button className={styles.iconBtn} type="button" aria-label="bookmark">
+                    <BookmarkIcon />
+                  </button>
+                </div>
               </div>
-              <div className={styles.bookmarkActions}>
-                <button className={styles.iconBtn} type="button" aria-label="favorite">
-                  <StarIcon active={item.favorite} />
-                </button>
-                <button className={styles.iconBtn} type="button" aria-label="bookmark">
-                  <BookmarkIcon />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}

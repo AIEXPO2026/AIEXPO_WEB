@@ -4,9 +4,7 @@ import styles from './Travel.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import TravelModal from './TravelModal';
 import TravelTracking from './Tracking';
-// [수정] getTravels는 좀 만들어주셈;
 import { startTravel, finishTravel, editTravel } from '../../api/travelApi'; 
-
 import MapIcon from '../../assets/map-icon.svg';
 import PlaceIcon from '../../assets/place-icon.svg';
 import ImgIcon from '../../assets/img-icon.svg';
@@ -142,8 +140,7 @@ function TravelRecordManagement() {
 
   const handleSave = async (updatedData) => {
     try {
-      await editTravel({
-        travel_id: editingTravel.id,
+      await editTravel(editingTravel.id, {
         people: updatedData.companionCount,
         mood: updatedData.mood || 1,
         weather_avg: updatedData.weather?.join(',') || '',
