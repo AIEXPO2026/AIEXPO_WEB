@@ -36,10 +36,19 @@ export const verifyEmail = async (email, authNum) => {
   return unwrapApiResponse(response);
 };
 
-// 비밀번호 변경
+// 비밀번호 변경 (로그인 상태)
 export const changePassword = async (oldPassword, newPassword) => {
   const response = await apiClient.put('/auth/password', {
     oldPassword,
+    newPassword,
+  });
+  return unwrapApiResponse(response);
+};
+
+// 비밀번호 재설정 (이메일 인증 후, 비로그인 상태)
+export const resetPassword = async (email, newPassword) => {
+  const response = await apiClient.post('/auth/password/reset', {
+    email,
     newPassword,
   });
   return unwrapApiResponse(response);

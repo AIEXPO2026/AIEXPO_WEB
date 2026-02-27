@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './CommunityBlog.module.css'
 import BottomNav from '../../../components/BottomNav/BottomNav'
+import { getBlogList } from '../../../api/recommendApi'
 
 function BackIcon() {
   return (
@@ -23,23 +25,29 @@ function DropdownArrow() {
   )
 }
 
-const blogData = [
-  { id: 1, title: '푸바오 보러 중국으로', author: '오승윤', location: '중국', date: '2일 전' },
-  { id: 2, title: '25년 일본 여행기', author: '김경윤', location: '일본', date: '7일 전' },
-  { id: 3, title: '겨울 국내 여행', author: '조상철', location: '대한민국', date: '2일 전' },
-  { id: 4, title: '싱가포르 국외현장체험', author: '오승윤', location: '이탈리아', date: '2일 전' },
-  { id: 5, title: '푸바오 보러 중국으로', author: '오승윤', location: '중국', date: '2일 전', highlight: true },
-  { id: 6, title: '25년 일본 여행기', author: '김경윤', location: '일본', date: '7일 전' },
-  { id: 7, title: '겨울 국내 여행', author: '조상철', location: '대한민국', date: '2일 전' },
-  { id: 8, title: '싱가포르 국외현장체험', author: '오승윤', location: '이탈리아', date: '2일 전' },
-]
-
 function BlogDetail() {
   const navigate = useNavigate()
+  const [blogData, setBlogData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const data = await getBlogList()
+        setBlogData(Array.isArray(data) ? data : [])
+      } catch (err) {
+        console.error('블로그 데이터 로드 실패:', err)
+        setError('블로그 데이터를 불러오지 못했습니다.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchBlogs()
+  }, [])
 
   return (
     <div className={styles.container}>
-      {/* Header */}
       <header className={styles.header}>
         <button className={styles.backButton} onClick={() => navigate(-1)}>
           <BackIcon />
@@ -47,12 +55,9 @@ function BlogDetail() {
         <h1 className={styles.title}>블로그</h1>
       </header>
 
-      {/* Divider */}
       <div className={styles.divider} />
 
-      {/* Content Area */}
       <div className={styles.contentArea}>
-        {/* Filter */}
         <div className={styles.filters}>
           <button className={styles.filterButton}>
             <span className={styles.filterText}>조회수 많은 순</span>
@@ -60,29 +65,35 @@ function BlogDetail() {
           </button>
         </div>
 
-        {/* Blog List */}
-        <div className={styles.blogList}>
-          {blogData.map((item) => (
-            <div 
-              key={item.id} 
-              className={`${styles.blogItem} ${item.highlight ? styles.blogItemHighlight : ''}`}
-            >
-              <div className={styles.blogText}>
-                <p className={styles.blogTitle}>{item.title}</p>
-                <div className={styles.blogMeta}>
-                  <span className={styles.metaText}>{item.author}</span>
-                  <span className={styles.dot}>·</span>
-                  <span className={styles.metaText}>{item.location}</span>
-                  <span className={styles.dot}>·</span>
-                  <span className={styles.metaText}>{item.date}</span>
+        {loading ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>불러오는 중...</p>
+        ) : error ? (
+          <p style={{ color: '#E53935', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>{error}</p>
+        ) : blogData.length === 0 ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>블로그 게시글이 없습니다.</p>
+        ) : (
+          <div className={styles.blogList}>
+            {blogData.map((item, idx) => (
+              <div
+                key={item.id ?? idx}
+                className={styles.blogItem}
+              >
+                <div className={styles.blogText}>
+                  <p className={styles.blogTitle}>{item.title}</p>
+                  <div className={styles.blogMeta}>
+                    <span className={styles.metaText}>{item.author ?? item.nickname}</span>
+                    <span className={styles.dot}>·</span>
+                    <span className={styles.metaText}>{item.city ?? item.location}</span>
+                    <span className={styles.dot}>·</span>
+                    <span className={styles.metaText}>{item.createdAt ?? item.date}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNav activePage="blog" />
     </div>
   )

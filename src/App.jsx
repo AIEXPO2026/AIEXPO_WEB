@@ -13,27 +13,27 @@ import Travel from './pages/Travel/Travel'
 import SearchResult from './pages/Search/SearchResult'
 import SearchResultDetail from './pages/Search/SearchResultDetail'
 import ReloadPrompt from './components/ReloadPrompt/ReloadPrompt'
+import PrivateRoute from './components/PrivateRoute'
 
 function App() {
   return (
     <>
     <ReloadPrompt />
     <Routes>
-      {/* 임시 주석처리: 미로그인 시 로그인페이지로 리다이렉트 */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/find-password" element={<FindPassword />} />
       <Route path="/welcome" element={<Welcome />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/community" element={<Community />} />
-      <Route path="/community/ranking" element={<CommunityRanking />} />
-      <Route path="/community/blog" element={<CommunityBlog />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/profile/change-password" element={<ChangePassword />} />
-      <Route path="/Travel" element={<Travel />}></Route>
-      <Route path="/search-result" element={<SearchResult />} />
-      <Route path="/search-result/detail" element={<SearchResultDetail />} />
+      <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+      <Route path="/community" element={<PrivateRoute><Community /></PrivateRoute>} />
+      <Route path="/community/ranking" element={<PrivateRoute><CommunityRanking /></PrivateRoute>} />
+      <Route path="/community/blog" element={<PrivateRoute><CommunityBlog /></PrivateRoute>} />
+      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+      <Route path="/profile/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
+      <Route path="/Travel" element={<PrivateRoute><Travel /></PrivateRoute>} />
+      <Route path="/search-result" element={<PrivateRoute><SearchResult /></PrivateRoute>} />
+      <Route path="/search-result/detail" element={<PrivateRoute><SearchResultDetail /></PrivateRoute>} />
     </Routes>
     </>
   )
