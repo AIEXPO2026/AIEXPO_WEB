@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup, sendVerificationEmail } from '../../../api/authApi';
+import { signup, sendVerificationEmail, verifyEmail } from '../../../api/authApi';
 import styles from './Signup.module.css';
 
 function Signup() {
@@ -39,13 +39,26 @@ function Signup() {
         setLoading(false);
       }
     } else if (step === 3) {
-      // 인증번호 확인 (저장만, 회원가입 시 함께 제출)
+      // 인증번호 API 검증
       if (!authCode) {
         setAuthCodeError('인증번호를 입력해주세요.');
         return;
       }
+      setLoading(true);
       setAuthCodeError('');
-      setStep(4);
+      try {
+        const verified = await verifyEmail(email, authCode);
+        if (verified) {
+          setStep(4);
+        } else {
+          setAuthCodeError('인증번호가 올바르지 않습니다.');
+        }
+      } catch (err) {
+        setAuthCodeError('인증번호 확인에 실패했습니다. 다시 시도해주세요.');
+        console.error('이메일 인증 실패:', err);
+      } finally {
+        setLoading(false);
+      }
     } else if (step === 5) {
       // 비밀번호 입력 후 회원가입 요청 (name, authNum 포함)
       if (!validatePassword(password)) {
@@ -69,6 +82,13 @@ function Signup() {
       } finally {
         setLoading(false);
       }
+    } else if (step === 1) {
+      if (!name.trim()) {
+        setApiError('이름을 입력해주세요.');
+        return;
+      }
+      setApiError('');
+      setStep(2);
     } else {
       setStep(step + 1);
     }
@@ -113,6 +133,7 @@ function Signup() {
   const getButtonText = () => {
     if (loading) return '처리 중...';
     if (step === 2) return '인증번호 전송';
+    if (step === 3) return '인증 확인';
     if (step === 5) return '회원가입';
     return '다음';
   };
