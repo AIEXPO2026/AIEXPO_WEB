@@ -65,20 +65,57 @@ const destinationData = [
   { id: 11, title: "슬품이 집", location: "대한민국 서울", category: "랜드마크", image: machuPicchu, favorite: true },
 ];
 
+const THEME_OPTIONS = [
+  { label: "전체", value: "전체" },
+  { label: "자연", value: "자연" },
+  { label: "역사", value: "역사" },
+  { label: "휴양", value: "휴양" },
+  { label: "문화", value: "문화" },
+  { label: "랜드마크", value: "랜드마크" },
+  { label: "국립공원", value: "국립공원" },
+];
+const SORT_OPTIONS = [
+  { label: "기본 순", value: "기본 순" },
+  { label: "인기 순", value: "인기 순" },
+  { label: "가나다 순", value: "가나다 순" },
+];
+
 function Home() {
   const navigate = useNavigate();
 
   const [type, setType] = useState("일반");
   const [query, setQuery] = useState("");
-  const [theme, setTheme] = useState("테마");
+  const [theme, setTheme] = useState("전체");
   const [sort, setSort] = useState("기본 순");
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [showThemeDropdown, setShowThemeDropdown] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   const filtered = useMemo(() => {
+    let list = destinationData;
+
+    if (theme !== "전체") {
+      list = list.filter((d) => d.category === theme);
+    }
+
+    if (sort === "인기 순") {
+      list = [...list].sort((a, b) => Number(b.favorite) - Number(a.favorite));
+    } else if (sort === "가나다 순") {
+      list = [...list].sort((a, b) => a.title.localeCompare(b.title, "ko"));
+    }
+
+    return list;
+  }, [theme, sort]);
+
+  const handleSearch = () => {
     const q = query.trim();
-    if (!q) return destinationData;
-    return destinationData.filter((d) => d.title.includes(q) || d.location.includes(q) || d.category.includes(q));
-  }, [query]);
+    if (!q) return;
+    navigate("/search-result", { state: { query: q, type } });
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
+  };
 
   return (
     <div className={styles.container}>
@@ -144,10 +181,11 @@ function Home() {
               placeholder="어느 나라로 떠날까요?"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
-            <div className={styles.searchIcon}>
+            <button className={styles.searchIconBtn} type="button" onClick={handleSearch} aria-label="검색">
               <SearchIcon />
-            </div>
+            </button>
           </div>
         </div>
       </section>
@@ -158,20 +196,67 @@ function Home() {
         <h2 className={styles.sectionTitle}>여행지 추천</h2>
 
         <div className={styles.pills}>
-          <button className={styles.pill} type="button" onClick={() => setTheme((p) => (p === "테마" ? "자연" : "테마"))}>
-            <span>{theme}</span>
-            <DropdownArrow />
-          </button>
-          <button className={styles.pill} type="button" onClick={() => setSort((p) => (p === "기본 순" ? "인기 순" : "기본 순"))}>
-            <span>{sort}</span>
-            <DropdownArrow />
-          </button>
+          {/* 테마 드롭다운 */}
+          <div className={styles.pillWrapper}>
+            <button
+              className={`${styles.pill} ${theme !== "전체" ? styles.pillActive : ""}`}
+              type="button"
+              onClick={() => { setShowThemeDropdown((p) => !p); setShowSortDropdown(false); }}
+            >
+              <span>{theme}</span>
+              <DropdownArrow />
+            </button>
+            {showThemeDropdown && (
+              <div className={styles.pillDropdown}>
+                {THEME_OPTIONS.map(({ label, value }) => (
+                  <button
+                    key={value}
+                    className={`${styles.pillDropdownItem} ${theme === value ? styles.pillDropdownItemActive : ""}`}
+                    type="button"
+                    onClick={() => { setTheme(value); setShowThemeDropdown(false); }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 정렬 드롭다운 */}
+          <div className={styles.pillWrapper}>
+            <button
+              className={`${styles.pill} ${sort !== "기본 순" ? styles.pillActive : ""}`}
+              type="button"
+              onClick={() => { setShowSortDropdown((p) => !p); setShowThemeDropdown(false); }}
+            >
+              <span>{sort}</span>
+              <DropdownArrow />
+            </button>
+            {showSortDropdown && (
+              <div className={styles.pillDropdown}>
+                {SORT_OPTIONS.map(({ label, value }) => (
+                  <button
+                    key={value}
+                    className={`${styles.pillDropdownItem} ${sort === value ? styles.pillDropdownItemActive : ""}`}
+                    type="button"
+                    onClick={() => { setSort(value); setShowSortDropdown(false); }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       <div className={styles.list}>
         {filtered.map((item) => (
-          <div key={item.id} className={styles.row}>
+          <div
+            key={item.id}
+            className={styles.row}
+            onClick={() => navigate("/search-result/detail", { state: { item } })}
+          >
             <div className={styles.left}>
               <img className={styles.thumb} src={item.image} alt={item.title} />
               <div className={styles.text}>
@@ -185,10 +270,10 @@ function Home() {
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.iconBtn} type="button" aria-label="favorite">
+              <button className={styles.iconBtn} type="button" aria-label="favorite" onClick={(e) => e.stopPropagation()}>
                 <StarIcon active={item.favorite} />
               </button>
-              <button className={styles.iconBtn} type="button" aria-label="bookmark">
+              <button className={styles.iconBtn} type="button" aria-label="bookmark" onClick={(e) => e.stopPropagation()}>
                 <BookmarkIcon />
               </button>
             </div>
