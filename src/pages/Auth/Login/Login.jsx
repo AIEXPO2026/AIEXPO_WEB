@@ -22,9 +22,9 @@ function Login() {
     try {
       const response = await signin(id, password);
 
-      // 토큰 저장
       if (response?.accessToken) {
         localStorage.setItem('accessToken', response.accessToken);
+        localStorage.setItem('nickname', id);
         navigate('/home');
       }
     } catch (err) {

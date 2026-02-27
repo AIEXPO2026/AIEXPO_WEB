@@ -8,8 +8,8 @@ import ChangePasswordModal from './Changepasswordmodal';
 import DeleteAccountModal from './Deleteaccountmodal';
 import LogoutModal from './Logoutmodal';
 import { getBookmarks, deleteBookmark, getCredit, getTravels } from '../../api/profileApi';
-import machuPicchu from '../../assets/machu-picchu.png';
 import { signout } from '../../api/authApi';
+import machuPicchu from '../../assets/machu-picchu.png';
 
 /* ─── SVG 아이콘 ──────────────────────────────────────────────────────────── */
 function ChevronRight() {
@@ -100,10 +100,13 @@ const MODAL = {
 function Profile() {
   const navigate = useNavigate();
 
-  const [userInfo, setUserInfo] = useState({
-    name: '오승윤',
-    userId: 'osy09',
-    email: 'osy@dgsw.hs.kr',
+  const [userInfo, setUserInfo] = useState(() => {
+    const nickname = localStorage.getItem('nickname') || '';
+    return {
+      name: nickname,
+      userId: nickname,
+      email: '',
+    };
   });
   const [credit, setCredit] = useState(0);
   const [travelData, setTravelData] = useState([]);
@@ -139,7 +142,8 @@ function Profile() {
 
   // ── 아이디 수정 성공 ────────────────────────────────────────────────────
   const handleEditIdSuccess = (newId) => {
-    setUserInfo((prev) => ({ ...prev, userId: newId }));
+    setUserInfo((prev) => ({ ...prev, name: newId, userId: newId }));
+    localStorage.setItem('nickname', newId); // ✅ localStorage도 동기화
     closeModal();
     alert(`아이디가 "${newId}"로 변경되었습니다.`);
   };
@@ -159,13 +163,19 @@ function Profile() {
   };
 
   // ── 로그아웃 확인 ────────────────────────────────────────────────────────
-  const handleLogoutConfirm = () => {
-    // 토큰 제거 (저장 방식에 따라 수정)
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    sessionStorage.clear();
-    closeModal();
-    navigate('/login');
+  const handleLogoutConfirm = async () => {
+    try {
+      await signout(); // ✅ 서버 세션 종료
+    } catch (err) {
+      console.warn('signout API 실패 (무시):', err.message);
+    } finally {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('nickname');
+      sessionStorage.clear();
+      closeModal();
+      navigate('/login');
+    }
   };
 
   // ── 크레딧 충전 성공 ─────────────────────────────────────────────────────
@@ -360,7 +370,6 @@ function Profile() {
       )}
       {activeModal === MODAL.CHANGE_PW && (
         <ChangePasswordModal
-          username={userInfo.userId}
           onClose={closeModal}
           onSuccess={handleChangePwSuccess}
         />
