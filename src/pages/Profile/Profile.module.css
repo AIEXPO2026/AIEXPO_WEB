@@ -8,7 +8,7 @@
   font-family: "Pretendard", sans-serif;
 }
 
-/* User Info Section */
+/* ── 유저 정보 ──────────────────────────────────────────────────────────── */
 .userSection {
   padding: 32px 28px 16px;
 }
@@ -34,7 +34,7 @@
   margin: 0;
 }
 
-/* Credit Section */
+/* ── 크레딧 ─────────────────────────────────────────────────────────────── */
 .creditBox {
   margin: 0 28px 20px;
   padding: 18px 20px;
@@ -58,6 +58,12 @@
   color: #888888;
 }
 
+.creditAmountRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .creditAmount {
   font-size: 32px;
   font-weight: 700;
@@ -77,15 +83,10 @@
   transition: background 0.2s;
 }
 
-.chargeButton:hover {
-  background: #1a1a1a;
-}
+.chargeButton:hover  { background: #1a1a1a; }
+.chargeButton:active { background: #000000; }
 
-.chargeButton:active {
-  background: #000000;
-}
-
-/* Menu Section */
+/* ── 메뉴 ───────────────────────────────────────────────────────────────── */
 .menuSection {
   padding: 0 28px;
   display: flex;
@@ -105,9 +106,7 @@
   transition: opacity 0.2s;
 }
 
-.menuItem:hover {
-  opacity: 0.7;
-}
+.menuItem:hover { opacity: 0.7; }
 
 .menuText {
   font-family: "Pretendard", sans-serif;
@@ -116,18 +115,16 @@
   color: #252525;
 }
 
-.menuText.logout {
-  color: #ff4444;
-}
+.menuText.logout { color: #ff4444; }
 
-/* Divider */
+/* ── 구분선 ─────────────────────────────────────────────────────────────── */
 .divider {
   height: 10px;
   background: #f5f5f5;
   margin: 16px 0 20px;
 }
 
-/* Travel Records Section */
+/* ── 여행기록 섹션 ───────────────────────────────────────────────────────── */
 .travelSection {
   padding: 0 28px;
 }
@@ -177,7 +174,7 @@
   height: 16px;
 }
 
-/* Travel List */
+/* ── 여행 카드 목록 ──────────────────────────────────────────────────────── */
 .travelList {
   display: flex;
   flex-direction: column;
@@ -192,25 +189,55 @@
   transition: all 0.2s;
 }
 
-.travelCard:hover {
-  opacity: 0.7;
+.travelCard:hover { opacity: 0.7; }
+
+.travelCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .travelCardTitle {
   font-size: 20px;
   font-weight: 700;
   color: #252525;
-  margin: 0 0 6px 0;
-}
-
-.travelCardMeta {
-  font-size: 16px;
-  font-weight: 400;
-  color: #888888;
   margin: 0;
 }
 
-/* Bookmark Section */
+.travelCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #888888;
+}
+
+/* ── 공개/비공개 뱃지 ────────────────────────────────────────────────────── */
+.publicBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.publicBadgeOn  { background: #E8F5E9; color: #2E7D32; }
+.publicBadgeOff { background: #F5F5F5; color: #888888; }
+
+/* ── 북마크 섹션 ─────────────────────────────────────────────────────────── */
 .bookmarkSection {
   padding: 0 28px 30px;
 }
@@ -266,10 +293,26 @@
 }
 
 .bookmarkItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 14px;
   font-weight: 400;
   color: #888888;
   margin: 0;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.scoreText {
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFC300;
 }
 
 .bookmarkActions {
@@ -289,10 +332,187 @@
   transition: opacity 0.2s;
 }
 
-.iconBtn:hover {
-  opacity: 0.7;
+.iconBtn:hover  { opacity: 0.7; }
+.iconBtn:active { opacity: 0.5; }
+
+.deleteBtn {
+  color: #ccc;
+  transition: color 0.15s, background 0.15s;
 }
 
-.iconBtn:active {
-  opacity: 0.5;
+.deleteBtn:hover {
+  color: #E53935;
+  background: #FFF0F0;
+  border-radius: 8px;
 }
+
+/* ── 로딩 / 빈 상태 ─────────────────────────────────────────────────────── */
+.loadingState,
+.emptyState {
+  text-align: center;
+  padding: 32px 0;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.emptyState button {
+  margin-top: 12px;
+  padding: 10px 24px;
+  background: #2b2b2b;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* ── 에러 텍스트 ─────────────────────────────────────────────────────────── */
+.errorText {
+  text-align: center;
+  padding: 16px 0;
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* ── 경유지 요약 오버레이 ────────────────────────────────────────────────── */
+.summaryOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.summaryModal {
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px 20px 0 0;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summaryTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+  padding: 4px;
+}
+
+.summaryStats {
+  display: flex;
+  gap: 12px;
+}
+
+.summaryStat {
+  flex: 1;
+  background: #f5f7ff;
+  border-radius: 12px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.summaryStatValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: #3D5AFE;
+}
+
+.summaryStatLabel {
+  font-size: 11px;
+  color: #888;
+}
+
+.summaryEmpty {
+  text-align: center;
+  color: #aaa;
+  padding: 24px 0;
+  font-size: 14px;
+}
+
+.summaryPlaceList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summaryPlaceItem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px solid #efefef;
+}
+
+.summaryPlaceIndex {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #3D5AFE;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.summaryPlaceContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.summaryPlaceName   { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+.summaryPlaceReview { font-size: 13px; color: #555; line-height: 1.4; }
+.summaryPlacePhotos { font-size: 12px; color: #888; }
+.summaryPlaceTime   { font-size: 11px; color: #bbb; }
+
+.summaryActions { margin-top: 4px; }
+
+.summaryEditButton {
+  width: 100%;
+  padding: 14px;
+  background: #3D5AFE;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.summaryEditButton:hover { background: #2a47e8; }
