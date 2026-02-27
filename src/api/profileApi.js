@@ -17,7 +17,7 @@ export const deleteBookmark = async (destinationId) => {
 // Response: { status, data: { credit } }
 export const getCredit = async () => {
   const response = await apiClient.get('/profile/credit');
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 크레딧 충전 - POST /profile/credit
@@ -26,7 +26,7 @@ export const chargeCredit = async (creditAmount) => {
   const response = await apiClient.post('/profile/credit', {
     credit: creditAmount,
   });
-  return response.data;
+  return unwrapApiResponse(response);
 };
 
 // 아이디 수정 - PUT /profile/username

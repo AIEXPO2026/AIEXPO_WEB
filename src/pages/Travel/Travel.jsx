@@ -173,6 +173,7 @@ function TravelRecordManagement() {
   const handleCloseModal = () => { setIsModalOpen(false); setEditingTravel(null); };
 
   const handleSave = async (updatedData) => {
+
     try {
       await editTravel(editingTravel.id, {
         people_count: updatedData.companionCount,
