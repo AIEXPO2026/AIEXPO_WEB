@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from './ProfileModal.module.css';
+import styles from './Profilemodal.module.css';
 
 function IconClose() {
   return (

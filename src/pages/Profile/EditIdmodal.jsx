@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { updateUsername } from '../../api/profileApi';
-import styles from './ProfileModal.module.css';
+import styles from './Profilemodal.module.css';
 
 function IconClose() {
   return (

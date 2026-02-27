@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { changePassword } from '../../api/authApi';
-import styles from './ProfileModal.module.css';
+import styles from './Profilemodal.module.css';
 
 function IconClose() {
   return (
