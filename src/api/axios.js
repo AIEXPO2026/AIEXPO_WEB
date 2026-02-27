@@ -32,10 +32,14 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // 401 에러 처리 (인증 실패)
+    // 401/403 에러 처리: 토큰이 있는 상태(인증된 세션)에서만 강제 로그아웃
+    // 토큰이 없는 상태(로그인 시도 등)에서는 리다이렉트하지 않고 에러를 그대로 전달
     if (error.response?.status === 401 || error.response?.status === 403) {
-      localStorage.removeItem('accessToken');
-      window.location.href = '/login';
+      const hasToken = localStorage.getItem('accessToken');
+      if (hasToken) {
+        localStorage.removeItem('accessToken');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
