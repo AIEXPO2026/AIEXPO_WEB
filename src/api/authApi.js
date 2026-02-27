@@ -1,11 +1,13 @@
 import apiClient, { unwrapApiResponse } from './axios';
 
 // 회원가입
-export const signup = async (username, password, email) => {
+export const signup = async (name, username, password, email, authNum) => {
   const response = await apiClient.post('/auth/signup', {
+    name,
     nickname: username,
     password_hash: password,
     email,
+    authNum,
   });
   return unwrapApiResponse(response);
 };
