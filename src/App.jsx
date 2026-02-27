@@ -10,6 +10,8 @@ import Home from './pages/Home/Home'
 import Profile from './pages/Profile/Profile'
 import ChangePassword from './pages/Profile/ChangePassword/ChangePassword'
 import Travel from './pages/Travel/Travel'
+import SearchResult from './pages/Search/SearchResult'
+import SearchResultDetail from './pages/Search/SearchResultDetail'
 import ReloadPrompt from './components/ReloadPrompt/ReloadPrompt'
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/change-password" element={<ChangePassword />} />
       <Route path="/Travel" element={<Travel />}></Route>
+      <Route path="/search-result" element={<SearchResult />} />
+      <Route path="/search-result/detail" element={<SearchResultDetail />} />
     </Routes>
     </>
   )
