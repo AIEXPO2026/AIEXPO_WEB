@@ -10,7 +10,6 @@ import LogoutModal from './Logoutmodal';
 import { getBookmarks, deleteBookmark, getCredit, getTravels } from '../../api/profileApi';
 import { signout } from '../../api/authApi';
 import machuPicchu from '../../assets/machu-picchu.png';
-import { signout } from '../../api/authApi';
 
 /* ─── SVG 아이콘 ──────────────────────────────────────────────────────────── */
 function ChevronRight() {
