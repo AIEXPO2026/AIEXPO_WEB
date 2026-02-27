@@ -1,0 +1,410 @@
+/* ── 공통 오버레이 ─────────────────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 400;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* ── 슬라이드업 모달 (기본) ──────────────────────────────────────────────── */
+.modal {
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px 24px 0 0;
+  padding: 28px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── 컴팩트 모달 (로그아웃 등) ───────────────────────────────────────────── */
+.modalCompact {
+  background: #fff;
+  width: calc(100% - 48px);
+  max-width: 360px;
+  border-radius: 20px;
+  padding: 32px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: scaleIn 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+  margin-bottom: 80px;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── 헤더 ────────────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.closeButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  transition: background 0.15s;
+}
+
+.closeButton:hover { background: #ebebeb; }
+
+/* ── 현재 정보 표시 ──────────────────────────────────────────────────────── */
+.currentInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  border: 1.5px solid #f0f0f0;
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+
+.currentLabel {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #888;
+}
+
+.currentValue {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* ── 폼 ──────────────────────────────────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.label {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  letter-spacing: 0.2px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #ebebeb;
+  border-radius: 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
+  color: #1a1a1a;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #FFD700;
+  background: #FFFBEB;
+}
+
+.input::placeholder { color: #c0c0c0; }
+
+.charCount {
+  font-size: 11px;
+  color: #bbb;
+  text-align: right;
+  margin-top: -4px;
+}
+
+.fieldHint {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  color: #aaa;
+  margin: 0;
+}
+
+/* ── 비밀번호 눈 아이콘 ──────────────────────────────────────────────────── */
+.passwordWrapper {
+  position: relative;
+}
+
+.passwordWrapper .input {
+  padding-right: 48px;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.eyeButton:hover { color: #666; }
+
+/* ── 비밀번호 강도 ───────────────────────────────────────────────────────── */
+.strengthBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -8px;
+}
+
+.strengthSegments {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.strengthSegment {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.strengthLabel {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 28px;
+}
+
+.matchText {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  margin: -8px 0 0;
+}
+
+/* ── 에러 ────────────────────────────────────────────────────────────────── */
+.errorText {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  color: #E53935;
+  margin: -8px 0 0;
+  text-align: center;
+}
+
+/* ── 버튼들 ──────────────────────────────────────────────────────────────── */
+.submitButton {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  border: none;
+  border-radius: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.4);
+  transition: all 0.15s ease;
+  letter-spacing: -0.2px;
+}
+
+.submitButton:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(255, 215, 0, 0.5); }
+.submitButton:active:not(:disabled) { transform: translateY(0); }
+.submitButton:disabled { background: #e8e8e8; color: #aaa; box-shadow: none; cursor: not-allowed; }
+
+.dangerButton {
+  width: 100%;
+  padding: 16px;
+  background: #E53935;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dangerButton:hover:not(:disabled) { background: #c62828; }
+.dangerButton:disabled { background: #e8e8e8; color: #aaa; cursor: not-allowed; }
+
+.cancelButton {
+  width: 100%;
+  padding: 14px;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cancelButton:hover { background: #ebebeb; }
+
+/* 로그아웃 확인 모달 버튼 행 */
+.confirmButtons {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.confirmButtons .cancelButton,
+.confirmButtons .dangerButton {
+  flex: 1;
+}
+
+/* ── 탈퇴 모달 전용 ──────────────────────────────────────────────────────── */
+.warningBox {
+  background: #FFF5F5;
+  border: 1.5px solid #FFCDD2;
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+.warningTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #E53935;
+  margin: 0 0 10px 0;
+}
+
+.warningList {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.warningList li {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  color: #C62828;
+  line-height: 1.5;
+}
+
+.reasonList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reasonItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #fafafa;
+  border: 1.5px solid #ebebeb;
+  border-radius: 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.reasonItem:hover { border-color: #E53935; background: #FFF5F5; }
+
+.reasonSelected {
+  border-color: #E53935 !important;
+  background: #FFF5F5 !important;
+  color: #E53935;
+  font-weight: 600;
+}
+
+.reasonRadio {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* API 미구현 배지 */
+.apiBadge {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  color: #888;
+  background: #f5f5f5;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+/* ── 로그아웃 모달 전용 ──────────────────────────────────────────────────── */
+.confirmIconArea {
+  width: 64px;
+  height: 64px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.confirmEmoji { font-size: 28px; }
+
+.confirmTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.confirmDesc {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+  margin: 0;
+  line-height: 1.6;
+}

@@ -18,7 +18,7 @@ function App() {
     <ReloadPrompt />
     <Routes>
       {/* 임시 주석처리: 미로그인 시 로그인페이지로 리다이렉트 */}
-      {/* <Route path="/" element={<Navigate to="/login" replace />} /> */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/find-password" element={<FindPassword />} />
