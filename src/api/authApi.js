@@ -29,13 +29,12 @@ export const sendVerificationEmail = async (email) => {
   return unwrapApiResponse(response);
 };
 
-// 인증 메일 확인 (boolean 직접 반환)
+// 인증 메일 확인 (성공 시 void, 실패 시 예외 발생)
 export const verifyEmail = async (email, authNum) => {
-  const response = await apiClient.post('/auth/email/verify', {
+  await apiClient.post('/auth/signup/email/verify', {
     email,
     authNum,
   });
-  return response.data;
 };
 
 // 비밀번호 변경 (로그인 상태)
