@@ -2,14 +2,14 @@
   max-width: 402px;
   width: 100%;
   min-height: 100vh;
-  background-color: #FAFAFA;
+  background-color: #ffffff;
   margin: 0 auto;
   padding-bottom: 110px;
   position: relative;
 }
 
 .header {
-  padding: 28px 0 0 24px;
+  padding: 56px 24px 0;
 }
 
 .title {

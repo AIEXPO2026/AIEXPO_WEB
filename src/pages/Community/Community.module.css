@@ -6,15 +6,14 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  border-radius: 44px;
-  overflow: hidden;
 }
 
 /* Content Area */
 .contentArea {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 144px;
+  padding-top: 32px;
+  padding-bottom: 110px;
 }
 
 /* Section Header */
@@ -145,6 +144,29 @@
   color: #a7a7a7;
 }
 
+/* Arrow Icon */
+.arrowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon Wrapper for Ranking Actions */
+.iconWrapper {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionIcon {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 /* Blog List */
 .blogList {
   display: flex;
@@ -181,96 +203,4 @@
   font-size: 16px;
   line-height: 1.2;
   color: #a7a7a7;
-}
-
-/* Bottom Navigation */
-.bottomNav {
-  position: fixed;
-  bottom: 34px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 402px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px 28px;
-  background: #ffffff;
-  border-top: 2px solid #d9d9d9;
-  height: 110px;
-  box-sizing: border-box;
-}
-
-.navItem {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-/* Home Indicator */
-.homeIndicator {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 402px;
-  height: 34px;
-  background: white;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 8px;
-}
-
-.homeIndicatorBar {
-  width: 144px;
-  height: 5px;
-  background: black;
-  border-radius: 100px;
-}
-
-/* Arrow Icon */
-.arrowIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Icon Wrapper for Ranking Actions */
-.iconWrapper {
-  width: 32px;
-  height: 32px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.actionIcon {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Nav Icon Wrapper */
-.navIconWrapper {
-  width: 40px;
-  height: 40px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.navIcon {
-  width: 75%;
-  height: 75%;
-  display: block;
 }
