@@ -429,7 +429,8 @@
 
 .summaryStat {
   flex: 1;
-  background: #f5f7ff;
+  background: #FFFBEB;
+  border: 1.5px solid #FFE066;
   border-radius: 12px;
   padding: 12px 8px;
   display: flex;
@@ -441,7 +442,7 @@
 .summaryStatValue {
   font-size: 15px;
   font-weight: 700;
-  color: #3D5AFE;
+  color: #1a1a1a;
 }
 
 .summaryStatLabel {
@@ -476,8 +477,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #3D5AFE;
-  color: #fff;
+  background: #FFD700;
+  color: #1a1a1a;
   font-size: 13px;
   font-weight: 700;
   display: flex;
@@ -504,15 +505,16 @@
 .summaryEditButton {
   width: 100%;
   padding: 14px;
-  background: #3D5AFE;
-  color: #fff;
+  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  color: #1a1a1a;
   border: none;
   border-radius: 14px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.15s;
   font-family: 'Pretendard', sans-serif;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.4);
 }
 
-.summaryEditButton:hover { background: #2a47e8; }
+.summaryEditButton:hover { box-shadow: 0 6px 18px rgba(255, 215, 0, 0.5); }

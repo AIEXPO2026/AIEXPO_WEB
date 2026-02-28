@@ -14,23 +14,29 @@ const IconTrash = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
 );
 
-// ✅ GPS 권한/신호 실패 시 표시할 안내 배너
+const IconPin = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+  </svg>
+);
+
 const GpsErrorBanner = ({ message }) => (
   <div className={styles.gpsErrorBanner}>
-    📍 {message}
+    <IconPin /> {message}
   </div>
 );
 
 const TravelTracking = ({ onFinish, onClose }) => {
   const [isTracking, setIsTracking] = useState(true);
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [gpsError, setGpsError] = useState(null);       // ✅ GPS 에러 메시지
-  const [mapReady, setMapReady] = useState(false);       // ✅ Google Maps 로드 여부
+  const [gpsError, setGpsError] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
   const [path, setPath] = useState([]);
   const [visitedPlaces, setVisitedPlaces] = useState([]);
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
+  const [isListOpen, setIsListOpen] = useState(true); // 방문지 목록 접기/펼치기
   const [travelStartTime] = useState(Date.now());
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -40,7 +46,6 @@ const TravelTracking = ({ onFinish, onClose }) => {
   const polylineRef = useRef(null);
   const markersRef = useRef([]);
 
-  // 경과 시간 계산
   useEffect(() => {
     const timer = setInterval(() => {
       setElapsedTime(Date.now() - travelStartTime);
@@ -48,7 +53,6 @@ const TravelTracking = ({ onFinish, onClose }) => {
     return () => clearInterval(timer);
   }, [travelStartTime]);
 
-  // ✅ Google Maps 로드 대기 (스크립트가 이미 주입돼 있을 수 있음)
   useEffect(() => {
     if (window.google?.maps) {
       setMapReady(true);
@@ -56,13 +60,11 @@ const TravelTracking = ({ onFinish, onClose }) => {
     }
     const script = document.getElementById('gmap-script');
     if (!script) { setMapReady(false); return; }
-
     const onLoad = () => setMapReady(true);
     script.addEventListener('load', onLoad);
     return () => script.removeEventListener('load', onLoad);
   }, []);
 
-  // ✅ 위치 추적 — 에러 코드별 메시지 분기
   useEffect(() => {
     if (!isTracking) return;
 
@@ -73,7 +75,7 @@ const TravelTracking = ({ onFinish, onClose }) => {
 
     watchIdRef.current = navigator.geolocation.watchPosition(
       (position) => {
-        setGpsError(null); // 성공하면 에러 해제
+        setGpsError(null);
         const newLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -85,34 +87,20 @@ const TravelTracking = ({ onFinish, onClose }) => {
       (error) => {
         console.warn('위치 추적 오류:', error);
         switch (error.code) {
-          case 1: // PERMISSION_DENIED
-            setGpsError('위치 권한이 거부되었습니다. 브라우저 설정에서 허용해주세요.');
-            break;
-          case 2: // POSITION_UNAVAILABLE
-            setGpsError('GPS 신호를 찾을 수 없습니다. 잠시 후 다시 시도합니다.');
-            break;
-          case 3: // TIMEOUT
-            setGpsError('위치 정보 요청이 시간 초과됐습니다. 재시도 중...');
-            break;
-          default:
-            setGpsError('위치 정보를 가져올 수 없습니다.');
+          case 1: setGpsError('위치 권한이 거부되었습니다. 브라우저 설정에서 허용해주세요.'); break;
+          case 2: setGpsError('GPS 신호를 찾을 수 없습니다. 잠시 후 다시 시도합니다.'); break;
+          case 3: setGpsError('위치 정보 요청이 시간 초과됐습니다. 재시도 중...'); break;
+          default: setGpsError('위치 정보를 가져올 수 없습니다.');
         }
       },
-      {
-        enableHighAccuracy: true,
-        maximumAge: 5000,   // ✅ 5초 캐시 허용 (Timeout 빈도 감소)
-        timeout: 15000,     // ✅ 10초 → 15초로 여유 있게
-      }
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
     );
 
     return () => {
-      if (watchIdRef.current) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
+      if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
     };
   }, [isTracking]);
 
-  // ✅ 지도 초기화 및 업데이트 — mapReady & currentLocation 모두 확인
   useEffect(() => {
     if (!currentLocation || !mapRef.current || !mapReady || !window.google?.maps) return;
 
@@ -122,6 +110,7 @@ const TravelTracking = ({ onFinish, onClose }) => {
         zoom: 16,
         disableDefaultUI: true,
         zoomControl: true,
+        mapId: 'DEMO_MAP_ID',
       });
     } else {
       googleMapRef.current.setCenter(currentLocation);
@@ -136,33 +125,81 @@ const TravelTracking = ({ onFinish, onClose }) => {
       map: googleMapRef.current,
     });
 
-    markersRef.current.forEach(m => m.setMap(null));
+    // 기존 마커 제거
+    markersRef.current.forEach(m => { m.map = null; });
     markersRef.current = [];
 
-    markersRef.current.push(new window.google.maps.Marker({
+    const { AdvancedMarkerElement } = window.google.maps.marker;
+
+    // 현재 위치 마커 (파란 원)
+    const currentDot = document.createElement('div');
+    currentDot.style.cssText = 'width:16px;height:16px;border-radius:50%;background:#4A90E2;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);';
+    markersRef.current.push(new AdvancedMarkerElement({
       position: currentLocation,
       map: googleMapRef.current,
-      icon: {
-        path: window.google.maps.SymbolPath.CIRCLE,
-        scale: 8,
-        fillColor: '#4A90E2',
-        fillOpacity: 1,
-        strokeColor: '#FFFFFF',
-        strokeWeight: 2,
-      },
+      content: currentDot,
     }));
 
+    // 열려있는 InfoWindow 추적
+    let openInfoWindow = null;
+
     visitedPlaces.forEach((place, index) => {
-      markersRef.current.push(new window.google.maps.Marker({
+      if (!place.location) return;
+
+      // 번호 뱃지 마커
+      const pin = document.createElement('div');
+      pin.style.cssText = 'width:28px;height:28px;border-radius:50%;background:#FFD700;color:#1a1a1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.25);border:2px solid #fff;cursor:pointer;';
+      pin.textContent = `${index + 1}`;
+
+      const marker = new AdvancedMarkerElement({
         position: place.location,
         map: googleMapRef.current,
-        label: {
-          text: `${index + 1}`,
-          color: '#1A1A1A',
-          fontSize: '12px',
-          fontWeight: 'bold',
-        },
-      }));
+        content: pin,
+      });
+
+      // InfoWindow 콘텐츠
+      const arrivalStr = new Date(place.arrivalTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      const photoLine = place.photoFiles?.length > 0
+        ? `<div style="display:flex;align-items:center;gap:4px;color:#B8860B;font-size:12px;margin-top:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> 사진 ${place.photoFiles.length}장</div>`
+        : '';
+      const reviewLine = place.review
+        ? `<div style="color:#555;font-size:12px;margin-top:4px;line-height:1.5">${place.review}</div>`
+        : '';
+
+      const infoWindow = new window.google.maps.InfoWindow({
+        content: `
+          <div style="font-family:'Pretendard',sans-serif;min-width:160px;max-width:220px;padding:4px 2px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="background:#FFD700;color:#1a1a1a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;">${index + 1}</span>
+              <strong style="font-size:15px;color:#1a1a1a">${place.name}</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;color:#999;font-size:11px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${arrivalStr} 도착</div>
+            ${reviewLine}
+            ${photoLine}
+          </div>
+        `,
+      });
+
+      // 클릭 시 토글
+      marker.addListener('click', () => {
+        if (openInfoWindow === infoWindow) {
+          infoWindow.close();
+          openInfoWindow = null;
+          return;
+        }
+        if (openInfoWindow) openInfoWindow.close();
+        infoWindow.open({ map: googleMapRef.current, anchor: marker });
+        openInfoWindow = infoWindow;
+      });
+
+      // hover 시 열기
+      marker.element.addEventListener('mouseenter', () => {
+        if (openInfoWindow && openInfoWindow !== infoWindow) openInfoWindow.close();
+        infoWindow.open({ map: googleMapRef.current, anchor: marker });
+        openInfoWindow = infoWindow;
+      });
+
+      markersRef.current.push(marker);
     });
   }, [currentLocation, path, visitedPlaces, mapReady]);
 
@@ -190,7 +227,6 @@ const TravelTracking = ({ onFinish, onClose }) => {
     return totalDistance.toFixed(2);
   };
 
-  // ✅ GPS 없어도 방문지 추가 가능 (위치 없으면 null로 저장)
   const handleAddPlace = () => {
     setSelectedPlace({ location: currentLocation ?? null, arrivalTime: Date.now() });
     setShowPlaceModal(true);
@@ -232,17 +268,12 @@ const TravelTracking = ({ onFinish, onClose }) => {
   const content = (
     <div className={styles.container}>
       <div className={styles.mapContainer} ref={mapRef}>
-        {/* ✅ GPS 에러 배너 */}
         {gpsError && <GpsErrorBanner message={gpsError} />}
-
-        {/* ✅ 지도 로딩 오버레이: GPS도 없고 지도도 없을 때만 표시 */}
         {!currentLocation && !gpsError && (
           <div className={styles.loadingOverlay}>
             <p>위치 정보를 불러오는 중...</p>
           </div>
         )}
-
-        {/* ✅ GPS는 있지만 Google Maps 미로드 시 안내 */}
         {currentLocation && !mapReady && (
           <div className={styles.loadingOverlay}>
             <p>지도를 불러오는 중...</p>
@@ -276,14 +307,27 @@ const TravelTracking = ({ onFinish, onClose }) => {
         </div>
       </div>
 
-      {/* 방문한 장소 타임라인 */}
       {visitedPlaces.length > 0 && (
         <div className={styles.placesList}>
-          <div className={styles.placesHeader}>
-            <span className={styles.placesTitle}>방문한 장소</span>
-            <span className={styles.placesCount}>{visitedPlaces.length}</span>
-          </div>
-          <div className={styles.placesTimeline}>
+          <button
+            type="button"
+            className={styles.placesHeader}
+            onClick={() => setIsListOpen(prev => !prev)}
+          >
+            <div className={styles.placesHeaderLeft}>
+              <span className={styles.placesTitle}>방문한 장소</span>
+              <span className={styles.placesCount}>{visitedPlaces.length}</span>
+            </div>
+            <svg
+              width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              style={{ transform: isListOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          {isListOpen && (
+            <div className={styles.placesTimeline}>
             {visitedPlaces.map((place, index) => (
               <div key={place.id} className={styles.placeRow}>
                 <div className={styles.timelineCol}>
@@ -317,11 +361,11 @@ const TravelTracking = ({ onFinish, onClose }) => {
               </div>
             ))}
           </div>
+          )}
         </div>
       )}
 
       <div className={styles.bottomControls}>
-        {/* ✅ GPS 없어도 방문지 추가 가능 */}
         <button className={styles.addPlaceButton} onClick={handleAddPlace} type="button">
           방문지 추가
         </button>

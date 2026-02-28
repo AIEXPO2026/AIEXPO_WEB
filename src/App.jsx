@@ -18,23 +18,23 @@ import PrivateRoute from './components/PrivateRoute'
 function App() {
   return (
     <>
-    <ReloadPrompt />
-    <Routes>
-      <Route path="/" element={<Navigate to={localStorage.getItem('accessToken') ? '/home' : '/login'} replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/find-password" element={<FindPassword />} />
-      <Route path="/welcome" element={<Welcome />} />
-      <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
-      <Route path="/community" element={<PrivateRoute><Community /></PrivateRoute>} />
-      <Route path="/community/ranking" element={<PrivateRoute><CommunityRanking /></PrivateRoute>} />
-      <Route path="/community/blog" element={<PrivateRoute><CommunityBlog /></PrivateRoute>} />
-      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-      <Route path="/profile/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
-      <Route path="/Travel" element={<PrivateRoute><Travel /></PrivateRoute>} />
-      <Route path="/search-result" element={<PrivateRoute><SearchResult /></PrivateRoute>} />
-      <Route path="/search-result/detail" element={<PrivateRoute><SearchResultDetail /></PrivateRoute>} />
-    </Routes>
+      <ReloadPrompt />
+      <Routes>
+        <Route path="/" element={<Navigate to={localStorage.getItem('accessToken') ? '/home' : '/login'} replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/find-password" element={<FindPassword />} />
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+        <Route path="/community" element={<PrivateRoute><Community /></PrivateRoute>} />
+        <Route path="/community/ranking" element={<PrivateRoute><CommunityRanking /></PrivateRoute>} />
+        <Route path="/community/blog" element={<PrivateRoute><CommunityBlog /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/profile/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
+        <Route path="/Travel" element={<PrivateRoute><Travel /></PrivateRoute>} />
+        <Route path="/search-result" element={<PrivateRoute><SearchResult /></PrivateRoute>} />
+        <Route path="/search-result/detail" element={<PrivateRoute><SearchResultDetail /></PrivateRoute>} />
+      </Routes>
     </>
   )
 }
