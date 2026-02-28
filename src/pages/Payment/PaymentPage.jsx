@@ -1,22 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { loadPaymentWidget, ANONYMOUS } from '@tosspayments/payment-widget-sdk';
 import styles from './PaymentPage.module.css';
 
 const CLIENT_KEY = import.meta.env.VITE_TOSS_CLIENT_KEY;
-
-function getCustomerKey() {
-  const userId = localStorage.getItem('userId');
-  if (userId) return `user_${userId}`;
-  return ANONYMOUS;
-}
 
 function PaymentPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const widgetRef = useRef(null);
+  const tossRef = useRef(null);
 
   const amount = state?.amount;
   const orderName = state?.orderName || '크레딧 충전';
@@ -31,35 +24,35 @@ function PaymentPage() {
   useEffect(() => {
     if (!amount || !CLIENT_KEY) return;
 
+    const script = document.createElement('script');
+    script.src = 'https://js.tosspayments.com/v1/payment';
+    script.onload = () => {
+      tossRef.current = window.TossPayments(CLIENT_KEY);
+      setIsReady(true);
+    };
+    script.onerror = () => {
+      navigate('/payment/fail?code=INIT_FAILED&message=결제 초기화에 실패했습니다.');
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, [amount, navigate]);
+
+  const handlePayment = async () => {
+    if (!tossRef.current || !isReady) return;
+    setIsLoading(true);
+
     const orderId = crypto.randomUUID();
     sessionStorage.setItem('toss_order_id', orderId);
     sessionStorage.setItem('toss_order_amount', String(amount));
 
-    async function initWidget() {
-      const paymentWidget = await loadPaymentWidget(CLIENT_KEY, getCustomerKey());
-      widgetRef.current = paymentWidget;
-
-      await paymentWidget.renderPaymentMethods({
-        selector: '#payment-method',
-        amount,
-      });
-      await paymentWidget.renderAgreement({ selector: '#payment-agreement' });
-
-      setIsReady(true);
-    }
-
-    initWidget().catch((err) => {
-      console.error('위젯 초기화 실패:', err);
-      navigate('/payment/fail?code=INIT_FAILED&message=결제 초기화에 실패했습니다.');
-    });
-  }, [amount, navigate]);
-
-  const handlePayment = async () => {
-    if (!widgetRef.current || !isReady) return;
-    setIsLoading(true);
     try {
-      const orderId = sessionStorage.getItem('toss_order_id');
-      await widgetRef.current.requestPayment({
+      await tossRef.current.requestPayment('카드', {
+        amount,
         orderId,
         orderName,
         customerName,
@@ -90,8 +83,9 @@ function PaymentPage() {
         <span className={styles.orderAmount}>{amount.toLocaleString()}원</span>
       </div>
 
-      <div id="payment-method" className={styles.widgetSection} />
-      <div id="payment-agreement" className={styles.widgetSection} />
+      <p className={styles.paymentNote}>
+        아래 버튼을 클릭하면 토스페이먼츠 결제창이 열립니다.
+      </p>
 
       <button
         type="button"
@@ -99,7 +93,7 @@ function PaymentPage() {
         onClick={handlePayment}
         disabled={!isReady || isLoading}
       >
-        {isLoading ? '처리 중...' : `${amount.toLocaleString()}원 결제하기`}
+        {!isReady ? '로딩 중...' : isLoading ? '처리 중...' : `${amount.toLocaleString()}원 결제하기`}
       </button>
     </div>
   );

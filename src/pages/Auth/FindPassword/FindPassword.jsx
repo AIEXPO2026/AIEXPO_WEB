@@ -50,7 +50,7 @@ function FindPassword() {
       setLoading(true);
       setApiError('');
       try {
-        await resetPassword(email, newPassword);
+        await resetPassword(email, verificationCode, newPassword);
         navigate('/login');
       } catch (err) {
         setApiError('비밀번호 변경에 실패했습니다. 다시 시도해주세요.');
