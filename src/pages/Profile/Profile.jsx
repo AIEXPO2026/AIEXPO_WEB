@@ -193,13 +193,6 @@ function Profile() {
     }
   };
 
-  // ── 크레딧 충전 성공 ─────────────────────────────────────────────────────
-  const handleChargeSuccess = (chargedAmount) => {
-    setCredit((prev) => prev + chargedAmount);
-    closeModal();
-    alert(`${chargedAmount.toLocaleString()} 크레딧이 충전되었습니다!`);
-  };
-
   const handleDeleteBookmark = async (destinationId) => {
     if (!window.confirm('북마크를 삭제하시겠습니까?')) return;
     try {
@@ -418,7 +411,6 @@ function Profile() {
         <CreditChargeModal
           currentCredit={credit}
           onClose={closeModal}
-          onSuccess={handleChargeSuccess}
         />
       )}
       {activeModal === MODAL.EDIT_ID && (

@@ -12,9 +12,12 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build argument for API URL
+# Build arguments
 ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
+ARG VITE_TOSS_CLIENT_KEY
+ENV VITE_TOSS_CLIENT_KEY=${VITE_TOSS_CLIENT_KEY}
 
 # Build the application
 RUN npm run build
