@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sendVerificationEmail, verifyEmail } from '../../../api/authApi';
+import { sendVerificationEmail, verifyEmail, resetPassword } from '../../../api/authApi';
 import styles from './FindPassword.module.css';
 
 function FindPassword() {
@@ -47,8 +47,17 @@ function FindPassword() {
         setPasswordError(true);
         return;
       }
-      // 비밀번호 변경 완료 후 로그인 페이지로 이동
-      navigate('/login');
+      setLoading(true);
+      setApiError('');
+      try {
+        await resetPassword(email, newPassword);
+        navigate('/login');
+      } catch (err) {
+        setApiError('비밀번호 변경에 실패했습니다. 다시 시도해주세요.');
+        console.error('비밀번호 재설정 실패:', err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 

@@ -24,7 +24,39 @@ function Signup() {
   };
 
   const handleNext = async () => {
-    if (step === 4) {
+    if (step === 2) {
+      // 이메일 입력 후 인증번호 전송
+      if (!email) return;
+      setLoading(true);
+      setApiError('');
+      try {
+        await sendVerificationEmail(email);
+        setStep(3);
+      } catch (err) {
+        setApiError('인증 메일 발송에 실패했습니다. 다시 시도해주세요.');
+        console.error('메일 발송 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    } else if (step === 3) {
+      // 인증번호 API 검증
+      if (!authCode) {
+        setAuthCodeError('인증번호를 입력해주세요.');
+        return;
+      }
+      setLoading(true);
+      setAuthCodeError('');
+      try {
+        await verifyEmail(email, authCode);
+        setStep(4);
+      } catch (err) {
+        setAuthCodeError('인증번호가 올바르지 않습니다.');
+        console.error('이메일 인증 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    } else if (step === 5) {
+      // 비밀번호 입력 후 회원가입 요청 (name, authNum 포함)
       if (!validatePassword(password)) {
         setPasswordError(true);
         return;
@@ -34,39 +66,25 @@ function Signup() {
         return;
       }
 
-      // 회원가입 후 이메일 인증번호 전송
       setLoading(true);
       setApiError('');
 
       try {
-        await signup(id, password, email);
-        await sendVerificationEmail(email);
-        setStep(5);
+        await signup(name, id, password, email, authCode);
+        navigate('/welcome');
       } catch (err) {
         setApiError('회원가입에 실패했습니다. 다시 시도해주세요.');
         console.error('회원가입 실패:', err);
       } finally {
         setLoading(false);
       }
-    } else if (step === 5) {
-      // 이메일 인증코드 확인
-      if (!authCode) {
-        setAuthCodeError('인증번호를 입력해주세요.');
+    } else if (step === 1) {
+      if (!name.trim()) {
+        setApiError('이름을 입력해주세요.');
         return;
       }
-
-      setLoading(true);
-      setAuthCodeError('');
-
-      try {
-        await verifyEmail(email, authCode);
-        navigate('/welcome');
-      } catch (err) {
-        setAuthCodeError('인증번호가 올바르지 않습니다.');
-        console.error('이메일 인증 실패:', err);
-      } finally {
-        setLoading(false);
-      }
+      setApiError('');
+      setStep(2);
     } else {
       setStep(step + 1);
     }
@@ -110,8 +128,9 @@ function Signup() {
 
   const getButtonText = () => {
     if (loading) return '처리 중...';
-    if (step === 4) return '회원가입';
-    if (step === 5) return '인증 완료';
+    if (step === 2) return '인증번호 전송';
+    if (step === 3) return '인증 확인';
+    if (step === 5) return '회원가입';
     return '다음';
   };
 
@@ -146,6 +165,25 @@ function Signup() {
       case 3:
         return (
           <div className={styles.inputGroup}>
+            <label className={`${styles.label} ${authCodeError ? styles.labelError : ''}`}>
+              인증번호
+            </label>
+            <p className={styles.emailHint}>{email}으로 발송된 인증번호를 입력해주세요.</p>
+            <input
+              type="text"
+              className={`${styles.input} ${authCodeError ? styles.inputError : ''}`}
+              placeholder="인증번호 6자리를 입력해주세요."
+              value={authCode}
+              onChange={(e) => setAuthCode(e.target.value)}
+            />
+            {authCodeError && (
+              <p className={styles.errorMessage}>{authCodeError}</p>
+            )}
+          </div>
+        );
+      case 4:
+        return (
+          <div className={styles.inputGroup}>
             <label className={styles.label}>아이디</label>
             <input
               type="text"
@@ -156,7 +194,7 @@ function Signup() {
             />
           </div>
         );
-      case 4:
+      case 5:
         return (
           <>
             <div className={styles.inputGroup}>
@@ -195,25 +233,6 @@ function Signup() {
             </div>
           </>
         );
-      case 5:
-        return (
-          <div className={styles.inputGroup}>
-            <label className={`${styles.label} ${authCodeError ? styles.labelError : ''}`}>
-              인증번호
-            </label>
-            <p className={styles.emailHint}>{email}으로 발송된 인증번호를 입력해주세요.</p>
-            <input
-              type="text"
-              className={`${styles.input} ${authCodeError ? styles.inputError : ''}`}
-              placeholder="인증번호 6자리를 입력해주세요."
-              value={authCode}
-              onChange={(e) => setAuthCode(e.target.value)}
-            />
-            {authCodeError && (
-              <p className={styles.errorMessage}>{authCodeError}</p>
-            )}
-          </div>
-        );
       default:
         return null;
     }
@@ -237,7 +256,7 @@ function Signup() {
         </button>
 
         <div className={styles.links}>
-          {step > 1 && step < 5 && (
+          {step > 1 && (
             <>
               <span className={styles.link} onClick={handleBack}>
                 이전으로
@@ -245,7 +264,7 @@ function Signup() {
               <span className={styles.divider}>|</span>
             </>
           )}
-          {step === 5 && (
+          {step === 3 && (
             <>
               <span className={styles.link} onClick={handleResendEmail}>
                 재전송하기

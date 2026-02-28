@@ -38,18 +38,8 @@ export const updateUsername = async (newUsername, password) => {
   return unwrapApiResponse(response);
 };
 
-// 비밀번호 변경 - PUT /auth/password
-export const changePassword = async (username, oldPassword, newPassword) => {
-  const response = await apiClient.put('/auth/password', {
-    username,
-    oldPassword,
-    newPassword,
-  });
-  return unwrapApiResponse(response);
-};
-
 // 내 여행 목록 조회 - GET /travel/my
 export const getTravels = async () => {
   const response = await apiClient.get('/travel/my');
-  return response.data;
+  return unwrapApiResponse(response);
 };

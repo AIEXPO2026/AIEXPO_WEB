@@ -1,7 +1,8 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './CommunityRanking.module.css'
-import machuPicchu from '../../../assets/machu-picchu.png'
 import BottomNav from '../../../components/BottomNav/BottomNav'
+import { getRanking } from '../../../api/recommendApi'
 
 function BackIcon() {
   return (
@@ -46,22 +47,29 @@ function BookmarkIcon() {
   )
 }
 
-const rankingData = [
-  { id: 1, rank: 1, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 2, rank: 2, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 3, rank: 3, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 4, rank: 4, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 5, rank: 1, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 6, rank: 2, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 7, rank: 3, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-]
-
 function RankingDetail() {
   const navigate = useNavigate()
+  const [rankingData, setRankingData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const fetchRanking = async () => {
+      try {
+        const data = await getRanking()
+        setRankingData(Array.isArray(data) ? data : [])
+      } catch (err) {
+        console.error('랭킹 데이터 로드 실패:', err)
+        setError('랭킹 데이터를 불러오지 못했습니다.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRanking()
+  }, [])
 
   return (
     <div className={styles.container}>
-      {/* Header */}
       <header className={styles.header}>
         <button className={styles.backButton} onClick={() => navigate(-1)}>
           <BackIcon />
@@ -69,12 +77,9 @@ function RankingDetail() {
         <h1 className={styles.title}>여행지 랭킹</h1>
       </header>
 
-      {/* Divider */}
       <div className={styles.divider} />
 
-      {/* Content Area */}
       <div className={styles.contentArea}>
-        {/* Filters */}
         <div className={styles.filters}>
           <button className={styles.filterButton}>
             <span>주요 국가별</span>
@@ -86,36 +91,43 @@ function RankingDetail() {
           </button>
         </div>
 
-        {/* Ranking List */}
-        <div className={styles.rankingList}>
-          {rankingData.map((item) => (
-            <div key={item.id} className={styles.rankingItem}>
-              <div className={styles.rankingInfo}>
-                <span className={styles.rankNumber}>{item.rank}</span>
-                <img src={item.image} alt={item.title} className={styles.rankingImage} />
-                <div className={styles.rankingText}>
-                  <span className={styles.rankingTitle}>{item.title}</span>
-                  <div className={styles.rankingMeta}>
-                    <span>{item.location}</span>
-                    <span className={styles.dot}>·</span>
-                    <span>{item.category}</span>
+        {loading ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>불러오는 중...</p>
+        ) : error ? (
+          <p style={{ color: '#E53935', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>{error}</p>
+        ) : rankingData.length === 0 ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>랭킹 데이터가 없습니다.</p>
+        ) : (
+          <div className={styles.rankingList}>
+            {rankingData.map((item, idx) => (
+              <div key={item.id ?? idx} className={styles.rankingItem}>
+                <div className={styles.rankingInfo}>
+                  <span className={styles.rankNumber}>{item.rank ?? idx + 1}</span>
+                  {item.imageUrl && (
+                    <img src={item.imageUrl} alt={item.name ?? item.title} className={styles.rankingImage} />
+                  )}
+                  <div className={styles.rankingText}>
+                    <span className={styles.rankingTitle}>{item.name ?? item.title}</span>
+                    <div className={styles.rankingMeta}>
+                      <span>{item.city ?? item.location}</span>
+                      {item.category && <><span className={styles.dot}>·</span><span>{item.category}</span></>}
+                    </div>
                   </div>
                 </div>
+                <div className={styles.rankingActions}>
+                  <button className={styles.iconBtn} type="button" aria-label="favorite">
+                    <StarIcon active={true} />
+                  </button>
+                  <button className={styles.iconBtn} type="button" aria-label="bookmark">
+                    <BookmarkIcon />
+                  </button>
+                </div>
               </div>
-              <div className={styles.rankingActions}>
-                <button className={styles.iconBtn} type="button" aria-label="favorite">
-                  <StarIcon active={true} />
-                </button>
-                <button className={styles.iconBtn} type="button" aria-label="bookmark">
-                  <BookmarkIcon />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNav activePage="ranking" />
     </div>
   )

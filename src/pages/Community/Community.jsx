@@ -1,7 +1,8 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Community.module.css'
-import machuPicchu from '../../assets/machu-picchu.png'
 import BottomNav from '../../components/BottomNav/BottomNav'
+import { getRanking, getBlogList } from '../../api/recommendApi'
 
 function StarIcon({ active = true }) {
   return (
@@ -39,30 +40,32 @@ function ArrowRightIcon() {
   )
 }
 
-const rankingData = [
-  { id: 1, rank: 1, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 2, rank: 2, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 3, rank: 3, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-  { id: 4, rank: 4, title: '마추픽추', location: '페루 쿠스코', category: '역사', image: machuPicchu },
-]
-
-const blogData = [
-  { id: 1, title: '푸바오 보러 중국으로', author: '오승훈', location: '중국', date: '2일 전' },
-  { id: 2, title: '25년 일본 여행기', author: '김경훈', location: '일본', date: '7일 전' },
-  { id: 3, title: '겨울 국내 여행', author: '조상철', location: '대한민국', date: '2일 전' },
-  { id: 4, title: '싱가포르 국외현장체험', author: '오승훈', location: '이탈리아', date: '2일 전' },
-  { id: 5, title: '푸바오 보러 중국으로', author: '오승훈', location: '중국', date: '2일 전' },
-  { id: 6, title: '25년 일본 여행기', author: '김경훈', location: '일본', date: '7일 전' },
-  { id: 7, title: '겨울 국내 여행', author: '조상철', location: '대한민국', date: '2일 전' },
-  { id: 8, title: '싱가포르 국외현장체험', author: '오승훈', location: '이탈리아', date: '2일 전' },
-]
-
-function Ranking() {
+function Community() {
   const navigate = useNavigate()
+  const [rankingData, setRankingData] = useState([])
+  const [blogData, setBlogData] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [ranking, blogs] = await Promise.all([
+          getRanking().catch(() => []),
+          getBlogList().catch(() => []),
+        ])
+        setRankingData(Array.isArray(ranking) ? ranking.slice(0, 4) : [])
+        setBlogData(Array.isArray(blogs) ? blogs.slice(0, 8) : [])
+      } catch (err) {
+        console.error('커뮤니티 데이터 로드 실패:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
     <div className={styles.container}>
-      {/* Content Area */}
       <div className={styles.contentArea}>
         {/* 여행지 랭킹 섹션 */}
         <div className={styles.sectionHeader}>
@@ -75,34 +78,40 @@ function Ranking() {
           </button>
         </div>
 
-        <div className={styles.rankingList}>
-          {rankingData.map((item) => (
-            <div key={item.id} className={styles.rankingItem}>
-              <div className={styles.rankingInfo}>
-                <span className={styles.rankNumber}>{item.rank}</span>
-                <img src={item.image} alt={item.title} className={styles.rankingImage} />
-                <div className={styles.rankingText}>
-                  <span className={styles.rankingTitle}>{item.title}</span>
-                  <div className={styles.rankingMeta}>
-                    <span>{item.location}</span>
-                    <span className={styles.dot}>·</span>
-                    <span>{item.category}</span>
+        {loading ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>불러오는 중...</p>
+        ) : rankingData.length === 0 ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>랭킹 데이터가 없습니다.</p>
+        ) : (
+          <div className={styles.rankingList}>
+            {rankingData.map((item, idx) => (
+              <div key={item.id ?? idx} className={styles.rankingItem}>
+                <div className={styles.rankingInfo}>
+                  <span className={styles.rankNumber}>{item.rank ?? idx + 1}</span>
+                  {item.imageUrl && (
+                    <img src={item.imageUrl} alt={item.name ?? item.title} className={styles.rankingImage} />
+                  )}
+                  <div className={styles.rankingText}>
+                    <span className={styles.rankingTitle}>{item.name ?? item.title}</span>
+                    <div className={styles.rankingMeta}>
+                      <span>{item.city ?? item.location}</span>
+                      {item.category && <><span className={styles.dot}>·</span><span>{item.category}</span></>}
+                    </div>
                   </div>
                 </div>
+                <div className={styles.rankingActions}>
+                  <button className={styles.iconBtn} type="button" aria-label="favorite">
+                    <StarIcon active={true} />
+                  </button>
+                  <button className={styles.iconBtn} type="button" aria-label="bookmark">
+                    <BookmarkIcon />
+                  </button>
+                </div>
               </div>
-              <div className={styles.rankingActions}>
-                <button className={styles.iconBtn} type="button" aria-label="favorite">
-                  <StarIcon active={true} />
-                </button>
-                <button className={styles.iconBtn} type="button" aria-label="bookmark">
-                  <BookmarkIcon />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* 구분선 */}
         <div className={styles.divider} />
 
         {/* 블로그 섹션 */}
@@ -116,28 +125,33 @@ function Ranking() {
           </button>
         </div>
 
-        <div className={styles.blogList}>
-          {blogData.map((item) => (
-            <div key={item.id} className={styles.blogItem}>
-              <div className={styles.blogText}>
-                <span className={styles.blogTitle}>{item.title}</span>
-                <div className={styles.blogMeta}>
-                  <span>{item.author}</span>
-                  <span className={styles.dot}>·</span>
-                  <span>{item.location}</span>
-                  <span className={styles.dot}>·</span>
-                  <span>{item.date}</span>
+        {loading ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>불러오는 중...</p>
+        ) : blogData.length === 0 ? (
+          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>블로그 게시글이 없습니다.</p>
+        ) : (
+          <div className={styles.blogList}>
+            {blogData.map((item, idx) => (
+              <div key={item.id ?? idx} className={styles.blogItem}>
+                <div className={styles.blogText}>
+                  <span className={styles.blogTitle}>{item.title}</span>
+                  <div className={styles.blogMeta}>
+                    <span>{item.author ?? item.nickname}</span>
+                    <span className={styles.dot}>·</span>
+                    <span>{item.city ?? item.location}</span>
+                    <span className={styles.dot}>·</span>
+                    <span>{item.createdAt ?? item.date}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* 하단 네비게이션 */}
       <BottomNav activePage="ranking" />
     </div>
   )
 }
 
-export default Ranking
+export default Community

@@ -124,13 +124,13 @@ function Profile() {
     try {
       setLoading(true);
       const [creditRes, travelsRes, bookmarksRes] = await Promise.all([
-        getCredit().catch(() => ({ data: { credit: 0 } })),
-        getTravels().catch(() => ({ data: [] })),
-        getBookmarks().catch(() => ({ data: [] })),
+        getCredit().catch(() => null),
+        getTravels().catch(() => null),
+        getBookmarks().catch(() => null),
       ]);
-      setCredit(creditRes?.data?.credit ?? 0);
-      setTravelData(travelsRes?.data ?? []);
-      setBookmarkData(bookmarksRes?.data ?? []);
+      setCredit(creditRes?.credit ?? 0);
+      setTravelData(Array.isArray(travelsRes) ? travelsRes : []);
+      setBookmarkData(Array.isArray(bookmarksRes) ? bookmarksRes : []);
     } catch (error) {
       console.error('Failed to load profile data:', error);
     } finally {
