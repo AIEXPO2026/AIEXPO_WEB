@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup, sendVerificationEmail, verifyEmail } from '../../../api/authApi';
+import { signup, sendVerificationEmail, verifySignupEmail } from '../../../api/authApi';
 import styles from './Signup.module.css';
 
 function Signup() {
@@ -47,7 +47,7 @@ function Signup() {
       setLoading(true);
       setAuthCodeError('');
       try {
-        await verifyEmail(email, authCode);
+        await verifySignupEmail(email, authCode);
         setStep(4);
       } catch (err) {
         setAuthCodeError('인증번호가 올바르지 않습니다.');

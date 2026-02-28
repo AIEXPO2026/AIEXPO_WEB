@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { chargeCredit } from '../../api/profileApi';
+import { useNavigate } from 'react-router-dom';
 import styles from './CreditChargeModal.module.css';
 
 function IconClose() {
@@ -21,10 +21,10 @@ function CoinIcon() {
 
 const PRESET_AMOUNTS = [10000, 30000, 50000];
 
-function CreditChargeModal({ currentCredit, onClose, onSuccess }) {
+function CreditChargeModal({ currentCredit, onClose }) {
+  const navigate = useNavigate();
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [customAmount, setCustomAmount] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const amount = selectedAmount ?? (parseInt(customAmount.replace(/,/g, ''), 10) || 0);
@@ -42,22 +42,14 @@ function CreditChargeModal({ currentCredit, onClose, onSuccess }) {
     setError('');
   };
 
-  const handleCharge = async () => {
+  const handleCharge = () => {
     if (!amount || amount <= 0) {
       setError('충전할 크레딧을 선택하거나 입력해주세요.');
       return;
     }
-    try {
-      setIsLoading(true);
-      setError('');
-      await chargeCredit(amount);
-      onSuccess(amount);
-    } catch (err) {
-      const msg = err.response?.data?.message;
-      setError(msg || '충전에 실패했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsLoading(false);
-    }
+    navigate('/payment', {
+      state: { amount, orderName: `크레딧 ${amount.toLocaleString()}원 충전` },
+    });
   };
 
   return (
@@ -123,9 +115,9 @@ function CreditChargeModal({ currentCredit, onClose, onSuccess }) {
           type="button"
           className={styles.chargeButton}
           onClick={handleCharge}
-          disabled={isLoading || !amount}
+          disabled={!amount}
         >
-          {isLoading ? '처리 중...' : `${amount > 0 ? amount.toLocaleString() + ' ' : ''}크레딧 충전하기`}
+          {`${amount > 0 ? amount.toLocaleString() + ' ' : ''}크레딧 결제하기`}
         </button>
 
         <p className={styles.notice}>충전된 크레딧은 환불되지 않습니다.</p>

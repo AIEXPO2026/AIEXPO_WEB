@@ -12,6 +12,9 @@ import ChangePassword from './pages/Profile/ChangePassword/ChangePassword'
 import Travel from './pages/Travel/Travel'
 import SearchResult from './pages/Search/SearchResult'
 import SearchResultDetail from './pages/Search/SearchResultDetail'
+import PaymentPage from './pages/Payment/PaymentPage'
+import PaymentSuccessPage from './pages/Payment/PaymentSuccessPage'
+import PaymentFailPage from './pages/Payment/PaymentFailPage'
 import ReloadPrompt from './components/ReloadPrompt/ReloadPrompt'
 import PrivateRoute from './components/PrivateRoute'
 
@@ -34,6 +37,9 @@ function App() {
         <Route path="/Travel" element={<PrivateRoute><Travel /></PrivateRoute>} />
         <Route path="/search-result" element={<PrivateRoute><SearchResult /></PrivateRoute>} />
         <Route path="/search-result/detail" element={<PrivateRoute><SearchResultDetail /></PrivateRoute>} />
+        <Route path="/payment" element={<PrivateRoute><PaymentPage /></PrivateRoute>} />
+        <Route path="/payment/success" element={<PrivateRoute><PaymentSuccessPage /></PrivateRoute>} />
+        <Route path="/payment/fail" element={<PrivateRoute><PaymentFailPage /></PrivateRoute>} />
       </Routes>
     </>
   )
