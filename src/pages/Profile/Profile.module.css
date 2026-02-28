@@ -126,7 +126,7 @@
 
 /* ── 여행기록 섹션 ───────────────────────────────────────────────────────── */
 .travelSection {
-  padding: 0 28px;
+  padding: 20px 28px 0;
 }
 
 .travelHeader {
@@ -239,7 +239,7 @@
 
 /* ── 북마크 섹션 ─────────────────────────────────────────────────────────── */
 .bookmarkSection {
-  padding: 0 28px 30px;
+  padding: 20px 28px 30px;
 }
 
 .bookmarkTitle {
