@@ -212,29 +212,43 @@ function TravelRecordManagement() {
   const handleCloseModal = () => { setIsModalOpen(false); setEditingTravel(null); };
 
   const handleSave = async (updatedData) => {
+    console.log('[handleSave] updatedData:', updatedData); // 디버그용
     try {
+      const weatherStr = Array.isArray(updatedData.weather) && updatedData.weather.length > 0
+        ? updatedData.weather.join(',')
+        : (updatedData.avg_weather ?? updatedData.avgWeather ?? '맑음'); // 빈 문자열 불가 → 기본값 '맑음'
+
       await editTravel(editingTravel.id, {
-        people_count: updatedData.companionCount,
-        mood: updatedData.mood || 1,
-        avg_weather: updatedData.weather?.join(',') || '',
-        public_travel: updatedData.isPublic,
+        people_count: Number(updatedData.companionCount ?? updatedData.peopleCount ?? 1),
+        mood: Number(updatedData.mood ?? 1),
+        avg_weather: weatherStr,
+        public_travel: Boolean(updatedData.isPublic ?? updatedData.publicTravel ?? false),
       });
       alert('여행 기록이 수정되었습니다.');
       await fetchTravelData();
       handleCloseModal();
     } catch (err) {
-      console.error('여행 수정 실패:', err.message);
-      alert('수정에 실패했습니다.');
+      // 400 원인 파악용 — 응답 body 출력
+      console.error('여행 수정 실패:', err.message, err?.response?.data);
+      alert(`수정에 실패했습니다. (${err?.response?.status ?? err.message})`);
     }
   };
 
-  const handleStartTracking = () => {
+  const handleStartTracking = async () => {
     if (isTrackingActive) return;
 
-    // API 호출 전에 먼저 화면 전환
+    // TRAVEL_ALREADY_STARTED 대응: 기존 여행 먼저 종료 시도
+    try {
+      await finishTravel();
+      console.log('기존 여행 종료 완료 후 새 여행 시작');
+    } catch (_) {
+      // 진행 중인 여행 없으면 무시
+    }
+
+    // 화면 먼저 전환
     setIsTrackingActive(true);
 
-    // 백그라운드에서 API 호출 (실패해도 지도 화면 유지)
+    // 백그라운드에서 새 여행 시작
     startTravel({
       budget_min: 1000,
       budget_max: 2147483647,
@@ -242,7 +256,7 @@ function TravelRecordManagement() {
       end_date: new Date().toISOString().split('T')[0],
       people_count: 1,
     }).catch((e) => {
-      console.warn('startTravel 백그라운드 실패 (오프라인 무시):', e?.response?.status ?? e.message);
+      console.warn('startTravel 백그라운드 실패:', e?.response?.data?.error?.code ?? e.message);
     });
   };
 
