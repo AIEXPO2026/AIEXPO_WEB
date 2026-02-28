@@ -1,11 +1,14 @@
+import { useEffect } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
 function ReloadPrompt() {
-  useRegisterSW({
-    onNeedRefresh(updateServiceWorker) {
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
+
+  useEffect(() => {
+    if (needRefresh) {
       updateServiceWorker(true)
-    },
-  })
+    }
+  }, [needRefresh])
 
   return null
 }

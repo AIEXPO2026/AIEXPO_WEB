@@ -22,13 +22,21 @@ function PaymentPage() {
   }, [amount, navigate]);
 
   useEffect(() => {
-    if (!amount || !CLIENT_KEY) return;
+    if (!amount) return;
+    if (!CLIENT_KEY) {
+      navigate('/payment/fail?code=INIT_FAILED&message=결제 초기화에 실패했습니다.');
+      return;
+    }
 
     const script = document.createElement('script');
     script.src = 'https://js.tosspayments.com/v1/payment';
     script.onload = () => {
-      tossRef.current = window.TossPayments(CLIENT_KEY);
-      setIsReady(true);
+      try {
+        tossRef.current = window.TossPayments(CLIENT_KEY);
+        setIsReady(true);
+      } catch {
+        navigate('/payment/fail?code=INIT_FAILED&message=결제 초기화에 실패했습니다.');
+      }
     };
     script.onerror = () => {
       navigate('/payment/fail?code=INIT_FAILED&message=결제 초기화에 실패했습니다.');
