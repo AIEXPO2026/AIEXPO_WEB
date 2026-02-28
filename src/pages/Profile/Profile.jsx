@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Profile.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
@@ -115,10 +115,25 @@ function Profile() {
   const [sortBy, setSortBy] = useState('recent');
   const [filterBy, setFilterBy] = useState('all');
   const [activeModal, setActiveModal] = useState(MODAL.NONE);
+  const [openDropdown, setOpenDropdown] = useState(null); // 'sort' | 'filter' | null
+  const [showAllTravels, setShowAllTravels] = useState(false);
+  const TRAVEL_LIMIT = 5;
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     loadProfileData();
   }, []);
+
+  useEffect(() => {
+    if (!openDropdown) return;
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openDropdown]);
 
   const loadProfileData = async () => {
     try {
@@ -207,7 +222,7 @@ function Profile() {
     });
 
   const filterLabel = { all: '전체', public: '공개', private: '비공개' };
-  const nextFilter = { all: 'public', public: 'private', private: 'all' };
+  const displayedTravels = showAllTravels ? filteredTravels : filteredTravels.slice(0, TRAVEL_LIMIT);
 
   return (
     <div className={styles.container}>
@@ -274,15 +289,53 @@ function Profile() {
       <div className={styles.travelSection}>
         <div className={styles.travelHeader}>
           <h2 className={styles.travelTitle}>내 여행기록</h2>
-          <div className={styles.filters}>
-            <button className={styles.filterButton} onClick={() => setSortBy(s => s === 'recent' ? 'oldest' : 'recent')}>
-              <span>{sortBy === 'recent' ? '최근 순' : '오래된 순'}</span>
-              <DropdownArrow />
-            </button>
-            <button className={styles.filterButton} onClick={() => setFilterBy(f => nextFilter[f])}>
-              <span>{filterLabel[filterBy]}</span>
-              <DropdownArrow />
-            </button>
+          <div className={styles.filters} ref={dropdownRef}>
+            {/* 정렬 드롭다운 */}
+            <div className={styles.filterWrapper}>
+              <button
+                className={styles.filterButton}
+                onClick={() => setOpenDropdown(o => o === 'sort' ? null : 'sort')}
+              >
+                <span>{sortBy === 'recent' ? '최근 순' : '오래된 순'}</span>
+                <DropdownArrow />
+              </button>
+              {openDropdown === 'sort' && (
+                <div className={styles.filterDropdown}>
+                  {[['recent', '최근 순'], ['oldest', '오래된 순']].map(([val, label]) => (
+                    <button
+                      key={val}
+                      className={`${styles.filterDropdownItem} ${sortBy === val ? styles.filterDropdownItemActive : ''}`}
+                      onClick={() => { setSortBy(val); setOpenDropdown(null); }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* 공개여부 드롭다운 */}
+            <div className={styles.filterWrapper}>
+              <button
+                className={styles.filterButton}
+                onClick={() => setOpenDropdown(o => o === 'filter' ? null : 'filter')}
+              >
+                <span>{filterLabel[filterBy]}</span>
+                <DropdownArrow />
+              </button>
+              {openDropdown === 'filter' && (
+                <div className={styles.filterDropdown}>
+                  {[['all', '전체'], ['public', '공개'], ['private', '비공개']].map(([val, label]) => (
+                    <button
+                      key={val}
+                      className={`${styles.filterDropdownItem} ${filterBy === val ? styles.filterDropdownItemActive : ''}`}
+                      onClick={() => { setFilterBy(val); setOpenDropdown(null); setShowAllTravels(false); }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -294,22 +347,29 @@ function Profile() {
             <button onClick={() => navigate('/travel')}>여행 시작하기</button>
           </div>
         ) : (
-          <div className={styles.travelList}>
-            {filteredTravels.map((travel) => (
-              <div key={travel.id} className={styles.travelCard} onClick={() => navigate(`/travel/${travel.id}`)}>
-                <div className={styles.travelCardTop}>
-                  <h3 className={styles.travelCardTitle}>{travel.title || `${travel.startDate} 여행`}</h3>
-                  <span className={`${styles.publicBadge} ${travel.publicTravel ? styles.publicBadgeOn : styles.publicBadgeOff}`}>
-                    {travel.publicTravel ? <><LockOpenIcon /> 공개</> : <><LockIcon /> 비공개</>}
-                  </span>
+          <>
+            <div className={styles.travelList}>
+              {displayedTravels.map((travel) => (
+                <div key={travel.id} className={styles.travelCard} onClick={() => navigate(`/travel/${travel.id}`)}>
+                  <div className={styles.travelCardTop}>
+                    <h3 className={styles.travelCardTitle}>{travel.title || `${travel.startDate} 여행`}</h3>
+                    <span className={`${styles.publicBadge} ${travel.publicTravel ? styles.publicBadgeOn : styles.publicBadgeOff}`}>
+                      {travel.publicTravel ? <><LockOpenIcon /> 공개</> : <><LockIcon /> 비공개</>}
+                    </span>
+                  </div>
+                  <div className={styles.travelCardMeta}>
+                    <span className={styles.metaChip}><CalendarIcon />{travel.startDate} ~ {travel.endDate}</span>
+                    {travel.avgWeather && <span className={styles.metaChip}>{travel.avgWeather}</span>}
+                  </div>
                 </div>
-                <div className={styles.travelCardMeta}>
-                  <span className={styles.metaChip}><CalendarIcon />{travel.startDate} ~ {travel.endDate}</span>
-                  {travel.avgWeather && <span className={styles.metaChip}>{travel.avgWeather}</span>}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+            {filteredTravels.length > TRAVEL_LIMIT && !showAllTravels && (
+              <button className={styles.showMoreBtn} onClick={() => setShowAllTravels(true)}>
+                더보기 ({filteredTravels.length - TRAVEL_LIMIT}개 더)
+              </button>
+            )}
+          </>
         )}
       </div>
 
