@@ -138,9 +138,9 @@ function Community() {
                   <div className={styles.blogMeta}>
                     <span>{item.author ?? item.nickname}</span>
                     <span className={styles.dot}>·</span>
-                    <span>{item.city ?? item.location}</span>
+                    <span>{item.country}</span>
                     <span className={styles.dot}>·</span>
-                    <span>{item.createdAt ?? item.date}</span>
+                    <span>{item.date}</span>
                   </div>
                 </div>
               </div>

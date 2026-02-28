@@ -83,9 +83,9 @@ function BlogDetail() {
                   <div className={styles.blogMeta}>
                     <span className={styles.metaText}>{item.author ?? item.nickname}</span>
                     <span className={styles.dot}>·</span>
-                    <span className={styles.metaText}>{item.city ?? item.location}</span>
+                    <span className={styles.metaText}>{item.country}</span>
                     <span className={styles.dot}>·</span>
-                    <span className={styles.metaText}>{item.createdAt ?? item.date}</span>
+                    <span className={styles.metaText}>{item.date}</span>
                   </div>
                 </div>
               </div>
