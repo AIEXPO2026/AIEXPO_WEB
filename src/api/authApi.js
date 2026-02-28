@@ -29,8 +29,16 @@ export const sendVerificationEmail = async (email) => {
   return unwrapApiResponse(response);
 };
 
-// 인증 메일 확인 (성공 시 void, 실패 시 예외 발생)
+// 인증 메일 확인 (공용)
 export const verifyEmail = async (email, authNum) => {
+  await apiClient.post('/auth/email/verify', {
+    email,
+    authNum,
+  });
+};
+
+// 회원가입 인증 메일 확인
+export const verifySignupEmail = async (email, authNum) => {
   await apiClient.post('/auth/signup/email/verify', {
     email,
     authNum,
