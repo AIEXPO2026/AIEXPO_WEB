@@ -15,7 +15,7 @@
   position: relative;
 }
 
-/* 상단 바 및 정보 */
+/* ── 상단 바 ─────────────────────────────────────────────────────────────── */
 .topBar {
   position: absolute;
   top: 0;
@@ -35,7 +35,7 @@
   border-radius: 18px;
   background: #FFFFFF;
   border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -48,7 +48,7 @@
   background: #FFFFFF;
   padding: 8px 16px;
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   font-size: 13px;
 }
 
@@ -64,6 +64,7 @@
   height: 8px;
   background-color: #FF1493;
   border-radius: 50%;
+  animation: blink 1.2s ease-in-out infinite;
 }
 
 .dotGray {
@@ -73,11 +74,254 @@
   border-radius: 50%;
 }
 
-.placeCount strong {
-  color: #FFD700;
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
 }
 
-/* 하단 버튼 섹션 */
+.placeCount strong { color: #FFD700; }
+
+/* ── 통계 바 ─────────────────────────────────────────────────────────────── */
+.statsBar {
+  position: absolute;
+  top: 64px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.statItem {
+  flex: 1;
+  background: rgba(255,255,255,0.95);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* ── GPS 에러 배너 ────────────────────────────────────────────────────────── */
+.gpsErrorBanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(229,57,53,0.92);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  text-align: center;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ── 로딩 오버레이 ───────────────────────────────────────────────────────── */
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  font-size: 14px;
+  color: #888;
+}
+
+/* ── 방문지 리스트 ───────────────────────────────────────────────────────── */
+.placesList {
+  position: absolute;
+  bottom: 100px;
+  left: 16px;
+  right: 16px;
+  background: rgba(255,255,255,0.97);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.placesHeader {
+  width: 100%;
+  padding: 12px 16px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+}
+
+.placesHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.placesTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #252525;
+}
+
+.placesCount {
+  background: #FFD700;
+  color: #1a1a1a;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 20px;
+}
+
+.placesTimeline {
+  padding: 8px 12px 12px;
+}
+
+.placeRow {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.timelineCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.timelineDot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFD700;
+  color: #1a1a1a;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.timelineLine {
+  width: 2px;
+  flex: 1;
+  min-height: 12px;
+  background: #f0f0f0;
+  margin: 3px 0;
+}
+
+.placeCard {
+  flex: 1;
+  margin-bottom: 6px;
+  animation: slideIn 0.25s ease both;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.placeCardInner {
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.placeCardLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.placeName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.placeReview {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.placeTime {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.placeCardRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.photoBadge {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #FFF8DC;
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+.photoBadgeCount {
+  font-size: 11px;
+  font-weight: 600;
+  color: #B8860B;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.removeButton:hover { color: #E53935; }
+
+/* ── 하단 버튼 ───────────────────────────────────────────────────────────── */
 .bottomControls {
   position: absolute;
   bottom: 0;
@@ -100,7 +344,8 @@
   font-size: 15px;
   color: #1A1A1A;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(255,215,0,0.2);
+  font-family: 'Pretendard', sans-serif;
 }
 
 .finishButton {
@@ -113,14 +358,16 @@
   font-size: 15px;
   color: #1A1A1A;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(255,215,0,0.4);
+  font-family: 'Pretendard', sans-serif;
 }
 
-/* 모달 스타일 */
-.modalOverlay, .confirmOverlay {
+/* ── 모달 공통 ───────────────────────────────────────────────────────────── */
+.modalOverlay,
+.confirmOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,14 +375,15 @@
   backdrop-filter: blur(4px);
 }
 
-.placeModal, .confirmModal {
+.placeModal,
+.confirmModal {
   background: #FFFFFF;
   border-radius: 16px;
   width: 90%;
   max-width: 400px;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
 .modalHeader {
@@ -158,6 +406,7 @@
   padding: 4px;
 }
 
+/* ── 장소 폼 ─────────────────────────────────────────────────────────────── */
 .placeForm {
   padding: 20px;
   display: flex;
@@ -165,21 +414,41 @@
   gap: 16px;
 }
 
-.placeForm input[type="text"],
-.placeForm textarea {
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+.formGroup input[type="text"],
+.formGroup textarea {
   width: 100%;
   padding: 12px;
   border: 1px solid #E0E0E0;
   border-radius: 10px;
   font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
   box-sizing: border-box;
+  resize: none;
+  outline: none;
+  transition: border-color 0.15s;
 }
 
-/* 사진 업로드 영역 */
-.photoUploadSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.formGroup input[type="text"]:focus,
+.formGroup textarea:focus {
+  border-color: #FFD700;
+}
+
+.charCount {
+  font-size: 11px;
+  color: #aaa;
+  text-align: right;
 }
 
 .fileLabel {
@@ -195,18 +464,45 @@
   width: fit-content;
 }
 
+.fileLabel.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .photoPreviewGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
-.photoPreviewGrid img {
-  width: 100%;
+.photoPreview {
+  position: relative;
   aspect-ratio: 1/1;
+}
+
+.photoPreview img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #EEE;
+}
+
+.removePhotoButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 0;
 }
 
 .saveButton {
@@ -218,13 +514,39 @@
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+  font-family: 'Pretendard', sans-serif;
 }
 
-/* 종료 확인 */
+/* ── 종료 확인 모달 ──────────────────────────────────────────────────────── */
 .confirmModal {
   padding: 24px;
   text-align: center;
+}
+
+.confirmModal h3 {
+  font-size: 20px;
+  margin: 0 0 8px;
+  color: #1a1a1a;
+}
+
+.confirmModal p {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 16px;
+}
+
+.confirmStats {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #444;
+  text-align: left;
+  margin-bottom: 4px;
 }
 
 .confirmButtons {
@@ -240,6 +562,8 @@
   border: none;
   font-weight: 600;
   cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
 }
 
 .confirmButtons button:first-child {

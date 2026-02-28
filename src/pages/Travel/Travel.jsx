@@ -18,7 +18,7 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 if (typeof window !== 'undefined' && !window.google && !document.getElementById('gmap-script')) {
   const script = document.createElement('script');
   script.id = 'gmap-script';
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,marker&loading=async`;
   script.async = true;
   script.defer = true;
   document.head.appendChild(script);
@@ -92,8 +92,17 @@ const VisitedPlacesSummary = ({ visitedPlaces, travelInfo, onClose, onSaveTravel
   <div className={styles.summaryOverlay} onClick={onClose}>
     <div className={styles.summaryModal} onClick={(e) => e.stopPropagation()}>
       <div className={styles.summaryHeader}>
-        <h2 className={styles.summaryTitle}>🗺️ 여행 경유지 기록</h2>
-        <button className={styles.closeButton} onClick={onClose} type="button">✕</button>
+        <h2 className={styles.summaryTitle}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight:'6px',verticalAlign:'middle'}}>
+            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+          </svg>
+          여행 경유지 기록
+        </h2>
+        <button className={styles.closeButton} onClick={onClose} type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
       <div className={styles.summaryStats}>
         <div className={styles.summaryStat}>
@@ -120,7 +129,12 @@ const VisitedPlacesSummary = ({ visitedPlaces, travelInfo, onClose, onSaveTravel
                 <div className={styles.summaryPlaceName}>{place.name}</div>
                 {place.review && <div className={styles.summaryPlaceReview}>{place.review}</div>}
                 {place.photoFiles?.length > 0 && (
-                  <div className={styles.summaryPlacePhotos}>📷 사진 {place.photoFiles.length}장</div>
+                  <div className={styles.summaryPlacePhotos}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight:'4px',verticalAlign:'middle'}}>
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    사진 {place.photoFiles.length}장
+                  </div>
                 )}
                 <div className={styles.summaryPlaceTime}>
                   {new Date(place.arrivalTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 도착
@@ -173,7 +187,6 @@ function TravelRecordManagement() {
   const handleCloseModal = () => { setIsModalOpen(false); setEditingTravel(null); };
 
   const handleSave = async (updatedData) => {
-
     try {
       await editTravel(editingTravel.id, {
         people_count: updatedData.companionCount,
@@ -190,7 +203,6 @@ function TravelRecordManagement() {
     }
   };
 
-  // ✅ 핵심 수정: API 성공 여부와 무관하게 즉시 지도 화면으로 전환
   const handleStartTracking = () => {
     if (isTrackingActive) return;
 
@@ -199,8 +211,8 @@ function TravelRecordManagement() {
 
     // 백그라운드에서 API 호출 — 실패해도 추적 화면은 유지
     startTravel({
-      budget_min: 0,
-      budget_max: 0,
+      budget_min: 1000,
+      budget_max: 2147483647,
       start_date: new Date().toISOString().split('T')[0],
       end_date: new Date().toISOString().split('T')[0],
       people_count: 1,
@@ -239,7 +251,6 @@ function TravelRecordManagement() {
         <h1 className={styles.title}>여행기록 관리</h1>
       </div>
 
-      {/* ✅ div → button으로 변경해 클릭 이벤트 확실히 처리 */}
       <button
         type="button"
         className={styles.banner}
@@ -265,7 +276,6 @@ function TravelRecordManagement() {
         {loading ? (
           <div className={styles.statusContainer}><p>로딩 중...</p></div>
         ) : error ? (
-          // ✅ 에러 상태에서도 목록 UI는 유지 (앱 사용 막지 않음)
           <div className={styles.statusContainer}>
             <p className={styles.errorText}>{error}</p>
           </div>
