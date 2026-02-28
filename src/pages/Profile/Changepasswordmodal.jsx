@@ -83,7 +83,7 @@ function ChangePasswordModal({ username, onClose, onSuccess }) {
     try {
       setIsLoading(true);
       setError('');
-      await changePassword(username, oldPassword, newPassword);
+      await changePassword(oldPassword, newPassword);
       onSuccess();
     } catch (err) {
       const msg = err.response?.data?.message;

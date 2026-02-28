@@ -1,13 +1,12 @@
 import apiClient, { unwrapApiResponse } from './axios';
 
 // 회원가입
-export const signup = async (name, username, password, email, authNum) => {
+export const signup = async (name, username, password, email) => {
   const response = await apiClient.post('/auth/signup', {
     name,
     nickname: username,
     password_hash: password,
     email,
-    authNum,
   });
   return unwrapApiResponse(response);
 };
@@ -23,26 +22,12 @@ export const signin = async (username, password) => {
 
 // 인증 메일 전송
 export const sendVerificationEmail = async (email) => {
-  const response = await apiClient.post('/auth/email/send', {
-    email,
-  });
-  return unwrapApiResponse(response);
-};
-
-// 인증 메일 확인 (공용)
-export const verifyEmail = async (email, authNum) => {
-  await apiClient.post('/auth/email/verify', {
-    email,
-    authNum,
-  });
+  await apiClient.post('/auth/email/send', { email });
 };
 
 // 회원가입 인증 메일 확인
 export const verifySignupEmail = async (email, authNum) => {
-  await apiClient.post('/auth/signup/email/verify', {
-    email,
-    authNum,
-  });
+  await apiClient.post('/auth/signup/email/verify', { email, authNum });
 };
 
 // 비밀번호 변경 (로그인 상태)
@@ -56,12 +41,11 @@ export const changePassword = async (oldPassword, newPassword) => {
 
 // 비밀번호 재설정 (이메일 인증 후, 비로그인 상태)
 export const resetPassword = async (email, authNum, newPassword) => {
-  const response = await apiClient.post('/auth/password/reset', {
+  await apiClient.post('/auth/password/reset', {
     email,
     authNum,
     password_hash: newPassword,
   });
-  return unwrapApiResponse(response);
 };
 
 // 로그아웃

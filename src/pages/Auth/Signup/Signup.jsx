@@ -70,7 +70,7 @@ function Signup() {
       setApiError('');
 
       try {
-        await signup(name, id, password, email, authCode);
+        await signup(name, id, password, email);
         navigate('/welcome');
       } catch (err) {
         setApiError('회원가입에 실패했습니다. 다시 시도해주세요.');
