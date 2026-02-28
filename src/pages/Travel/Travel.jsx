@@ -162,7 +162,7 @@ function TravelRecordManagement() {
   const [isTrackingActive, setIsTrackingActive] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [finishedTravelData, setFinishedTravelData] = useState(null);
-  
+
   // 통계 데이터
   const [totalPlaces, setTotalPlaces] = useState(0);
   const [totalPhotos, setTotalPhotos] = useState(0);
@@ -178,34 +178,25 @@ function TravelRecordManagement() {
       const res = await getTravels();
       const travels = res.data ?? [];
       setTravelData(travels);
-      
-      // 총 방문 장소 수 계산
+
+      // 총 방문 장소 / 사진 수 집계
       let placesCount = 0;
       let photosCount = 0;
-      
       for (const travel of travels) {
-        // 각 여행의 방문지 개수 합산
         if (travel.id) {
           try {
             const attractions = await getAttractions(travel.id);
-            const attractionList = attractions.data ?? [];
-            placesCount += attractionList.length;
-            
-            // 사진 개수 합산
-            attractionList.forEach(attraction => {
-              if (attraction.photoURL) {
-                photosCount += 1;
-              }
-            });
+            const list = attractions.data ?? [];
+            placesCount += list.length;
+            list.forEach(a => { if (a.photoURL) photosCount += 1; });
           } catch (err) {
             console.warn(`여행 ${travel.id}의 방문지 조회 실패:`, err.message);
           }
         }
       }
-      
       setTotalPlaces(placesCount);
       setTotalPhotos(photosCount);
-      
+
     } catch (err) {
       console.warn('여행 목록 로드 실패 (서버 미연결):', err.message);
       setError('서버에 연결할 수 없습니다. 여행 시작은 가능합니다.');
@@ -243,7 +234,7 @@ function TravelRecordManagement() {
     // API 호출 전에 먼저 화면 전환
     setIsTrackingActive(true);
 
-    // 백그라운드에서 API 호출
+    // 백그라운드에서 API 호출 (실패해도 지도 화면 유지)
     startTravel({
       budget_min: 1000,
       budget_max: 2147483647,
@@ -251,7 +242,7 @@ function TravelRecordManagement() {
       end_date: new Date().toISOString().split('T')[0],
       people_count: 1,
     }).catch((e) => {
-      console.warn('startTravel 백그라운드 실패 (오프라인 무시):', e.message);
+      console.warn('startTravel 백그라운드 실패 (오프라인 무시):', e?.response?.status ?? e.message);
     });
   };
 
