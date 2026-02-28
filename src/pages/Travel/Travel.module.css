@@ -57,9 +57,7 @@
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
-.bannerContent {
-  flex: 1;
-}
+.bannerContent { flex: 1; }
 
 .bannerTitle {
   font-family: 'Pretendard', sans-serif;
@@ -124,11 +122,7 @@
   justify-content: center;
 }
 
-.statIcon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
+.statIcon img { width: 100%; height: 100%; object-fit: contain; }
 
 .statNumber {
   font-family: 'Pretendard', sans-serif;
@@ -181,9 +175,7 @@
   min-height: 110px;
 }
 
-.travelCard:active {
-  transform: scale(0.98);
-}
+.travelCard:active { transform: scale(0.98); }
 
 .badgeWrapper {
   position: absolute;
@@ -209,11 +201,7 @@
   position: relative;
 }
 
-.travelImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.travelImage img { width: 100%; height: 100%; object-fit: cover; }
 
 .travelInfo {
   flex: 1;
@@ -261,21 +249,9 @@
   transition: all 0.2s ease;
 }
 
-.editButton img {
-  width: 14px;
-  height: 14px;
-  object-fit: contain;
-}
-
-.editButton:hover {
-  background: #F0F0F0;
-  border-color: #D0D0D0;
-}
-
-.editButton:active {
-  background: #E8E8E8;
-  transform: scale(0.95);
-}
+.editButton img { width: 14px; height: 14px; object-fit: contain; }
+.editButton:hover { background: #F0F0F0; border-color: #D0D0D0; }
+.editButton:active { background: #E8E8E8; transform: scale(0.95); }
 
 .travelMeta {
   display: flex;
@@ -302,11 +278,7 @@
   justify-content: center;
 }
 
-.metaIcon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
+.metaIcon img { width: 100%; height: 100%; object-fit: contain; }
 
 .metaItem span:last-child {
   font-family: 'Pretendard', sans-serif;
@@ -348,9 +320,7 @@
   margin-top: auto;
 }
 
-/* ─── Travel.module.css에 아래 스타일을 추가하세요 ─────────────────────────── */
-
-/* 경유지 요약 오버레이 */
+/* ── 경유지 요약 모달 ────────────────────────────────────────────────────── */
 .summaryOverlay {
   position: fixed;
   inset: 0;
@@ -385,9 +355,23 @@
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* 통계 행 */
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── 통계 카드 (노란색) ──────────────────────────────────────────────────── */
 .summaryStats {
   display: flex;
   gap: 12px;
@@ -395,7 +379,8 @@
 
 .summaryStat {
   flex: 1;
-  background: #f5f7ff;
+  background: #FFFBEB;
+  border: 1.5px solid #FFE066;
   border-radius: 12px;
   padding: 12px 8px;
   display: flex;
@@ -407,7 +392,7 @@
 .summaryStatValue {
   font-size: 15px;
   font-weight: 700;
-  color: #3D5AFE;
+  color: #1a1a1a;
 }
 
 .summaryStatLabel {
@@ -415,7 +400,7 @@
   color: #888;
 }
 
-/* 경유지 리스트 */
+/* ── 경유지 리스트 ───────────────────────────────────────────────────────── */
 .summaryEmpty {
   text-align: center;
   color: #aaa;
@@ -439,12 +424,13 @@
   border: 1px solid #efefef;
 }
 
+/* ── 번호 인덱스 (노란색) ────────────────────────────────────────────────── */
 .summaryPlaceIndex {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #3D5AFE;
-  color: #fff;
+  background: #FFD700;
+  color: #1a1a1a;
   font-size: 13px;
   font-weight: 700;
   display: flex;
@@ -461,46 +447,35 @@
   flex: 1;
 }
 
-.summaryPlaceName {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.summaryPlaceReview {
-  font-size: 13px;
-  color: #555;
-  line-height: 1.4;
-}
-
+.summaryPlaceName   { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+.summaryPlaceReview { font-size: 13px; color: #555; line-height: 1.4; }
 .summaryPlacePhotos {
   font-size: 12px;
   color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
+.summaryPlaceTime   { font-size: 11px; color: #bbb; }
 
-.summaryPlaceTime {
-  font-size: 11px;
-  color: #bbb;
-}
-
-/* 하단 버튼 */
-.summaryActions {
-  margin-top: 4px;
-}
+/* ── 저장 버튼 (노란색) ──────────────────────────────────────────────────── */
+.summaryActions { margin-top: 4px; }
 
 .summaryEditButton {
   width: 100%;
   padding: 14px;
-  background: #3D5AFE;
-  color: #fff;
+  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  color: #1a1a1a;
   border: none;
   border-radius: 14px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: box-shadow 0.15s;
+  font-family: 'Pretendard', sans-serif;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.4);
 }
 
 .summaryEditButton:hover {
-  background: #2a47e8;
+  box-shadow: 0 6px 18px rgba(255, 215, 0, 0.55);
 }

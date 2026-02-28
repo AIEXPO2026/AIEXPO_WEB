@@ -3,7 +3,7 @@ import styles from './Travel.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import TravelModal from './TravelModal';
 import TravelTracking from './Tracking';
-import { getTravels, startTravel, finishTravel, editTravel } from '../../api/travelApi';
+import { getTravels, startTravel, finishTravel, editTravel, getAttractions } from '../../api/travelApi';
 import MapIcon from '../../assets/map-icon.svg';
 import PlaceIcon from '../../assets/place-icon.svg';
 import ImgIcon from '../../assets/img-icon.svg';
@@ -14,11 +14,11 @@ import SplaceIcon from '../../assets/smollPlace-icon.svg';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-// 페이지 진입 즉시 Google Maps 로드 시작 (지도 화면 전환 전에 미리 준비)
+// 페이지 진입 즉시 Google Maps 로드 시작
 if (typeof window !== 'undefined' && !window.google && !document.getElementById('gmap-script')) {
   const script = document.createElement('script');
   script.id = 'gmap-script';
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,marker&loading=async`;
   script.async = true;
   script.defer = true;
   document.head.appendChild(script);
@@ -92,8 +92,17 @@ const VisitedPlacesSummary = ({ visitedPlaces, travelInfo, onClose, onSaveTravel
   <div className={styles.summaryOverlay} onClick={onClose}>
     <div className={styles.summaryModal} onClick={(e) => e.stopPropagation()}>
       <div className={styles.summaryHeader}>
-        <h2 className={styles.summaryTitle}>🗺️ 여행 경유지 기록</h2>
-        <button className={styles.closeButton} onClick={onClose} type="button">✕</button>
+        <h2 className={styles.summaryTitle}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight:'6px',verticalAlign:'middle'}}>
+            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+          </svg>
+          여행 경유지 기록
+        </h2>
+        <button className={styles.closeButton} onClick={onClose} type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
       <div className={styles.summaryStats}>
         <div className={styles.summaryStat}>
@@ -120,7 +129,12 @@ const VisitedPlacesSummary = ({ visitedPlaces, travelInfo, onClose, onSaveTravel
                 <div className={styles.summaryPlaceName}>{place.name}</div>
                 {place.review && <div className={styles.summaryPlaceReview}>{place.review}</div>}
                 {place.photoFiles?.length > 0 && (
-                  <div className={styles.summaryPlacePhotos}>📷 사진 {place.photoFiles.length}장</div>
+                  <div className={styles.summaryPlacePhotos}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight:'4px',verticalAlign:'middle'}}>
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    사진 {place.photoFiles.length}장
+                  </div>
                 )}
                 <div className={styles.summaryPlaceTime}>
                   {new Date(place.arrivalTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 도착
@@ -148,6 +162,10 @@ function TravelRecordManagement() {
   const [isTrackingActive, setIsTrackingActive] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [finishedTravelData, setFinishedTravelData] = useState(null);
+  
+  // 통계 데이터
+  const [totalPlaces, setTotalPlaces] = useState(0);
+  const [totalPhotos, setTotalPhotos] = useState(0);
 
   useEffect(() => {
     fetchTravelData();
@@ -158,12 +176,42 @@ function TravelRecordManagement() {
       setLoading(true);
       setError(null);
       const res = await getTravels();
-      setTravelData(res.data ?? []);
+      const travels = res.data ?? [];
+      setTravelData(travels);
+      
+      // 총 방문 장소 수 계산
+      let placesCount = 0;
+      let photosCount = 0;
+      
+      for (const travel of travels) {
+        // 각 여행의 방문지 개수 합산
+        if (travel.id) {
+          try {
+            const attractions = await getAttractions(travel.id);
+            const attractionList = attractions.data ?? [];
+            placesCount += attractionList.length;
+            
+            // 사진 개수 합산
+            attractionList.forEach(attraction => {
+              if (attraction.photoURL) {
+                photosCount += 1;
+              }
+            });
+          } catch (err) {
+            console.warn(`여행 ${travel.id}의 방문지 조회 실패:`, err.message);
+          }
+        }
+      }
+      
+      setTotalPlaces(placesCount);
+      setTotalPhotos(photosCount);
+      
     } catch (err) {
-      // 서버 미연결 시 에러 표시만 하고 앱은 정상 동작
       console.warn('여행 목록 로드 실패 (서버 미연결):', err.message);
       setError('서버에 연결할 수 없습니다. 여행 시작은 가능합니다.');
       setTravelData([]);
+      setTotalPlaces(0);
+      setTotalPhotos(0);
     } finally {
       setLoading(false);
     }
@@ -173,7 +221,6 @@ function TravelRecordManagement() {
   const handleCloseModal = () => { setIsModalOpen(false); setEditingTravel(null); };
 
   const handleSave = async (updatedData) => {
-
     try {
       await editTravel(editingTravel.id, {
         people_count: updatedData.companionCount,
@@ -190,17 +237,16 @@ function TravelRecordManagement() {
     }
   };
 
-  // ✅ 핵심 수정: API 성공 여부와 무관하게 즉시 지도 화면으로 전환
   const handleStartTracking = () => {
     if (isTrackingActive) return;
 
     // API 호출 전에 먼저 화면 전환
     setIsTrackingActive(true);
 
-    // 백그라운드에서 API 호출 — 실패해도 추적 화면은 유지
+    // 백그라운드에서 API 호출
     startTravel({
-      budget_min: 0,
-      budget_max: 0,
+      budget_min: 1000,
+      budget_max: 2147483647,
       start_date: new Date().toISOString().split('T')[0],
       end_date: new Date().toISOString().split('T')[0],
       people_count: 1,
@@ -210,7 +256,6 @@ function TravelRecordManagement() {
   };
 
   const handleFinishTracking = async (data) => {
-    // API 실패해도 요약 화면은 반드시 노출
     try {
       await finishTravel();
     } catch (err) {
@@ -239,7 +284,6 @@ function TravelRecordManagement() {
         <h1 className={styles.title}>여행기록 관리</h1>
       </div>
 
-      {/* ✅ div → button으로 변경해 클릭 이벤트 확실히 처리 */}
       <button
         type="button"
         className={styles.banner}
@@ -256,8 +300,8 @@ function TravelRecordManagement() {
 
       <div className={styles.statsContainer}>
         <StatCardComponent icon={MapIcon} number={travelData.length} label="총 여행" />
-        <StatCardComponent icon={PlaceIcon} number="16" label="방문 장소" />
-        <StatCardComponent icon={ImgIcon} number="28" label="남긴 사진" />
+        <StatCardComponent icon={PlaceIcon} number={totalPlaces} label="방문 장소" />
+        <StatCardComponent icon={ImgIcon} number={totalPhotos} label="남긴 사진" />
       </div>
 
       <div className={styles.section}>
@@ -265,7 +309,6 @@ function TravelRecordManagement() {
         {loading ? (
           <div className={styles.statusContainer}><p>로딩 중...</p></div>
         ) : error ? (
-          // ✅ 에러 상태에서도 목록 UI는 유지 (앱 사용 막지 않음)
           <div className={styles.statusContainer}>
             <p className={styles.errorText}>{error}</p>
           </div>
