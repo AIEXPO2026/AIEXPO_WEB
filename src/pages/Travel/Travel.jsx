@@ -3,7 +3,7 @@ import styles from './Travel.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import TravelModal from './TravelModal';
 import TravelTracking from './Tracking';
-import { getTravels, startTravel, finishTravel, editTravel } from '../../api/travelApi';
+import { getTravels, startTravel, finishTravel, editTravel, getAttractions } from '../../api/travelApi';
 import MapIcon from '../../assets/map-icon.svg';
 import PlaceIcon from '../../assets/place-icon.svg';
 import ImgIcon from '../../assets/img-icon.svg';
@@ -14,7 +14,7 @@ import SplaceIcon from '../../assets/smollPlace-icon.svg';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-// 페이지 진입 즉시 Google Maps 로드 시작 (지도 화면 전환 전에 미리 준비)
+// 페이지 진입 즉시 Google Maps 로드 시작
 if (typeof window !== 'undefined' && !window.google && !document.getElementById('gmap-script')) {
   const script = document.createElement('script');
   script.id = 'gmap-script';
@@ -162,6 +162,10 @@ function TravelRecordManagement() {
   const [isTrackingActive, setIsTrackingActive] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [finishedTravelData, setFinishedTravelData] = useState(null);
+  
+  // 통계 데이터
+  const [totalPlaces, setTotalPlaces] = useState(0);
+  const [totalPhotos, setTotalPhotos] = useState(0);
 
   useEffect(() => {
     fetchTravelData();
@@ -172,12 +176,42 @@ function TravelRecordManagement() {
       setLoading(true);
       setError(null);
       const res = await getTravels();
-      setTravelData(res.data ?? []);
+      const travels = res.data ?? [];
+      setTravelData(travels);
+      
+      // 총 방문 장소 수 계산
+      let placesCount = 0;
+      let photosCount = 0;
+      
+      for (const travel of travels) {
+        // 각 여행의 방문지 개수 합산
+        if (travel.id) {
+          try {
+            const attractions = await getAttractions(travel.id);
+            const attractionList = attractions.data ?? [];
+            placesCount += attractionList.length;
+            
+            // 사진 개수 합산
+            attractionList.forEach(attraction => {
+              if (attraction.photoURL) {
+                photosCount += 1;
+              }
+            });
+          } catch (err) {
+            console.warn(`여행 ${travel.id}의 방문지 조회 실패:`, err.message);
+          }
+        }
+      }
+      
+      setTotalPlaces(placesCount);
+      setTotalPhotos(photosCount);
+      
     } catch (err) {
-      // 서버 미연결 시 에러 표시만 하고 앱은 정상 동작
       console.warn('여행 목록 로드 실패 (서버 미연결):', err.message);
       setError('서버에 연결할 수 없습니다. 여행 시작은 가능합니다.');
       setTravelData([]);
+      setTotalPlaces(0);
+      setTotalPhotos(0);
     } finally {
       setLoading(false);
     }
@@ -209,7 +243,7 @@ function TravelRecordManagement() {
     // API 호출 전에 먼저 화면 전환
     setIsTrackingActive(true);
 
-    // 백그라운드에서 API 호출 — 실패해도 추적 화면은 유지
+    // 백그라운드에서 API 호출
     startTravel({
       budget_min: 1000,
       budget_max: 2147483647,
@@ -222,7 +256,6 @@ function TravelRecordManagement() {
   };
 
   const handleFinishTracking = async (data) => {
-    // API 실패해도 요약 화면은 반드시 노출
     try {
       await finishTravel();
     } catch (err) {
@@ -267,8 +300,8 @@ function TravelRecordManagement() {
 
       <div className={styles.statsContainer}>
         <StatCardComponent icon={MapIcon} number={travelData.length} label="총 여행" />
-        <StatCardComponent icon={PlaceIcon} number="16" label="방문 장소" />
-        <StatCardComponent icon={ImgIcon} number="28" label="남긴 사진" />
+        <StatCardComponent icon={PlaceIcon} number={totalPlaces} label="방문 장소" />
+        <StatCardComponent icon={ImgIcon} number={totalPhotos} label="남긴 사진" />
       </div>
 
       <div className={styles.section}>
