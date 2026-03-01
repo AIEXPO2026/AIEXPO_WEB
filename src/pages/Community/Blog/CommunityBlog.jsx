@@ -66,11 +66,11 @@ function BlogDetail() {
         </div>
 
         {loading ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>불러오는 중...</p>
+          <p className={styles.loadingState}>불러오는 중...</p>
         ) : error ? (
-          <p style={{ color: '#E53935', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>{error}</p>
+          <p className={styles.errorState}>{error}</p>
         ) : blogData.length === 0 ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>블로그 게시글이 없습니다.</p>
+          <p className={styles.emptyState}>블로그 게시글이 없습니다.</p>
         ) : (
           <div className={styles.blogList}>
             {blogData.map((item, idx) => (
@@ -94,7 +94,7 @@ function BlogDetail() {
         )}
       </div>
 
-      <BottomNav activePage="blog" />
+      <BottomNav activePage="community" />
     </div>
   )
 }

@@ -50,6 +50,7 @@ function Login() {
             placeholder="아이디를 입력해주세요."
             value={id}
             onChange={(e) => setId(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleLogin(); }}
           />
         </div>
 
@@ -63,6 +64,7 @@ function Login() {
             placeholder="비밀번호를 입력해주세요."
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleLogin(); }}
           />
           {error && (
             <p className={styles.errorMessage}>

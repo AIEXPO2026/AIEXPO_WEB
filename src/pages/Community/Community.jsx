@@ -79,9 +79,9 @@ function Community() {
         </div>
 
         {loading ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>불러오는 중...</p>
+          <p className={styles.loadingState}>불러오는 중...</p>
         ) : rankingData.length === 0 ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>랭킹 데이터가 없습니다.</p>
+          <p className={styles.emptyState}>랭킹 데이터가 없습니다.</p>
         ) : (
           <div className={styles.rankingList}>
             {rankingData.map((item, idx) => (
@@ -126,9 +126,9 @@ function Community() {
         </div>
 
         {loading ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>불러오는 중...</p>
+          <p className={styles.loadingState}>불러오는 중...</p>
         ) : blogData.length === 0 ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '16px 0' }}>블로그 게시글이 없습니다.</p>
+          <p className={styles.emptyState}>블로그 게시글이 없습니다.</p>
         ) : (
           <div className={styles.blogList}>
             {blogData.map((item, idx) => (
@@ -149,7 +149,7 @@ function Community() {
         )}
       </div>
 
-      <BottomNav activePage="ranking" />
+      <BottomNav activePage="community" />
     </div>
   )
 }

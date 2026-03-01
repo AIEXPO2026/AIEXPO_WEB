@@ -13,7 +13,16 @@
   flex: 1;
   overflow-y: auto;
   padding-top: 32px;
-  padding-bottom: 110px;
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+}
+
+.loadingState,
+.emptyState {
+  text-align: center;
+  padding: 24px;
+  color: #aaa;
+  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* Section Header */

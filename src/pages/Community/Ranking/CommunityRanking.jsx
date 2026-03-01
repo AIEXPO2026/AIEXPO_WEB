@@ -92,11 +92,11 @@ function RankingDetail() {
         </div>
 
         {loading ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>불러오는 중...</p>
+          <p className={styles.loadingState}>불러오는 중...</p>
         ) : error ? (
-          <p style={{ color: '#E53935', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>{error}</p>
+          <p className={styles.errorState}>{error}</p>
         ) : rankingData.length === 0 ? (
-          <p style={{ color: '#aaa', fontSize: '14px', padding: '24px 0', textAlign: 'center' }}>랭킹 데이터가 없습니다.</p>
+          <p className={styles.emptyState}>랭킹 데이터가 없습니다.</p>
         ) : (
           <div className={styles.rankingList}>
             {rankingData.map((item, idx) => (
@@ -128,7 +128,7 @@ function RankingDetail() {
         )}
       </div>
 
-      <BottomNav activePage="ranking" />
+      <BottomNav activePage="community" />
     </div>
   )
 }

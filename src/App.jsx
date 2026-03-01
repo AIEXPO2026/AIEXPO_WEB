@@ -34,7 +34,7 @@ function App() {
         <Route path="/community/blog" element={<PrivateRoute><CommunityBlog /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/profile/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
-        <Route path="/Travel" element={<PrivateRoute><Travel /></PrivateRoute>} />
+        <Route path="/travel" element={<PrivateRoute><Travel /></PrivateRoute>} />
         <Route path="/search-result" element={<PrivateRoute><SearchResult /></PrivateRoute>} />
         <Route path="/search-result/detail" element={<PrivateRoute><SearchResultDetail /></PrivateRoute>} />
         <Route path="/payment" element={<PrivateRoute><PaymentPage /></PrivateRoute>} />

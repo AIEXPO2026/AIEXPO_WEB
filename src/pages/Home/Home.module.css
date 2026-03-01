@@ -313,12 +313,9 @@
 .list {
   display: flex;
   flex-direction: column;
-  padding-bottom: 110px;
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
   overflow-y: auto;
   flex: 1;
-
-  /* 기존에 24px 좌우 패딩을 list에 줬다면 유지해도 되는데,
-     Ranking은 item에 24px을 줬으니 여기선 빼고 row에 주는 방식이 더 동일함 */
   padding-left: 0;
   padding-right: 0;
 }

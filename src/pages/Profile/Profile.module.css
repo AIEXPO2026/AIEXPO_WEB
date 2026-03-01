@@ -4,13 +4,13 @@
   min-height: 100vh;
   margin: 0 auto;
   background-color: #ffffff;
-  padding-bottom: 110px;
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
   font-family: "Pretendard", sans-serif;
 }
 
 /* ── 유저 정보 ──────────────────────────────────────────────────────────── */
 .userSection {
-  padding: 56px 28px 16px;
+  padding: 56px 24px 16px;
 }
 
 .userName {
@@ -36,7 +36,7 @@
 
 /* ── 크레딧 ─────────────────────────────────────────────────────────────── */
 .creditBox {
-  margin: 0 28px 20px;
+  margin: 0 24px 20px;
   padding: 18px 20px;
   background: #ffffff;
   border: 2px solid #d9d9d9;
@@ -88,7 +88,7 @@
 
 /* ── 메뉴 ───────────────────────────────────────────────────────────────── */
 .menuSection {
-  padding: 0 28px;
+  padding: 0 24px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -126,7 +126,7 @@
 
 /* ── 여행기록 섹션 ───────────────────────────────────────────────────────── */
 .travelSection {
-  padding: 20px 28px 0;
+  padding: 20px 24px 0;
 }
 
 .travelHeader {
@@ -306,7 +306,7 @@
 
 /* ── 북마크 섹션 ─────────────────────────────────────────────────────────── */
 .bookmarkSection {
-  padding: 20px 28px 30px;
+  padding: 20px 24px 30px;
 }
 
 .bookmarkTitle {
