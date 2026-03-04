@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./SearchResult.module.css";
 import BottomNav from "../../components/BottomNav/BottomNav";
 import { search, superSearch } from "../../api/searchApi";
+import { getBookmarks, addBookmark, deleteBookmark } from "../../api/profileApi";
 
 // ── 아이콘 ──────────────────────────────────────────
 function BackIcon() {
@@ -51,14 +52,12 @@ function BookmarkIcon() {
 // API 응답 필드 정규화
 function normalizeItem(item) {
   return {
-    id:          item.id,
+    destinationId: item.destinationId ?? item.id,
     title:       item.name       ?? item.title    ?? "",
-    location:    item.location   ?? item.country  ?? "",
+    location:    item.location   ?? item.country  ?? item.city ?? "",
     category:    item.theme      ?? item.category ?? "",
     image:       item.imageUrl   ?? item.image_url ?? item.image ?? null,
     description: item.description ?? "",
-    favorite:    item.liked      ?? item.favorite ?? false,
-    bookmarked:  item.bookmarked ?? item.saved    ?? false,
   };
 }
 
@@ -71,7 +70,8 @@ function SearchResult() {
   const location = useLocation();
   const { query = "", type = "일반" } = location.state ?? {};
 
-  const [results, setResults]   = useState([]);
+  const [results, setResults]     = useState([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState(new Set());
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState(null);
 
@@ -89,6 +89,33 @@ function SearchResult() {
     setShowCost(false);
   };
 
+  const handleToggleBookmark = async (e, destinationId) => {
+    e.stopPropagation();
+    const isBookmarked = bookmarkedIds.has(destinationId);
+
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (isBookmarked) next.delete(destinationId);
+      else next.add(destinationId);
+      return next;
+    });
+
+    try {
+      if (isBookmarked) {
+        await deleteBookmark(destinationId);
+      } else {
+        await addBookmark(destinationId);
+      }
+    } catch {
+      setBookmarkedIds((prev) => {
+        const next = new Set(prev);
+        if (isBookmarked) next.add(destinationId);
+        else next.delete(destinationId);
+        return next;
+      });
+    }
+  };
+
   useEffect(() => {
     if (!query.trim()) return;
 
@@ -96,11 +123,17 @@ function SearchResult() {
       setLoading(true);
       setError(null);
       try {
-        const data = type === "슈퍼"
-          ? await superSearch(query)
-          : await search(query);
+        const [data, bookmarks] = await Promise.all([
+          type === "슈퍼" ? superSearch(query) : search(query),
+          getBookmarks().catch(() => []),
+        ]);
         const list = Array.isArray(data) ? data : [];
         setResults(list.map(normalizeItem));
+
+        const ids = new Set(
+          (Array.isArray(bookmarks) ? bookmarks : []).map((b) => b.destinationId)
+        );
+        setBookmarkedIds(ids);
       } catch {
         setError("검색에 실패했습니다. 다시 시도해주세요.");
       } finally {
@@ -225,9 +258,8 @@ function SearchResult() {
         )}
         {!loading && !error && results.map((item) => (
           <div
-            key={item.id}
+            key={item.destinationId}
             className={styles.row}
-            onClick={() => navigate("/search-result/detail", { state: { item } })}
           >
             <div className={styles.left}>
               <img
@@ -250,10 +282,20 @@ function SearchResult() {
               </div>
             </div>
             <div className={styles.actions}>
-              <button className={styles.iconBtn} type="button" aria-label="favorite" onClick={(e) => e.stopPropagation()}>
-                <StarIcon active={item.favorite} />
+              <button
+                className={styles.iconBtn}
+                type="button"
+                aria-label="bookmark"
+                onClick={(e) => handleToggleBookmark(e, item.destinationId)}
+              >
+                <StarIcon active={bookmarkedIds.has(item.destinationId)} />
               </button>
-              <button className={styles.iconBtn} type="button" aria-label="bookmark" onClick={(e) => e.stopPropagation()}>
+              <button
+                className={styles.iconBtn}
+                type="button"
+                aria-label="travel"
+                onClick={() => navigate("/search-result/detail", { state: { item } })}
+              >
                 <BookmarkIcon />
               </button>
             </div>

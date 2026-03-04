@@ -7,6 +7,12 @@ export const getBookmarks = async () => {
   return unwrapApiResponse(response);
 };
 
+// 북마크 추가 - POST /profile/bookmark
+export const addBookmark = async (destinationId) => {
+  const response = await apiClient.post('/profile/bookmark', { destinationId });
+  return unwrapApiResponse(response);
+};
+
 // 북마크 삭제 - DELETE /profile/bookmark/{destinationId}
 export const deleteBookmark = async (destinationId) => {
   const response = await apiClient.delete(`/profile/bookmark/${destinationId}`);

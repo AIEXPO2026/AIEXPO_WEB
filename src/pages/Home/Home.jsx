@@ -1,10 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 import BottomNav from "../../components/BottomNav/BottomNav";
 
 import singaporeBanner from "../../assets/singapore-banner.png";
 import machuPicchu from "../../assets/machu-picchu.png";
+
+const BANNERS = [singaporeBanner, machuPicchu];
+
+import { getRecommendations } from "../../api/recommendApi";
+import { getBookmarks, addBookmark, deleteBookmark } from "../../api/profileApi";
 
 function DropdownArrow() {
   return (
@@ -36,7 +41,6 @@ function BookmarkIcon() {
   );
 }
 
-
 function SearchIcon() {
   return (
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,19 +55,15 @@ function SearchIcon() {
   );
 }
 
-const destinationData = [
-  { id: 1, title: "마추픽추", location: "페루 쿠스코", category: "역사", image: machuPicchu, favorite: true },
-  { id: 2, title: "에펠탑", location: "프랑스 파리", category: "랜드마크", image: machuPicchu, favorite: true },
-  { id: 3, title: "그랜드 캐년", location: "미국 애리조나", category: "국립공원", image: machuPicchu, favorite: false },
-  { id: 4, title: "산토리니", location: "그리스", category: "휴양", image: machuPicchu, favorite: false },
-  { id: 5, title: "경복궁", location: "대한민국 서울", category: "역사", image: machuPicchu, favorite: false },
-  { id: 6, title: "성산일출봉", location: "대한민국 제주", category: "자연", image: machuPicchu, favorite: false },
-  { id: 7, title: "해운대 해수욕장", location: "대한민국 부산", category: "휴양", image: machuPicchu, favorite: true },
-  { id: 8, title: "불국사", location: "대한민국 경북", category: "역사", image: machuPicchu, favorite: false },
-  { id: 9, title: "전주 한옥마을", location: "대한민국 전북", category: "문화", image: machuPicchu, favorite: false },
-  { id: 10, title: "설악산 국립공원", location: "대한민국 강원", category: "국립공원", image: machuPicchu, favorite: false },
-  { id: 11, title: "슬품이 집", location: "대한민국 서울", category: "랜드마크", image: machuPicchu, favorite: true },
-];
+function normalizeItem(item) {
+  return {
+    destinationId: item.destinationId ?? item.id,
+    title:    item.name     ?? item.title    ?? "",
+    location: item.location ?? item.country  ?? item.city ?? "",
+    category: item.theme    ?? item.category ?? "",
+    image:    item.imageUrl ?? item.image_url ?? item.image ?? null,
+  };
+}
 
 const THEME_OPTIONS = [
   { label: "전체", value: "전체" },
@@ -91,21 +91,91 @@ function Home() {
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
+  const [currentBanner, setCurrentBanner] = useState(0);
+  const touchStartX = useRef(null);
+
+  const [items, setItems] = useState([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState(new Set());
+
+  useEffect(() => {
+    const load = async () => {
+      const [recs, bookmarks] = await Promise.all([
+        getRecommendations().catch(() => []),
+        getBookmarks().catch(() => []),
+      ]);
+      const list = Array.isArray(recs) ? recs : [];
+      setItems(list.map(normalizeItem));
+
+      const ids = new Set(
+        (Array.isArray(bookmarks) ? bookmarks : []).map((b) => b.destinationId)
+      );
+      setBookmarkedIds(ids);
+    };
+    load();
+  }, []);
+
+  const handleToggleBookmark = async (e, destinationId) => {
+    e.stopPropagation();
+    const isBookmarked = bookmarkedIds.has(destinationId);
+
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (isBookmarked) next.delete(destinationId);
+      else next.add(destinationId);
+      return next;
+    });
+
+    try {
+      if (isBookmarked) {
+        await deleteBookmark(destinationId);
+      } else {
+        await addBookmark(destinationId);
+      }
+    } catch {
+      setBookmarkedIds((prev) => {
+        const next = new Set(prev);
+        if (isBookmarked) next.add(destinationId);
+        else next.delete(destinationId);
+        return next;
+      });
+    }
+  };
+
   const filtered = useMemo(() => {
-    let list = destinationData;
+    let list = items;
 
     if (theme !== "전체") {
       list = list.filter((d) => d.category === theme);
     }
 
     if (sort === "인기 순") {
-      list = [...list].sort((a, b) => Number(b.favorite) - Number(a.favorite));
+      list = [...list].sort(
+        (a, b) =>
+          Number(bookmarkedIds.has(b.destinationId)) -
+          Number(bookmarkedIds.has(a.destinationId))
+      );
     } else if (sort === "가나다 순") {
       list = [...list].sort((a, b) => a.title.localeCompare(b.title, "ko"));
     }
 
     return list;
-  }, [theme, sort]);
+  }, [items, theme, sort, bookmarkedIds]);
+
+  const handleBannerTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleBannerTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < 40) return;
+    if (delta < 0) {
+      setCurrentBanner((p) => (p + 1) % BANNERS.length);
+    } else {
+      setCurrentBanner((p) => (p - 1 + BANNERS.length) % BANNERS.length);
+    }
+  };
 
   const handleSearch = () => {
     const q = query.trim();
@@ -123,14 +193,27 @@ function Home() {
         <h1 className={styles.serviceTitle}>서비스명</h1>
       </header>
       <section className={styles.bannerSection}>
-        <div className={styles.bannerCard}>
-          <img className={styles.bannerImage} src={singaporeBanner} alt="배너" />
+        <div
+          className={styles.bannerCard}
+          onTouchStart={handleBannerTouchStart}
+          onTouchEnd={handleBannerTouchEnd}
+        >
+          <div
+            className={styles.bannerTrack}
+            style={{ transform: `translateX(-${currentBanner * 100}%)` }}
+          >
+            {BANNERS.map((src, i) => (
+              <img key={i} className={styles.bannerSlide} src={src} alt={`배너 ${i + 1}`} />
+            ))}
+          </div>
           <div className={styles.bannerOverlay}>
             <div className={styles.bannerIndicator}>
-              <span className={`${styles.dot} ${styles.dotActive}`} />
-              <span className={styles.dot} />
-              <span className={styles.dot} />
-              <span className={styles.dot} />
+              {BANNERS.map((_, i) => (
+                <span
+                  key={i}
+                  className={`${styles.dot} ${i === currentBanner ? styles.dotActive : ""}`}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -253,27 +336,45 @@ function Home() {
       <div className={styles.list}>
         {filtered.map((item) => (
           <div
-            key={item.id}
+            key={item.destinationId}
             className={styles.row}
-            onClick={() => navigate("/search-result/detail", { state: { item } })}
           >
             <div className={styles.left}>
-              <img className={styles.thumb} src={item.image} alt={item.title} />
+              <img
+                className={styles.thumb}
+                src={item.image || ""}
+                alt={item.title}
+                onError={(e) => { e.target.style.visibility = "hidden"; }}
+              />
               <div className={styles.text}>
                 <div className={styles.name}>{item.title}</div>
                 <div className={styles.meta}>
                   <span>{item.location}</span>
-                  <span className={styles.metaDot}>·</span>
-                  <span>{item.category}</span>
+                  {item.category && (
+                    <>
+                      <span className={styles.metaDot}>·</span>
+                      <span>{item.category}</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.iconBtn} type="button" aria-label="favorite" onClick={(e) => e.stopPropagation()}>
-                <StarIcon active={item.favorite} />
+              <button
+                className={styles.iconBtn}
+                type="button"
+                aria-label="bookmark"
+                onClick={(e) => handleToggleBookmark(e, item.destinationId)}
+              >
+                <StarIcon active={bookmarkedIds.has(item.destinationId)} />
               </button>
-              <button className={styles.iconBtn} type="button" aria-label="bookmark" onClick={(e) => e.stopPropagation()}>
+              <button
+                className={styles.iconBtn}
+                type="button"
+                aria-label="travel"
+                onClick={() => navigate("/search-result/detail", { state: { item } })}
+              >
                 <BookmarkIcon />
               </button>
             </div>
