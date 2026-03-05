@@ -38,26 +38,23 @@ function StarIcon({ active }) {
   );
 }
 
-function BookmarkIcon() {
+function MapIcon() {
   return (
-    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M16 24.75L8 21.8625L1.8 24.3375C1.35556 24.5208 0.944444 24.4695 0.566667 24.1835C0.188889 23.8975 0 23.5134 0 23.0312V3.78125C0 3.48333 0.0835555 3.21979 0.250667 2.99063C0.417778 2.76146 0.645333 2.58958 0.933333 2.475L8 0L16 2.8875L22.2 0.4125C22.6444 0.229167 23.0556 0.280958 23.4333 0.567875C23.8111 0.854792 24 1.23842 24 1.71875V20.9688C24 21.2667 23.9169 21.5302 23.7507 21.7594C23.5844 21.9885 23.3564 22.1604 23.0667 22.275L16 24.75ZM14.6667 21.3812V5.29375L9.33333 3.36875V19.4562L14.6667 21.3812Z"
-        fill="#C2C2C2"
-      />
+    <svg width="28" height="28" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 28.875L12 25.9875L5.8 28.4625C5.35556 28.6458 4.94444 28.5945 4.56667 28.3085C4.18889 28.0225 4 27.6384 4 27.1562V7.90625C4 7.60833 4.08356 7.34479 4.25067 7.11563C4.41778 6.88646 4.64533 6.71458 4.93333 6.6L12 4.125L20 7.0125L26.2 4.5375C26.6444 4.35417 27.0556 4.40596 27.4333 4.69288C27.8111 4.97979 28 5.36342 28 5.84375V25.0938C28 25.3917 27.9169 25.6552 27.7507 25.8844C27.5844 26.1135 27.3564 26.2854 27.0667 26.4L20 28.875ZM18.6667 25.5062V9.41875L13.3333 7.49375V23.5812L18.6667 25.5062Z" fill="#B8B8B8"/>
     </svg>
   );
 }
 
 // API 응답 필드 정규화
-function normalizeItem(item) {
+function normalizeItem(item, index = 0) {
   return {
-    destinationId: item.destinationId ?? item.id,
+    destinationId: item.destinationId ?? item.id ?? index,
     title:       item.name       ?? item.title    ?? "",
     location:    item.location   ?? item.country  ?? item.city ?? "",
     category:    item.theme      ?? item.category ?? "",
     image:       item.imageUrl   ?? item.image_url ?? item.image ?? null,
-    description: item.description ?? "",
+    description: item.description ?? item.content ?? "",
   };
 }
 
@@ -70,10 +67,10 @@ function SearchResult() {
   const location = useLocation();
   const { query = "", type = "일반" } = location.state ?? {};
 
-  const [results, setResults]     = useState([]);
+  const [results, setResults]           = useState([]);
   const [bookmarkedIds, setBookmarkedIds] = useState(new Set());
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState(null);
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState(null);
 
   const [atmosphere, setAtmosphere] = useState("분위기");
   const [placeType, setPlaceType]   = useState("유형");
@@ -91,17 +88,15 @@ function SearchResult() {
 
   const handleToggleBookmark = async (e, destinationId) => {
     e.stopPropagation();
-    const isBookmarked = bookmarkedIds.has(destinationId);
-
+    const isCurrentlyBookmarked = bookmarkedIds.has(destinationId);
     setBookmarkedIds((prev) => {
       const next = new Set(prev);
-      if (isBookmarked) next.delete(destinationId);
+      if (isCurrentlyBookmarked) next.delete(destinationId);
       else next.add(destinationId);
       return next;
     });
-
     try {
-      if (isBookmarked) {
+      if (isCurrentlyBookmarked) {
         await deleteBookmark(destinationId);
       } else {
         await addBookmark(destinationId);
@@ -109,7 +104,7 @@ function SearchResult() {
     } catch {
       setBookmarkedIds((prev) => {
         const next = new Set(prev);
-        if (isBookmarked) next.add(destinationId);
+        if (isCurrentlyBookmarked) next.add(destinationId);
         else next.delete(destinationId);
         return next;
       });
@@ -128,12 +123,10 @@ function SearchResult() {
           getBookmarks().catch(() => []),
         ]);
         const list = Array.isArray(data) ? data : [];
-        setResults(list.map(normalizeItem));
-
-        const ids = new Set(
+        setResults(list.map((item, i) => normalizeItem(item, i)));
+        setBookmarkedIds(new Set(
           (Array.isArray(bookmarks) ? bookmarks : []).map((b) => b.destinationId)
-        );
-        setBookmarkedIds(ids);
+        ));
       } catch {
         setError("검색에 실패했습니다. 다시 시도해주세요.");
       } finally {
@@ -257,10 +250,7 @@ function SearchResult() {
           </div>
         )}
         {!loading && !error && results.map((item) => (
-          <div
-            key={item.destinationId}
-            className={styles.row}
-          >
+          <div key={item.destinationId} className={styles.row}>
             <div className={styles.left}>
               <img
                 className={styles.thumb}
@@ -293,10 +283,10 @@ function SearchResult() {
               <button
                 className={styles.iconBtn}
                 type="button"
-                aria-label="travel"
+                aria-label="지도 보기"
                 onClick={() => navigate("/search-result/detail", { state: { item } })}
               >
-                <BookmarkIcon />
+                <MapIcon />
               </button>
             </div>
           </div>

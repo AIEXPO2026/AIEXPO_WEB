@@ -133,7 +133,6 @@
   padding: 12px 24px;
   gap: 12px;
   border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
 }
 
 .row:active {
