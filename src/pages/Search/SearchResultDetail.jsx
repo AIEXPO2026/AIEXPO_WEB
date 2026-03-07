@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./SearchResultDetail.module.css";
 import BottomNav from "../../components/BottomNav/BottomNav";
+import { addBookmark, deleteBookmark } from "../../api/profileApi";
 
 function StarIcon({ active }) {
   return (
@@ -19,7 +20,21 @@ function SearchResultDetail() {
   const location = useLocation();
   const item = location.state?.item;
 
-  const [starred, setStarred] = useState(item?.favorite ?? false);
+  const [starred, setStarred] = useState(item?.bookmarked ?? item?.favorite ?? false);
+
+  const handleBookmark = async () => {
+    const next = !starred;
+    setStarred(next);
+    try {
+      if (next) {
+        await addBookmark(item.id);
+      } else {
+        await deleteBookmark(item.id);
+      }
+    } catch {
+      setStarred(!next);
+    }
+  };
 
   if (!item) {
     navigate(-1);
@@ -27,7 +42,8 @@ function SearchResultDetail() {
   }
 
   const mapQuery = encodeURIComponent(`${item.title} ${item.location}`);
-  const mapSrc   = `https://maps.google.com/maps?q=${mapQuery}&output=embed&z=14`;
+  const apiKey   = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const mapSrc   = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${mapQuery}&zoom=14`;
 
   return (
     <div className={styles.container}>
@@ -77,7 +93,7 @@ function SearchResultDetail() {
             className={styles.starBtn}
             type="button"
             aria-label="favorite"
-            onClick={() => setStarred((p) => !p)}
+            onClick={handleBookmark}
           >
             <StarIcon active={starred} />
           </button>

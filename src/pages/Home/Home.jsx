@@ -1,10 +1,17 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 import BottomNav from "../../components/BottomNav/BottomNav";
+import { getRecommendations } from "../../api/recommendApi";
+import { getBookmarks, addBookmark, deleteBookmark } from "../../api/profileApi";
 
 import singaporeBanner from "../../assets/singapore-banner.png";
 import machuPicchu from "../../assets/machu-picchu.png";
+
+const BANNER_SLIDES = [
+  { image: singaporeBanner, alt: "싱가포르" },
+  { image: machuPicchu, alt: "마추픽추" },
+];
 
 function DropdownArrow() {
   return (
@@ -25,17 +32,13 @@ function StarIcon({ active }) {
   );
 }
 
-function BookmarkIcon() {
+function MapIcon() {
   return (
-    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M16 24.75L8 21.8625L1.8 24.3375C1.35556 24.5208 0.944444 24.4695 0.566667 24.1835C0.188889 23.8975 0 23.5134 0 23.0312V3.78125C0 3.48333 0.0835555 3.21979 0.250667 2.99063C0.417778 2.76146 0.645333 2.58958 0.933333 2.475L8 0L16 2.8875L22.2 0.4125C22.6444 0.229167 23.0556 0.280958 23.4333 0.567875C23.8111 0.854792 24 1.23842 24 1.71875V20.9688C24 21.2667 23.9169 21.5302 23.7507 21.7594C23.5844 21.9885 23.3564 22.1604 23.0667 22.275L16 24.75ZM14.6667 21.3812V5.29375L9.33333 3.36875V19.4562L14.6667 21.3812Z"
-        fill="#C2C2C2"
-      />
+    <svg width="28" height="28" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 28.875L12 25.9875L5.8 28.4625C5.35556 28.6458 4.94444 28.5945 4.56667 28.3085C4.18889 28.0225 4 27.6384 4 27.1562V7.90625C4 7.60833 4.08356 7.34479 4.25067 7.11563C4.41778 6.88646 4.64533 6.71458 4.93333 6.6L12 4.125L20 7.0125L26.2 4.5375C26.6444 4.35417 27.0556 4.40596 27.4333 4.69288C27.8111 4.97979 28 5.36342 28 5.84375V25.0938C28 25.3917 27.9169 25.6552 27.7507 25.8844C27.5844 26.1135 27.3564 26.2854 27.0667 26.4L20 28.875ZM18.6667 25.5062V9.41875L13.3333 7.49375V23.5812L18.6667 25.5062Z" fill="#B8B8B8"/>
     </svg>
   );
 }
-
 
 function SearchIcon() {
   return (
@@ -51,19 +54,15 @@ function SearchIcon() {
   );
 }
 
-const destinationData = [
-  { id: 1, title: "마추픽추", location: "페루 쿠스코", category: "역사", image: machuPicchu, favorite: true },
-  { id: 2, title: "에펠탑", location: "프랑스 파리", category: "랜드마크", image: machuPicchu, favorite: true },
-  { id: 3, title: "그랜드 캐년", location: "미국 애리조나", category: "국립공원", image: machuPicchu, favorite: false },
-  { id: 4, title: "산토리니", location: "그리스", category: "휴양", image: machuPicchu, favorite: false },
-  { id: 5, title: "경복궁", location: "대한민국 서울", category: "역사", image: machuPicchu, favorite: false },
-  { id: 6, title: "성산일출봉", location: "대한민국 제주", category: "자연", image: machuPicchu, favorite: false },
-  { id: 7, title: "해운대 해수욕장", location: "대한민국 부산", category: "휴양", image: machuPicchu, favorite: true },
-  { id: 8, title: "불국사", location: "대한민국 경북", category: "역사", image: machuPicchu, favorite: false },
-  { id: 9, title: "전주 한옥마을", location: "대한민국 전북", category: "문화", image: machuPicchu, favorite: false },
-  { id: 10, title: "설악산 국립공원", location: "대한민국 강원", category: "국립공원", image: machuPicchu, favorite: false },
-  { id: 11, title: "슬품이 집", location: "대한민국 서울", category: "랜드마크", image: machuPicchu, favorite: true },
-];
+function normalizeItem(item) {
+  return {
+    destinationId: item.destinationId ?? item.id,
+    title:    item.name     ?? item.title    ?? "",
+    location: item.location ?? item.country  ?? item.city ?? "",
+    category: item.theme    ?? item.category ?? "",
+    image:    item.imageUrl ?? item.image_url ?? item.image ?? null,
+  };
+}
 
 const THEME_OPTIONS = [
   { label: "전체", value: "전체" },
@@ -91,21 +90,101 @@ function Home() {
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
-  const filtered = useMemo(() => {
-    let list = destinationData;
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const timerRef = useRef(null);
+  const dragStartX = useRef(null);
 
+  const startTimer = () => {
+    timerRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % BANNER_SLIDES.length);
+    }, 3500);
+  };
+
+  useEffect(() => {
+    startTimer();
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  const goToSlide = (index) => {
+    clearInterval(timerRef.current);
+    setCurrentSlide(index);
+    startTimer();
+  };
+
+  const handleDragStart = (e) => {
+    dragStartX.current = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+  };
+
+  const handleDragEnd = (e) => {
+    if (dragStartX.current === null) return;
+    const endX = e.type === "touchend" ? e.changedTouches[0].clientX : e.clientX;
+    const diff = dragStartX.current - endX;
+    dragStartX.current = null;
+    if (Math.abs(diff) < 30) return;
+    const next = diff > 0
+      ? (currentSlide + 1) % BANNER_SLIDES.length
+      : (currentSlide - 1 + BANNER_SLIDES.length) % BANNER_SLIDES.length;
+    goToSlide(next);
+  };
+
+  const [items, setItems] = useState([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState(new Set());
+
+  useEffect(() => {
+    const load = async () => {
+      const [recs, bookmarks] = await Promise.all([
+        getRecommendations().catch(() => []),
+        getBookmarks().catch(() => []),
+      ]);
+      setItems((Array.isArray(recs) ? recs : []).map(normalizeItem));
+      setBookmarkedIds(new Set(
+        (Array.isArray(bookmarks) ? bookmarks : []).map((b) => b.destinationId)
+      ));
+    };
+    load();
+  }, []);
+
+  const handleToggleBookmark = async (e, destinationId) => {
+    e.stopPropagation();
+    const isCurrentlyBookmarked = bookmarkedIds.has(destinationId);
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (isCurrentlyBookmarked) next.delete(destinationId);
+      else next.add(destinationId);
+      return next;
+    });
+    try {
+      if (isCurrentlyBookmarked) {
+        await deleteBookmark(destinationId);
+      } else {
+        await addBookmark(destinationId);
+      }
+    } catch {
+      setBookmarkedIds((prev) => {
+        const next = new Set(prev);
+        if (isCurrentlyBookmarked) next.add(destinationId);
+        else next.delete(destinationId);
+        return next;
+      });
+    }
+  };
+
+  const filtered = useMemo(() => {
+    let list = items;
     if (theme !== "전체") {
       list = list.filter((d) => d.category === theme);
     }
-
     if (sort === "인기 순") {
-      list = [...list].sort((a, b) => Number(b.favorite) - Number(a.favorite));
+      list = [...list].sort(
+        (a, b) =>
+          Number(bookmarkedIds.has(b.destinationId)) -
+          Number(bookmarkedIds.has(a.destinationId))
+      );
     } else if (sort === "가나다 순") {
       list = [...list].sort((a, b) => a.title.localeCompare(b.title, "ko"));
     }
-
     return list;
-  }, [theme, sort]);
+  }, [items, theme, sort, bookmarkedIds]);
 
   const handleSearch = () => {
     const q = query.trim();
@@ -120,17 +199,27 @@ function Home() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.serviceTitle}>서비스명</h1>
+        <h1 className={styles.serviceTitle}>길담</h1>
       </header>
       <section className={styles.bannerSection}>
-        <div className={styles.bannerCard}>
-          <img className={styles.bannerImage} src={singaporeBanner} alt="배너" />
+        <div
+          className={styles.bannerCard}
+          onMouseDown={handleDragStart}
+          onMouseUp={handleDragEnd}
+          onTouchStart={handleDragStart}
+          onTouchEnd={handleDragEnd}
+        >
+          <img className={styles.bannerImage} src={BANNER_SLIDES[currentSlide].image} alt={BANNER_SLIDES[currentSlide].alt} />
           <div className={styles.bannerOverlay}>
             <div className={styles.bannerIndicator}>
-              <span className={`${styles.dot} ${styles.dotActive}`} />
-              <span className={styles.dot} />
-              <span className={styles.dot} />
-              <span className={styles.dot} />
+              {BANNER_SLIDES.map((_, i) => (
+                <span
+                  key={i}
+                  className={`${styles.dot} ${i === currentSlide ? styles.dotActive : ""}`}
+                  onClick={() => goToSlide(i)}
+                  style={{ cursor: "pointer" }}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -153,20 +242,14 @@ function Home() {
                 <button
                   className={styles.dropdownItem}
                   type="button"
-                  onClick={() => {
-                    setType("일반");
-                    setShowTypeDropdown(false);
-                  }}
+                  onClick={() => { setType("일반"); setShowTypeDropdown(false); }}
                 >
                   일반 서치
                 </button>
                 <button
                   className={styles.dropdownItem}
                   type="button"
-                  onClick={() => {
-                    setType("슈퍼");
-                    setShowTypeDropdown(false);
-                  }}
+                  onClick={() => { setType("슈퍼"); setShowTypeDropdown(false); }}
                 >
                   <span>슈퍼 서치</span>
                   <span className={styles.dropdownCredit}>10 크레딧 소요</span>
@@ -196,7 +279,6 @@ function Home() {
         <h2 className={styles.sectionTitle}>여행지 추천</h2>
 
         <div className={styles.pills}>
-          {/* 테마 드롭다운 */}
           <div className={styles.pillWrapper}>
             <button
               className={`${styles.pill} ${theme !== "전체" ? styles.pillActive : ""}`}
@@ -222,7 +304,6 @@ function Home() {
             )}
           </div>
 
-          {/* 정렬 드롭다운 */}
           <div className={styles.pillWrapper}>
             <button
               className={`${styles.pill} ${sort !== "기본 순" ? styles.pillActive : ""}`}
@@ -252,29 +333,44 @@ function Home() {
 
       <div className={styles.list}>
         {filtered.map((item) => (
-          <div
-            key={item.id}
-            className={styles.row}
-            onClick={() => navigate("/search-result/detail", { state: { item } })}
-          >
+          <div key={item.destinationId} className={styles.row}>
             <div className={styles.left}>
-              <img className={styles.thumb} src={item.image} alt={item.title} />
+              <img
+                className={styles.thumb}
+                src={item.image || ""}
+                alt={item.title}
+                onError={(e) => { e.target.style.visibility = "hidden"; }}
+              />
               <div className={styles.text}>
                 <div className={styles.name}>{item.title}</div>
                 <div className={styles.meta}>
                   <span>{item.location}</span>
-                  <span className={styles.metaDot}>·</span>
-                  <span>{item.category}</span>
+                  {item.category && (
+                    <>
+                      <span className={styles.metaDot}>·</span>
+                      <span>{item.category}</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.iconBtn} type="button" aria-label="favorite" onClick={(e) => e.stopPropagation()}>
-                <StarIcon active={item.favorite} />
+              <button
+                className={styles.iconBtn}
+                type="button"
+                aria-label="bookmark"
+                onClick={(e) => handleToggleBookmark(e, item.destinationId)}
+              >
+                <StarIcon active={bookmarkedIds.has(item.destinationId)} />
               </button>
-              <button className={styles.iconBtn} type="button" aria-label="bookmark" onClick={(e) => e.stopPropagation()}>
-                <BookmarkIcon />
+              <button
+                className={styles.iconBtn}
+                type="button"
+                aria-label="지도 보기"
+                onClick={() => navigate("/search-result/detail", { state: { item } })}
+              >
+                <MapIcon />
               </button>
             </div>
           </div>

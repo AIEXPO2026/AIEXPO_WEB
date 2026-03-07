@@ -39,6 +39,26 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: bannerFadeIn 0.5s ease;
+}
+
+@keyframes bannerFadeIn {
+  from { opacity: 0.4; }
+  to   { opacity: 1; }
+}
+
+.bannerTrack {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.35s ease;
+}
+
+.bannerSlide {
+  min-width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .bannerOverlay {
@@ -327,7 +347,6 @@
   align-items: center;
   padding: 10px 24px;
   gap: 12px;
-  cursor: pointer;
 }
 
 .row:active {
