@@ -30,6 +30,11 @@ export const verifySignupEmail = async (email, authNum) => {
   await apiClient.post('/auth/signup/email/verify', { email, authNum });
 };
 
+// 비밀번호 찾기 인증 메일 확인
+export const verifyPasswordEmail = async (email, authNum) => {
+  await apiClient.post('/auth/email/verify', { email, authNum });
+};
+
 // 비밀번호 변경 (로그인 상태)
 export const changePassword = async (oldPassword, newPassword) => {
   const response = await apiClient.put('/auth/password', {

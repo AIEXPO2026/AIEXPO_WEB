@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sendVerificationEmail, verifySignupEmail, resetPassword } from '../../../api/authApi';
+import { sendVerificationEmail, verifyPasswordEmail, resetPassword } from '../../../api/authApi';
 import styles from './FindPassword.module.css';
 
 function FindPassword() {
@@ -33,7 +33,7 @@ function FindPassword() {
       setLoading(true);
       setApiError('');
       try {
-        await verifySignupEmail(email, verificationCode);
+        await verifyPasswordEmail(email, verificationCode);
         setStep(3);
       } catch (err) {
         setApiError('인증번호가 올바르지 않습니다.');
