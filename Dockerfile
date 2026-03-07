@@ -28,8 +28,9 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine
 
-# Runtime variable for backend upstream used by nginx template rendering
+# Runtime variables for upstream services used by nginx template rendering
 ENV BACKEND_UPSTREAM=http://server:8080
+ENV AISERVER_UPSTREAM=http://aiserver:8000
 
 # Copy built files from build stage
 COPY --from=build /app/dist /usr/share/nginx/html

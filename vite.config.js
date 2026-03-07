@@ -49,6 +49,7 @@ export default defineConfig({
       workbox: {
         cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/swagger-ui/, /^\/v3\/api-docs/],
         globPatterns: ['**/*.{js,css,html,png,jpg,svg,woff2}'],
         runtimeCaching: [
           {
