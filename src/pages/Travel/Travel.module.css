@@ -85,6 +85,41 @@
   font-size: 20px;
 }
 
+.courseBanner {
+  position: relative;
+  width: 354px;
+  height: 76px;
+  margin: 10px auto 0;
+  background: linear-gradient(135deg, #FFFEF0 0%, #FFFBE0 100%);
+  border: 1.5px solid #FFE566;
+  box-shadow: 0px 2px 12px rgba(255, 215, 0, 0.12);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.courseBanner:active {
+  transform: translateY(1px);
+  box-shadow: 0px 1px 8px rgba(255, 215, 0, 0.15);
+}
+
+.courseIconWrapper {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+  margin-right: 14px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
 .statsContainer {
   display: flex;
   justify-content: space-between;

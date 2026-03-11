@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Travel.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import TravelModal from './TravelModal';
@@ -154,6 +155,7 @@ const VisitedPlacesSummary = ({ visitedPlaces, travelInfo, onClose, onSaveTravel
 );
 
 function TravelRecordManagement() {
+  const navigate = useNavigate();
   const [travelData, setTravelData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -299,6 +301,19 @@ function TravelRecordManagement() {
         <div className={styles.bannerContent}>
           <h2 className={styles.bannerTitle}>새로운 여행 시작!</h2>
           <p className={styles.bannerSubtitle}>위치 추적을 시작하고 새로운 여행을 기록하세요</p>
+        </div>
+        <div className={styles.arrowIcon}>›</div>
+      </button>
+
+      <button
+        type="button"
+        className={styles.courseBanner}
+        onClick={() => navigate('/travel/course')}
+      >
+        <div className={styles.courseIconWrapper}>✨</div>
+        <div className={styles.bannerContent}>
+          <h2 className={styles.bannerTitle}>AI 여행 코스 만들기</h2>
+          <p className={styles.bannerSubtitle}>위치를 입력하면 AI가 최적의 코스를 추천해요</p>
         </div>
         <div className={styles.arrowIcon}>›</div>
       </button>
