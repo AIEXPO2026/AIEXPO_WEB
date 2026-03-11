@@ -40,17 +40,20 @@ function AICourse() {
   };
 
   const handleSave = async () => {
-    // member_id는 백엔드 /auth/me 엔드포인트 구현 후 연결 예정
-    const memberId = localStorage.getItem('memberId');
-    if (!memberId) {
-      setSaveStatus('no_member_id');
+    const token = localStorage.getItem('accessToken');
+    let nickname = null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      nickname = payload.sub;
+    } catch {
+      setSaveStatus('error');
       return;
     }
 
     setSaving(true);
     setSaveStatus(null);
     try {
-      await saveCourse(Number(memberId), generatedLocation);
+      await saveCourse(nickname, generatedLocation);
       setSaveStatus('success');
     } catch (err) {
       setSaveStatus('error');

@@ -1,14 +1,16 @@
 import apiClient, { unwrapApiResponse } from './axios';
 
+const AI_TIMEOUT = 60000; // 60초 — OpenAI 호출 포함 AI 서버 응답 대기
+
 // 여행지 추천
 export const getRecommendations = async () => {
-  const response = await apiClient.get('/recommend');
+  const response = await apiClient.get('/recommend', { timeout: AI_TIMEOUT });
   return unwrapApiResponse(response);
 };
 
 // 여행지 랭킹
 export const getRanking = async () => {
-  const response = await apiClient.get('/recommend/ranking');
+  const response = await apiClient.get('/recommend/ranking', { timeout: AI_TIMEOUT });
   return unwrapApiResponse(response);
 };
 

@@ -27,34 +27,31 @@
   width: 354px;
   height: 76px;
   margin: 20px auto 0;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F8F8F8 100%);
-  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+  background: #F6F6F6;
   border-radius: 12px;
   display: flex;
   align-items: center;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: opacity 0.15s;
 }
 
 .banner:active {
-  transform: translateY(1px);
-  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.06);
+  opacity: 0.8;
 }
 
 .playIconWrapper {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  background: #FFD700;
   border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: white;
+  color: #1A1A1A;
   font-size: 18px;
   margin-right: 14px;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
 .bannerContent { flex: 1; }
@@ -90,26 +87,24 @@
   width: 354px;
   height: 76px;
   margin: 10px auto 0;
-  background: linear-gradient(135deg, #FFFEF0 0%, #FFFBE0 100%);
+  background: #FFF8D6;
   border: 1.5px solid #FFE566;
-  box-shadow: 0px 2px 12px rgba(255, 215, 0, 0.12);
   border-radius: 12px;
   display: flex;
   align-items: center;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: opacity 0.15s;
 }
 
 .courseBanner:active {
-  transform: translateY(1px);
-  box-shadow: 0px 1px 8px rgba(255, 215, 0, 0.15);
+  opacity: 0.8;
 }
 
 .courseIconWrapper {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #FFE53B 0%, #FFD700 100%);
+  background: #FFD700;
   border-radius: 24px;
   display: flex;
   align-items: center;
@@ -117,7 +112,6 @@
   flex-shrink: 0;
   font-size: 20px;
   margin-right: 14px;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
 .statsContainer {
