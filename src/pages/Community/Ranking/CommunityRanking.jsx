@@ -57,7 +57,7 @@ function RankingDetail() {
     const fetchRanking = async () => {
       try {
         const data = await getRanking()
-        setRankingData(Array.isArray(data) ? data : [])
+        setRankingData(data?.content ?? [])
       } catch (err) {
         console.error('랭킹 데이터 로드 실패:', err)
         setError('랭킹 데이터를 불러오지 못했습니다.')
