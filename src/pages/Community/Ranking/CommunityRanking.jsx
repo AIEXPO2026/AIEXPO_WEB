@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './CommunityRanking.module.css'
 import BottomNav from '../../../components/BottomNav/BottomNav'
 import { getRanking } from '../../../api/recommendApi'
+import { addBookmark, deleteBookmark } from '../../../api/profileApi'
 
 function BackIcon() {
   return (
@@ -52,6 +53,7 @@ function RankingDetail() {
   const [rankingData, setRankingData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [bookmarkedIds, setBookmarkedIds] = useState(new Set())
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -67,6 +69,41 @@ function RankingDetail() {
     }
     fetchRanking()
   }, [])
+
+  const handleBookmark = async (e, item) => {
+    e.stopPropagation()
+    const id = item.id
+    const next = !bookmarkedIds.has(id)
+    setBookmarkedIds(prev => {
+      const s = new Set(prev)
+      next ? s.add(id) : s.delete(id)
+      return s
+    })
+    try {
+      next ? await addBookmark(id) : await deleteBookmark(id)
+    } catch {
+      setBookmarkedIds(prev => {
+        const s = new Set(prev)
+        next ? s.delete(id) : s.add(id)
+        return s
+      })
+    }
+  }
+
+  const handleMapView = (e, item) => {
+    e.stopPropagation()
+    navigate('/search-result/detail', {
+      state: {
+        item: {
+          id: item.id,
+          title: item.name,
+          location: item.resorts,
+          category: item.countryTheme,
+          image: item.imageUrl,
+        }
+      }
+    })
+  }
 
   return (
     <div className={styles.container}>
@@ -109,16 +146,16 @@ function RankingDetail() {
                   <div className={styles.rankingText}>
                     <span className={styles.rankingTitle}>{item.name ?? item.title}</span>
                     <div className={styles.rankingMeta}>
-                      <span>{item.city ?? item.location}</span>
+                      <span>{item.resorts ?? item.city ?? item.location}</span>
                       {item.category && <><span className={styles.dot}>·</span><span>{item.category}</span></>}
                     </div>
                   </div>
                 </div>
                 <div className={styles.rankingActions}>
-                  <button className={styles.iconBtn} type="button" aria-label="favorite">
-                    <StarIcon active={true} />
+                  <button className={styles.iconBtn} type="button" aria-label="favorite" onClick={(e) => handleBookmark(e, item)}>
+                    <StarIcon active={bookmarkedIds.has(item.id)} />
                   </button>
-                  <button className={styles.iconBtn} type="button" aria-label="bookmark">
+                  <button className={styles.iconBtn} type="button" aria-label="지도보기" onClick={(e) => handleMapView(e, item)}>
                     <BookmarkIcon />
                   </button>
                 </div>

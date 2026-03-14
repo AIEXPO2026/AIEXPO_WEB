@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Community.module.css'
 import BottomNav from '../../components/BottomNav/BottomNav'
 import { getRanking, getBlogList } from '../../api/recommendApi'
+import { addBookmark, deleteBookmark } from '../../api/profileApi'
 
 function StarIcon({ active = true }) {
   return (
@@ -45,16 +46,17 @@ function Community() {
   const [rankingData, setRankingData] = useState([])
   const [blogData, setBlogData] = useState([])
   const [loading, setLoading] = useState(true)
+  const [bookmarkedIds, setBookmarkedIds] = useState(new Set())
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [ranking, blogs] = await Promise.all([
-          getRanking().catch(() => []),
-          getBlogList().catch(() => []),
+          getRanking().catch(() => null),
+          getBlogList().catch(() => null),
         ])
-        setRankingData(Array.isArray(ranking) ? ranking.slice(0, 4) : [])
-        setBlogData(Array.isArray(blogs) ? blogs.slice(0, 8) : [])
+        setRankingData((ranking?.content ?? []).slice(0, 4))
+        setBlogData((Array.isArray(blogs) ? blogs : blogs?.content ?? []).slice(0, 8))
       } catch (err) {
         console.error('커뮤니티 데이터 로드 실패:', err)
       } finally {
@@ -63,6 +65,41 @@ function Community() {
     }
     fetchData()
   }, [])
+
+  const handleBookmark = async (e, item) => {
+    e.stopPropagation()
+    const id = item.id
+    const next = !bookmarkedIds.has(id)
+    setBookmarkedIds(prev => {
+      const s = new Set(prev)
+      next ? s.add(id) : s.delete(id)
+      return s
+    })
+    try {
+      next ? await addBookmark(id) : await deleteBookmark(id)
+    } catch {
+      setBookmarkedIds(prev => {
+        const s = new Set(prev)
+        next ? s.delete(id) : s.add(id)
+        return s
+      })
+    }
+  }
+
+  const handleMapView = (e, item) => {
+    e.stopPropagation()
+    navigate('/search-result/detail', {
+      state: {
+        item: {
+          id: item.id,
+          title: item.name,
+          location: item.resorts,
+          category: item.countryTheme,
+          image: item.imageUrl,
+        }
+      }
+    })
+  }
 
   return (
     <div className={styles.container}>
@@ -100,10 +137,10 @@ function Community() {
                   </div>
                 </div>
                 <div className={styles.rankingActions}>
-                  <button className={styles.iconBtn} type="button" aria-label="favorite">
-                    <StarIcon active={true} />
+                  <button className={styles.iconBtn} type="button" aria-label="favorite" onClick={(e) => handleBookmark(e, item)}>
+                    <StarIcon active={bookmarkedIds.has(item.id)} />
                   </button>
-                  <button className={styles.iconBtn} type="button" aria-label="bookmark">
+                  <button className={styles.iconBtn} type="button" aria-label="지도보기" onClick={(e) => handleMapView(e, item)}>
                     <BookmarkIcon />
                   </button>
                 </div>
