@@ -508,3 +508,11 @@
 .summaryEditButton:hover {
   box-shadow: 0 6px 18px rgba(255, 215, 0, 0.55);
 }
+
+.emptyContainer {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 0 8px;
+  color: var(--color-text-primary); /* SVG currentColor가 이 값을 사용 */
+}
