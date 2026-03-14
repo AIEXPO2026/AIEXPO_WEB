@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './CommunityRanking.module.css'
 import BottomNav from '../../../components/BottomNav/BottomNav'
 import { getRanking } from '../../../api/recommendApi'
-import { addBookmark, deleteBookmark } from '../../../api/profileApi'
+import { addCountryBookmark, deleteCountryBookmark } from '../../../api/profileApi'
 
 function BackIcon() {
   return (
@@ -80,7 +80,7 @@ function RankingDetail() {
       return s
     })
     try {
-      next ? await addBookmark(id) : await deleteBookmark(id)
+      next ? await addCountryBookmark(id) : await deleteCountryBookmark(id)
     } catch {
       setBookmarkedIds(prev => {
         const s = new Set(prev)
