@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signin } from '../../../api/authApi';
+import PasswordInput from '../../../components/common/PasswordInput';
 import styles from './Login.module.css';
 
 function Login() {
@@ -58,8 +59,7 @@ function Login() {
           <label className={`${styles.label} ${error ? styles.labelError : ''}`}>
             비밀번호
           </label>
-          <input
-            type="password"
+          <PasswordInput
             className={`${styles.input} ${error ? styles.inputError : ''}`}
             placeholder="비밀번호를 입력해주세요."
             value={password}

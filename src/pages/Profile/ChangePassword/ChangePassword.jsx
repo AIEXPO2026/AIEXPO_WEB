@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { changePassword } from '../../../api/authApi';
+import PasswordInput from '../../../components/common/PasswordInput';
 import styles from './ChangePassword.module.css';
 
 function BackIcon() {
@@ -100,8 +101,7 @@ function ChangePassword() {
       <div className={styles.form}>
         <div className={styles.inputGroup}>
           <label className={styles.label}>현재 비밀번호</label>
-          <input
-            type="password"
+          <PasswordInput
             className={styles.input}
             placeholder="현재 비밀번호를 입력해주세요."
             value={oldPassword}
@@ -111,8 +111,7 @@ function ChangePassword() {
 
         <div className={styles.inputGroup}>
           <label className={styles.label}>새 비밀번호</label>
-          <input
-            type="password"
+          <PasswordInput
             className={styles.input}
             placeholder="영문 대소문자, 숫자, 특수문자 포함 8자 이상"
             value={newPassword}
@@ -124,8 +123,7 @@ function ChangePassword() {
           <label className={`${styles.label} ${confirmError ? styles.labelError : ''}`}>
             새 비밀번호 재확인
           </label>
-          <input
-            type="password"
+          <PasswordInput
             className={`${styles.input} ${confirmError ? styles.inputError : ''}`}
             placeholder="새 비밀번호를 다시 입력해주세요."
             value={confirmPassword}

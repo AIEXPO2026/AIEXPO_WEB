@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup, sendVerificationEmail, verifySignupEmail } from '../../../api/authApi';
+import PasswordInput from '../../../components/common/PasswordInput';
 import styles from './Signup.module.css';
 
 function Signup() {
@@ -201,8 +202,7 @@ function Signup() {
               <label className={`${styles.label} ${passwordError ? styles.labelError : ''}`}>
                 비밀번호
               </label>
-              <input
-                type="password"
+              <PasswordInput
                 className={`${styles.input} ${passwordError ? styles.inputError : ''}`}
                 placeholder="비밀번호를 입력해주세요."
                 value={password}
@@ -218,8 +218,7 @@ function Signup() {
               <label className={`${styles.label} ${confirmPasswordError ? styles.labelError : ''}`}>
                 비밀번호 재확인
               </label>
-              <input
-                type="password"
+              <PasswordInput
                 className={`${styles.input} ${confirmPasswordError ? styles.inputError : ''}`}
                 placeholder="비밀번호를 다시 입력해주세요."
                 value={confirmPassword}
