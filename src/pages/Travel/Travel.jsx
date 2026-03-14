@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styles from './Travel.module.css';
 import BottomNav from '../../components/BottomNav/BottomNav';
 import TravelModal from './TravelModal';
@@ -19,7 +18,7 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 if (typeof window !== 'undefined' && !window.google && !document.getElementById('gmap-script')) {
   const script = document.createElement('script');
   script.id = 'gmap-script';
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,marker&loading=async`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=marker&loading=async`;
   script.async = true;
   script.defer = true;
   document.head.appendChild(script);
@@ -155,7 +154,6 @@ const VisitedPlacesSummary = ({ visitedPlaces, travelInfo, onClose, onSaveTravel
 );
 
 function TravelRecordManagement() {
-  const navigate = useNavigate();
   const [travelData, setTravelData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -222,7 +220,7 @@ function TravelRecordManagement() {
 
       await editTravel(editingTravel.id, {
         people_count: Number(updatedData.companionCount ?? updatedData.peopleCount ?? 1),
-        mood: Number(updatedData.mood ?? 1),
+        mood: Math.min(Math.max(Number(updatedData.mood ?? 1), 0), 4), // 0~4 강제
         avg_weather: weatherStr,
         public_travel: Boolean(updatedData.isPublic ?? updatedData.publicTravel ?? false),
       });
@@ -263,21 +261,42 @@ function TravelRecordManagement() {
   };
 
   const handleFinishTracking = async (data) => {
+    let travelId = null;
     try {
-      await finishTravel();
+      const res = await finishTravel();
+      // 서버 응답에서 실제 여행 id 추출
+      travelId = res?.data?.id ?? res?.id ?? null;
+      console.log('[finishTravel] travelId:', travelId, 'res:', res);
     } catch (err) {
-      console.warn('finishTravel 실패 (오프라인 무시):', err.message);
+      console.warn('finishTravel 실패:', err.message, err?.response?.data);
     } finally {
       setIsTrackingActive(false);
-      setFinishedTravelData(data);
+      setFinishedTravelData({ ...data, travelId }); // id 포함해서 저장
       setShowSummary(true);
     }
   };
 
-  const handleSummaryProceed = () => {
+  const handleSummaryProceed = async () => {
     setShowSummary(false);
-    setEditingTravel({ id: Date.now(), ...finishedTravelData });
-    setIsModalOpen(true);
+    try {
+      // finishTravel 응답에 id가 없으므로 목록 새로고침 후 최신 여행 사용
+      const res = await getTravels();
+      const travels = res.data ?? [];
+      // travelStatus가 TRAVEL_FINISHED인 가장 최근 여행
+      const latest = [...travels].reverse().find(t => t.travelStatus === 'TRAVEL_FINISHED') ?? travels[travels.length - 1];
+      if (latest) {
+        setTravelData(travels);
+        setEditingTravel({ ...latest, ...finishedTravelData, id: latest.id });
+        setIsModalOpen(true);
+      } else {
+        alert('여행 정보를 불러오지 못했습니다. 목록에서 직접 수정해주세요.');
+        fetchTravelData();
+      }
+    } catch (err) {
+      console.warn('handleSummaryProceed 실패:', err.message);
+      alert('여행 정보를 불러오지 못했습니다. 목록에서 직접 수정해주세요.');
+      fetchTravelData();
+    }
   };
 
   const handleSummaryClose = () => {
@@ -301,19 +320,6 @@ function TravelRecordManagement() {
         <div className={styles.bannerContent}>
           <h2 className={styles.bannerTitle}>새로운 여행 시작!</h2>
           <p className={styles.bannerSubtitle}>위치 추적을 시작하고 새로운 여행을 기록하세요</p>
-        </div>
-        <div className={styles.arrowIcon}>›</div>
-      </button>
-
-      <button
-        type="button"
-        className={styles.courseBanner}
-        onClick={() => navigate('/travel/course')}
-      >
-        <div className={styles.courseIconWrapper}>✨</div>
-        <div className={styles.bannerContent}>
-          <h2 className={styles.bannerTitle}>AI 여행 코스 만들기</h2>
-          <p className={styles.bannerSubtitle}>위치를 입력하면 AI가 최적의 코스를 추천해요</p>
         </div>
         <div className={styles.arrowIcon}>›</div>
       </button>
