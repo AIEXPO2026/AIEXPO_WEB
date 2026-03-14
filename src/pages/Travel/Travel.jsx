@@ -24,6 +24,87 @@ if (typeof window !== 'undefined' && !window.google && !document.getElementById(
   document.head.appendChild(script);
 }
 
+// ─── TravelEmptyState ─────────────────────────────────────────────────────────
+const TravelEmptyState = () => (
+  <div className={styles.emptyContainer}>
+    <svg width="100%" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg">
+      {/* 지도 배경 */}
+      <rect x="180" y="60" width="320" height="210" rx="16" fill="#FAC775" fillOpacity="0.18" stroke="#EF9F27" strokeWidth="0.5" strokeOpacity="0.18"/>
+
+      {/* 지도 격자선 */}
+      {[90,120,150,180,210].map(y => (
+        <line key={`h${y}`} x1="200" y1={y} x2="480" y2={y} stroke="currentColor" strokeWidth="0.5" opacity="0.12"/>
+      ))}
+      {[240,290,340,390,440].map(x => (
+        <line key={`v${x}`} x1={x} y1="70" x2={x} y2="260" stroke="currentColor" strokeWidth="0.5" opacity="0.12"/>
+      ))}
+
+      {/* 점선 여행 경로 */}
+      <path d="M250 220 Q280 170 310 190 Q340 210 370 150 Q395 110 430 130"
+        fill="none" stroke="#EF9F27" strokeWidth="2" strokeDasharray="6 5" opacity="0.55"/>
+
+      {/* 경로 포인트 */}
+      <circle cx="250" cy="220" r="5" fill="#EF9F27" opacity="0.5"/>
+      <circle cx="310" cy="190" r="5" fill="#EF9F27" opacity="0.5"/>
+      <circle cx="370" cy="150" r="5" fill="#EF9F27" opacity="0.5"/>
+
+      {/* 목적지 핀 */}
+      <ellipse cx="430" cy="148" rx="10" ry="4" fill="rgba(0,0,0,0.1)" opacity="0.4"/>
+      <path d="M430 90 C418 90 410 99 410 110 C410 128 430 145 430 145 C430 145 450 128 450 110 C450 99 442 90 430 90Z"
+        fill="#EF9F27" stroke="#BA7517" strokeWidth="0.8"/>
+      <circle cx="430" cy="111" r="6" fill="white" opacity="0.85"/>
+
+      {/* 돋보기 */}
+      <circle cx="476" cy="238" r="14" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.35"/>
+      <line x1="486" y1="248" x2="496" y2="258" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" opacity="0.35"/>
+
+      {/* 나무 */}
+      <g opacity="0.25">
+        <polygon points="215,195 225,170 235,195" fill="currentColor"/>
+        <rect x="223" y="195" width="4" height="8" fill="currentColor"/>
+        <polygon points="205,210 213,190 221,210" fill="currentColor"/>
+        <rect x="211" y="210" width="3" height="6" fill="currentColor"/>
+      </g>
+
+      {/* 구름 왼쪽 */}
+      <g opacity="0.12">
+        <ellipse cx="155" cy="155" rx="22" ry="12" fill="currentColor"/>
+        <ellipse cx="140" cy="158" rx="14" ry="10" fill="currentColor"/>
+        <ellipse cx="170" cy="158" rx="14" ry="10" fill="currentColor"/>
+      </g>
+
+      {/* 구름 오른쪽 */}
+      <g opacity="0.1">
+        <ellipse cx="530" cy="200" rx="18" ry="10" fill="currentColor"/>
+        <ellipse cx="517" cy="202" rx="11" ry="8" fill="currentColor"/>
+        <ellipse cx="543" cy="202" rx="11" ry="8" fill="currentColor"/>
+      </g>
+
+      {/* 별 장식 왼쪽 */}
+      <g opacity="0.2">
+        <line x1="155" y1="80" x2="175" y2="100" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="148" y1="95" x2="162" y2="95" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+        <line x1="170" y1="75" x2="170" y2="88" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+      </g>
+
+      {/* 별 장식 오른쪽 */}
+      <g opacity="0.15">
+        <line x1="500" y1="72" x2="516" y2="88" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="495" y1="84" x2="506" y2="84" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+        <line x1="514" y1="68" x2="514" y2="78" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+      </g>
+
+      {/* 텍스트 */}
+      <text x="340" y="310" textAnchor="middle" fontSize="17" fontWeight="500" fill="currentColor" opacity="0.9">
+        아직 여행 기록이 없어요
+      </text>
+      <text x="340" y="336" textAnchor="middle" fontSize="13" fill="currentColor" opacity="0.5">
+        새로운 여행을 시작하고 소중한 순간을 기록해보세요
+      </text>
+    </svg>
+  </div>
+);
+
 // ─── 유틸: 경과 시간(ms) → "N시간 M분" 문자열 ────────────────────────────────
 const formatDuration = (ms) => {
   const totalMinutes = Math.floor(ms / 1000 / 60);
@@ -255,6 +336,9 @@ function TravelRecordManagement() {
   const [showSummary, setShowSummary] = useState(false);
   const [finishedTravelData, setFinishedTravelData] = useState(null);
   const [isSavingAttractions, setIsSavingAttractions] = useState(false);
+  // startTravel 응답에서 받은 여행 id를 저장
+  // → finishTravel 응답에 id가 없으므로 여기서 미리 확보해둠
+  const [currentTravelId, setCurrentTravelId] = useState(null);
 
   const [totalPlaces, setTotalPlaces] = useState(0);
   const [totalPhotos, setTotalPhotos] = useState(0);
@@ -358,22 +442,32 @@ function TravelRecordManagement() {
     // 혹시 진행 중인 여행이 있으면 먼저 종료
     try {
       await finishTravel();
-      console.log('기존 여행 종료 완료');
     } catch (_) {
       // 진행 중인 여행 없으면 무시
     }
 
     setIsTrackingActive(true);
+    setCurrentTravelId(null); // 이전 여행 id 초기화
 
+    // ★ 핵심: startTravel 응답에서 여행 id를 미리 저장
+    // /travel/finish 응답에 id가 없기 때문에,
+    // 여행 시작 시점에 id를 확보해두지 않으면 종료 후 엉뚱한 여행이 수정될 수 있음
     startTravel({
       budget_min: 1000,
       budget_max: 2147483647,
       start_date: new Date().toISOString().split('T')[0],
       end_date: new Date().toISOString().split('T')[0],
       people_count: 1,
+    }).then((res) => {
+      const id = res?.data?.id ?? res?.id ?? null;
+      if (id) {
+        setCurrentTravelId(id);
+      } else {
+        console.warn('[startTravel] 응답에 id 없음 — 종료 후 목록 재조회 fallback 사용');
+      }
     }).catch((e) => {
       console.warn(
-        'startTravel 백그라운드 실패:',
+        'startTravel 실패:',
         e?.response?.data?.error?.code ?? e.message,
       );
     });
@@ -381,17 +475,15 @@ function TravelRecordManagement() {
 
   // ── 여행 추적 종료 ───────────────────────────────────────────────────────
   const handleFinishTracking = async (data) => {
-    let finishedTravelId = null;
     try {
-      const res = await finishTravel();
-      // /travel/finish 응답에 id가 없으므로 목록에서 조회
-      // res.data.id가 있다면 사용, 없으면 null (handleSummaryProceed에서 재조회)
-      finishedTravelId = res?.data?.id ?? res?.id ?? null;
+      await finishTravel();
     } catch (err) {
       console.warn('finishTravel 실패:', err.message, err?.response?.data);
     } finally {
       setIsTrackingActive(false);
-      setFinishedTravelData({ ...data, travelId: finishedTravelId });
+      // currentTravelId: startTravel 응답에서 확보한 id (가장 신뢰할 수 있는 값)
+      // 없으면 handleSummaryProceed에서 목록 재조회 fallback 사용
+      setFinishedTravelData({ ...data, travelId: currentTravelId });
       setShowSummary(true);
     }
   };
@@ -567,10 +659,7 @@ function TravelRecordManagement() {
             <p className={styles.errorText}>{error}</p>
           </div>
         ) : travelData.length === 0 ? (
-          <div className={styles.emptyContainer}>
-            <p>아직 여행 기록이 없습니다.</p>
-            <p>새로운 여행을 시작해보세요!</p>
-          </div>
+          <TravelEmptyState />
         ) : (
           <div className={styles.travelList}>
             {travelData.map((travel) => (
