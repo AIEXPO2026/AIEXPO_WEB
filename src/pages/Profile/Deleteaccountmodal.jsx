@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PasswordInput from '../../components/common/PasswordInput';
 import styles from './Profilemodal.module.css';
 
 function IconClose() {
@@ -101,9 +102,8 @@ function DeleteAccountModal({ username, onClose, onConfirm }) {
 
             <div className={styles.fieldGroup}>
               <label className={styles.label}>비밀번호 확인</label>
-              <input
+              <PasswordInput
                 className={styles.input}
-                type="password"
                 placeholder="비밀번호를 입력하세요"
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setError(''); }}

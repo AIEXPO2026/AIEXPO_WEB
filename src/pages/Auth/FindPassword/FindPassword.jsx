@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sendVerificationEmail, verifyPasswordEmail, resetPassword } from '../../../api/authApi';
+import PasswordInput from '../../../components/common/PasswordInput';
 import styles from './FindPassword.module.css';
 
 function FindPassword() {
@@ -133,8 +134,7 @@ function FindPassword() {
           <>
             <div className={styles.inputGroup}>
               <label className={styles.label}>새 비밀번호</label>
-              <input
-                type="password"
+              <PasswordInput
                 className={styles.input}
                 placeholder="새 비밀번호를 입력해주세요."
                 value={newPassword}
@@ -145,8 +145,7 @@ function FindPassword() {
               <label className={`${styles.label} ${passwordError ? styles.labelError : ''}`}>
                 비밀번호 재확인
               </label>
-              <input
-                type="password"
+              <PasswordInput
                 className={`${styles.input} ${passwordError ? styles.inputError : ''}`}
                 placeholder="비밀번호를 다시 입력해주세요."
                 value={confirmPassword}

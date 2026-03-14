@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { updateUsername } from '../../api/profileApi';
+import PasswordInput from '../../components/common/PasswordInput';
 import styles from './Profilemodal.module.css';
 
 function IconClose() {
@@ -71,9 +72,8 @@ function EditIdModal({ currentUserId, onClose, onSuccess }) {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label}>현재 비밀번호 확인</label>
-            <input
+            <PasswordInput
               className={styles.input}
-              type="password"
               placeholder="현재 비밀번호를 입력하세요"
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError(''); }}

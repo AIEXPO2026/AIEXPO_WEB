@@ -169,7 +169,7 @@ function Community() {
         ) : (
           <div className={styles.blogList}>
             {blogData.map((item, idx) => (
-              <div key={item.id ?? idx} className={styles.blogItem}>
+              <div key={item.id ?? idx} className={styles.blogItem} onClick={() => navigate(`/community/blog/${item.id}`)}>
                 <div className={styles.blogText}>
                   <span className={styles.blogTitle}>{item.title}</span>
                   <div className={styles.blogMeta}>
