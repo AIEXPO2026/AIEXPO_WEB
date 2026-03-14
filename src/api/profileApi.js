@@ -8,14 +8,25 @@ export const getBookmarks = async () => {
 };
 
 // 북마크 추가 - POST /profile/bookmark
+// destinationId 또는 countryId 중 하나만 전달
 export const addBookmark = async (destinationId) => {
   const response = await apiClient.post('/profile/bookmark', { destinationId });
   return unwrapApiResponse(response);
 };
 
-// 북마크 삭제 - DELETE /profile/bookmark/{destinationId}
+export const addCountryBookmark = async (countryId) => {
+  const response = await apiClient.post('/profile/bookmark', { countryId });
+  return unwrapApiResponse(response);
+};
+
+// 북마크 삭제 - DELETE /profile/bookmark/{id}?isCountry=true|false
 export const deleteBookmark = async (destinationId) => {
   const response = await apiClient.delete(`/profile/bookmark/${destinationId}`);
+  return response.data;
+};
+
+export const deleteCountryBookmark = async (countryId) => {
+  const response = await apiClient.delete(`/profile/bookmark/${countryId}`, { params: { isCountry: true } });
   return response.data;
 };
 

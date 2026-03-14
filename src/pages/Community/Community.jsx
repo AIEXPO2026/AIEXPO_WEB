@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Community.module.css'
 import BottomNav from '../../components/BottomNav/BottomNav'
 import { getRanking, getBlogList } from '../../api/recommendApi'
-import { addBookmark, deleteBookmark } from '../../api/profileApi'
+import { addCountryBookmark, deleteCountryBookmark } from '../../api/profileApi'
 
 function StarIcon({ active = true }) {
   return (
@@ -76,7 +76,7 @@ function Community() {
       return s
     })
     try {
-      next ? await addBookmark(id) : await deleteBookmark(id)
+      next ? await addCountryBookmark(id) : await deleteCountryBookmark(id)
     } catch {
       setBookmarkedIds(prev => {
         const s = new Set(prev)
