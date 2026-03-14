@@ -9,18 +9,18 @@ function extractResults(data) {
 }
 
 // 슈퍼 검색
-export const superSearch = async (content) => {
-  const response = await apiClient.post('/search/super', { content }, { timeout: AI_TIMEOUT });
+export const superSearch = async (content, country, searchEngine) => {
+  const response = await apiClient.post('/search/super', { content, country, searchEngine }, { timeout: AI_TIMEOUT });
   return extractResults(unwrapApiResponse(response));
 };
 
 // 테마 검색
-export const themeSearch = async (theme) => {
-  const response = await apiClient.post('/search/theme', { theme }, { timeout: AI_TIMEOUT });
+export const themeSearch = async (theme, country, searchEngine) => {
+  const response = await apiClient.post('/search/theme', { theme, country, searchEngine }, { timeout: AI_TIMEOUT });
   return extractResults(unwrapApiResponse(response));
 };
 
-// 일반 검색 (AI 서버의 super search 사용)
+// 일반 검색
 export const search = async (content) => {
   const response = await apiClient.post('/search/super', { content }, { timeout: AI_TIMEOUT });
   return extractResults(unwrapApiResponse(response));

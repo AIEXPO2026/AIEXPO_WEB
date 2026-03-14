@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 import BottomNav from "../../components/BottomNav/BottomNav";
 import { getRecommendations } from "../../api/recommendApi";
 import { getBookmarks, addBookmark, deleteBookmark } from "../../api/profileApi";
+import { SUPPORTED_COUNTRIES, getEnginesForCountry } from "../../constants/searchEngines";
 
 import singaporeBanner from "../../assets/singapore-banner.png";
 import machuPicchu from "../../assets/machu-picchu.png";
@@ -58,25 +59,27 @@ function normalizeItem(item) {
   return {
     destinationId: item.destinationId ?? item.id,
     title:    item.name     ?? item.title    ?? "",
-    location: item.location ?? item.country  ?? item.city ?? "",
-    category: item.theme    ?? item.category ?? "",
+    location: item.resorts  ?? item.location ?? item.country ?? item.city ?? "",
+    category: item.countryTheme ?? item.theme ?? item.category ?? "",
     image:    item.imageUrl ?? item.image_url ?? item.image ?? null,
   };
 }
 
 const THEME_OPTIONS = [
-  { label: "전체", value: "전체" },
-  { label: "자연", value: "자연" },
-  { label: "역사", value: "역사" },
-  { label: "휴양", value: "휴양" },
-  { label: "문화", value: "문화" },
-  { label: "랜드마크", value: "랜드마크" },
-  { label: "국립공원", value: "국립공원" },
+  { label: "전체",      value: "ALL" },
+  { label: "역사",      value: "HISTORY" },
+  { label: "자연",      value: "NATURE" },
+  { label: "액티비티",  value: "ACTIVITY" },
+  { label: "쇼핑",      value: "SHOPPING" },
+  { label: "문화",      value: "CULTURE" },
+  { label: "음식",      value: "FOOD" },
+  { label: "해변",      value: "BEACH" },
+  { label: "테마파크",  value: "THEME_PARK" },
 ];
 const SORT_OPTIONS = [
-  { label: "기본 순", value: "기본 순" },
-  { label: "인기 순", value: "인기 순" },
-  { label: "가나다 순", value: "가나다 순" },
+  { label: "기본 순", value: "DEFAULT" },
+  { label: "인기 순", value: "POPULAR" },
+  { label: "가나다 순", value: "NAME" },
 ];
 
 function Home() {
@@ -84,11 +87,29 @@ function Home() {
 
   const [type, setType] = useState("일반");
   const [query, setQuery] = useState("");
-  const [theme, setTheme] = useState("전체");
-  const [sort, setSort] = useState("기본 순");
+  const [country, setCountry] = useState("");
+  const [searchEngine, setSearchEngine] = useState("");
+  const [theme, setTheme] = useState("ALL");
+  const [sort, setSort] = useState("DEFAULT");
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+
+  const handleTypeSelect = (newType) => {
+    setType(newType);
+    setShowTypeDropdown(false);
+    if (newType !== "슈퍼") {
+      setCountry("");
+      setSearchEngine("");
+    }
+  };
+
+  const handleCountrySelect = (c) => {
+    setCountry(c);
+    setShowCountryDropdown(false);
+    setSearchEngine(getEnginesForCountry(c)[0].code);
+  };
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const timerRef = useRef(null);
@@ -133,7 +154,7 @@ function Home() {
   useEffect(() => {
     const load = async () => {
       const [recs, bookmarks] = await Promise.all([
-        getRecommendations().catch(() => []),
+        getRecommendations(theme, sort).catch(() => []),
         getBookmarks().catch(() => []),
       ]);
       setItems((Array.isArray(recs) ? recs : []).map(normalizeItem));
@@ -142,7 +163,7 @@ function Home() {
       ));
     };
     load();
-  }, []);
+  }, [theme, sort]);
 
   const handleToggleBookmark = async (e, destinationId) => {
     e.stopPropagation();
@@ -169,27 +190,15 @@ function Home() {
     }
   };
 
-  const filtered = useMemo(() => {
-    let list = items;
-    if (theme !== "전체") {
-      list = list.filter((d) => d.category === theme);
-    }
-    if (sort === "인기 순") {
-      list = [...list].sort(
-        (a, b) =>
-          Number(bookmarkedIds.has(b.destinationId)) -
-          Number(bookmarkedIds.has(a.destinationId))
-      );
-    } else if (sort === "가나다 순") {
-      list = [...list].sort((a, b) => a.title.localeCompare(b.title, "ko"));
-    }
-    return list;
-  }, [items, theme, sort, bookmarkedIds]);
 
   const handleSearch = () => {
     const q = query.trim();
     if (!q) return;
-    navigate("/search-result", { state: { query: q, type } });
+    if (type === "슈퍼" && !country) {
+      setShowCountryDropdown(true);
+      return;
+    }
+    navigate("/search-result", { state: { query: q, type, country, searchEngine } });
   };
 
   const handleKeyDown = (e) => {
@@ -242,14 +251,14 @@ function Home() {
                 <button
                   className={styles.dropdownItem}
                   type="button"
-                  onClick={() => { setType("일반"); setShowTypeDropdown(false); }}
+                  onClick={() => handleTypeSelect("일반")}
                 >
                   일반 서치
                 </button>
                 <button
                   className={styles.dropdownItem}
                   type="button"
-                  onClick={() => { setType("슈퍼"); setShowTypeDropdown(false); }}
+                  onClick={() => handleTypeSelect("슈퍼")}
                 >
                   <span>슈퍼 서치</span>
                   <span className={styles.dropdownCredit}>10 크레딧 소요</span>
@@ -271,6 +280,52 @@ function Home() {
             </button>
           </div>
         </div>
+
+        {type === "슈퍼" && (
+          <div className={styles.superSearchOptions}>
+            {/* 나라 선택 */}
+            <div className={styles.pillWrapper}>
+              <button
+                className={`${styles.pill} ${country ? styles.pillActive : ""}`}
+                type="button"
+                onClick={() => setShowCountryDropdown((p) => !p)}
+              >
+                <span>{country || "나라 선택"}</span>
+                <DropdownArrow />
+              </button>
+              {showCountryDropdown && (
+                <div className={styles.pillDropdown}>
+                  {SUPPORTED_COUNTRIES.map((c) => (
+                    <button
+                      key={c}
+                      className={`${styles.pillDropdownItem} ${country === c ? styles.pillDropdownItemActive : ""}`}
+                      type="button"
+                      onClick={() => handleCountrySelect(c)}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 검색 엔진 선택 (나라 선택 후 표시) */}
+            {country && (
+              <div className={styles.engineChips}>
+                {getEnginesForCountry(country).map((engine) => (
+                  <button
+                    key={engine.code}
+                    className={`${styles.engineChip} ${searchEngine === engine.code ? styles.engineChipActive : ""}`}
+                    type="button"
+                    onClick={() => setSearchEngine(engine.code)}
+                  >
+                    {engine.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       <div className={styles.divider} />
@@ -281,11 +336,11 @@ function Home() {
         <div className={styles.pills}>
           <div className={styles.pillWrapper}>
             <button
-              className={`${styles.pill} ${theme !== "전체" ? styles.pillActive : ""}`}
+              className={`${styles.pill} ${theme !== "ALL" ? styles.pillActive : ""}`}
               type="button"
               onClick={() => { setShowThemeDropdown((p) => !p); setShowSortDropdown(false); }}
             >
-              <span>{theme}</span>
+              <span>{THEME_OPTIONS.find((o) => o.value === theme)?.label ?? theme}</span>
               <DropdownArrow />
             </button>
             {showThemeDropdown && (
@@ -306,11 +361,11 @@ function Home() {
 
           <div className={styles.pillWrapper}>
             <button
-              className={`${styles.pill} ${sort !== "기본 순" ? styles.pillActive : ""}`}
+              className={`${styles.pill} ${sort !== "DEFAULT" ? styles.pillActive : ""}`}
               type="button"
               onClick={() => { setShowSortDropdown((p) => !p); setShowThemeDropdown(false); }}
             >
-              <span>{sort}</span>
+              <span>{SORT_OPTIONS.find((o) => o.value === sort)?.label ?? sort}</span>
               <DropdownArrow />
             </button>
             {showSortDropdown && (
@@ -332,7 +387,7 @@ function Home() {
       </div>
 
       <div className={styles.list}>
-        {filtered.map((item) => (
+        {items.map((item) => (
           <div key={item.destinationId} className={styles.row}>
             <div className={styles.left}>
               <img

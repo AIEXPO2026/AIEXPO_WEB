@@ -65,7 +65,7 @@ const COST_OPTIONS       = ["전체", "저예산", "중간", "고급"];
 function SearchResult() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { query = "", type = "일반" } = location.state ?? {};
+  const { query = "", type = "일반", country = "", searchEngine = "" } = location.state ?? {};
 
   const [results, setResults]           = useState([]);
   const [bookmarkedIds, setBookmarkedIds] = useState(new Set());
@@ -119,7 +119,7 @@ function SearchResult() {
       setError(null);
       try {
         const [data, bookmarks] = await Promise.all([
-          type === "슈퍼" ? superSearch(query) : search(query),
+          type === "슈퍼" ? superSearch(query, country, searchEngine) : search(query),
           getBookmarks().catch(() => []),
         ]);
         const list = Array.isArray(data) ? data : [];
@@ -135,7 +135,7 @@ function SearchResult() {
     };
 
     fetchResults();
-  }, [query, type]);
+  }, [query, type, country, searchEngine]);
 
   return (
     <div className={styles.container}>
