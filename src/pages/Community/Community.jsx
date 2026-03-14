@@ -131,7 +131,7 @@ function Community() {
                   <div className={styles.rankingText}>
                     <span className={styles.rankingTitle}>{item.name ?? item.title}</span>
                     <div className={styles.rankingMeta}>
-                      <span>{item.city ?? item.location}</span>
+                      <span>{item.resorts ?? item.city ?? item.location}</span>
                       {item.category && <><span className={styles.dot}>·</span><span>{item.category}</span></>}
                     </div>
                   </div>

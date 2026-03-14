@@ -6,6 +6,8 @@ import Welcome from './pages/Auth/Welcome/Welcome'
 import Community from './pages/Community/Community'
 import CommunityRanking from './pages/Community/Ranking/CommunityRanking'
 import CommunityBlog from './pages/Community/Blog/CommunityBlog'
+import CommunityBlogDetail from './pages/Community/Blog/CommunityBlogDetail'
+import CommunityBlogWrite from './pages/Community/Blog/CommunityBlogWrite'
 import Home from './pages/Home/Home'
 import Profile from './pages/Profile/Profile'
 import ChangePassword from './pages/Profile/ChangePassword/ChangePassword'
@@ -33,6 +35,8 @@ function App() {
         <Route path="/community" element={<PrivateRoute><Community /></PrivateRoute>} />
         <Route path="/community/ranking" element={<PrivateRoute><CommunityRanking /></PrivateRoute>} />
         <Route path="/community/blog" element={<PrivateRoute><CommunityBlog /></PrivateRoute>} />
+        <Route path="/community/blog/write" element={<PrivateRoute><CommunityBlogWrite /></PrivateRoute>} />
+        <Route path="/community/blog/:id" element={<PrivateRoute><CommunityBlogDetail /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/profile/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
         <Route path="/travel" element={<PrivateRoute><Travel /></PrivateRoute>} />

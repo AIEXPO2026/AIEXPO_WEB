@@ -25,3 +25,10 @@ export const getBlogDetail = async (id) => {
   const response = await apiClient.get(`/blogs/${id}`);
   return unwrapApiResponse(response);
 };
+
+// 블로그 작성 - POST /blogs
+// Body: { title, content, date, country }
+export const writeBlog = async ({ title, content, date, country }) => {
+  const response = await apiClient.post('/blogs', { title, content, date, country });
+  return unwrapApiResponse(response);
+};

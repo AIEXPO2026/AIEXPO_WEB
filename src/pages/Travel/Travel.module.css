@@ -24,7 +24,7 @@
 
 .banner {
   position: relative;
-  width: 354px;
+  width: calc(100% - 48px);
   height: 76px;
   margin: 20px auto 0;
   background: #F6F6F6;
@@ -84,7 +84,7 @@
 
 .courseBanner {
   position: relative;
-  width: 354px;
+  width: calc(100% - 48px);
   height: 76px;
   margin: 10px auto 0;
   background: #FFF8D6;
@@ -178,8 +178,8 @@
 
 .sectionTitle {
   font-family: 'Pretendard', sans-serif;
-  font-weight: 600;
-  font-size: 19px;
+  font-weight: 700;
+  font-size: 22px;
   line-height: 1.3;
   color: #1A1A1A;
   margin: 0 0 16px 0;

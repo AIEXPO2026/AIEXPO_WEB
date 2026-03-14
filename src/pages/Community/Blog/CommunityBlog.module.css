@@ -12,20 +12,18 @@
 
 /* Header */
 .header {
-  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding-top: 56px;
-  padding-bottom: 20px;
+  padding: 56px 24px 16px;
   background: #ffffff;
 }
 
 .backButton {
   position: absolute;
   left: 31px;
-  top: 44px;
+  top: 56px;
   width: 16px;
   height: 32px;
   display: flex;
@@ -57,7 +55,6 @@
   background: #ececec;
   width: 100%;
   flex-shrink: 0;
-  margin-top: 20px;
 }
 
 /* Content Area */
@@ -97,14 +94,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 175px;
+  gap: 8px;
   height: 28px;
   padding: 16px;
   background: #ffffff;
   border: 1px solid #b8b8b8;
   border-radius: 8px;
   cursor: pointer;
-  box-sizing: border-box;
+  box-sizing: content-box;
 }
 
 .filterText {
@@ -120,6 +117,19 @@
   height: 12px;
 }
 
+.writeButton {
+  position: absolute;
+  right: 24px;
+  top: 56px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Blog List */
 .blogList {
   display: flex;
@@ -130,6 +140,12 @@
   padding: 10px 24px;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.blogItem:active {
+  background: #f6f6f6;
 }
 
 .blogItemHighlight {
@@ -150,6 +166,9 @@
   color: #252525;
   line-height: 1.2;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .blogMeta {

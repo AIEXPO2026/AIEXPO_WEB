@@ -4,6 +4,14 @@ import styles from './CommunityBlog.module.css'
 import BottomNav from '../../../components/BottomNav/BottomNav'
 import { getBlogList } from '../../../api/recommendApi'
 
+function PencilIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#252525"/>
+    </svg>
+  )
+}
+
 function BackIcon() {
   return (
     <svg width="13" height="23" viewBox="0 0 13 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,6 +61,9 @@ function BlogDetail() {
           <BackIcon />
         </button>
         <h1 className={styles.title}>블로그</h1>
+        <button className={styles.writeButton} onClick={() => navigate('/community/blog/write')}>
+          <PencilIcon />
+        </button>
       </header>
 
       <div className={styles.divider} />
@@ -77,6 +88,7 @@ function BlogDetail() {
               <div
                 key={item.id ?? idx}
                 className={styles.blogItem}
+                onClick={() => navigate(`/community/blog/${item.id}`)}
               >
                 <div className={styles.blogText}>
                   <p className={styles.blogTitle}>{item.title}</p>
