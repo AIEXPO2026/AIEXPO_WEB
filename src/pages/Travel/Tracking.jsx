@@ -36,7 +36,7 @@ const TravelTracking = ({ onFinish, onClose }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
-  const [isListOpen, setIsListOpen] = useState(true); // 방문지 목록 접기/펼치기
+  const [isListOpen, setIsListOpen] = useState(true);
   const [travelStartTime] = useState(Date.now());
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -125,13 +125,11 @@ const TravelTracking = ({ onFinish, onClose }) => {
       map: googleMapRef.current,
     });
 
-    // 기존 마커 제거
     markersRef.current.forEach(m => { m.map = null; });
     markersRef.current = [];
 
     const { AdvancedMarkerElement } = window.google.maps.marker;
 
-    // 현재 위치 마커 (파란 원)
     const currentDot = document.createElement('div');
     currentDot.style.cssText = 'width:16px;height:16px;border-radius:50%;background:#4A90E2;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);';
     markersRef.current.push(new AdvancedMarkerElement({
@@ -140,13 +138,11 @@ const TravelTracking = ({ onFinish, onClose }) => {
       content: currentDot,
     }));
 
-    // 열려있는 InfoWindow 추적
     let openInfoWindow = null;
 
     visitedPlaces.forEach((place, index) => {
       if (!place.location) return;
 
-      // 번호 뱃지 마커
       const pin = document.createElement('div');
       pin.style.cssText = 'width:28px;height:28px;border-radius:50%;background:#FFD700;color:#1a1a1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.25);border:2px solid #fff;cursor:pointer;';
       pin.textContent = `${index + 1}`;
@@ -157,7 +153,6 @@ const TravelTracking = ({ onFinish, onClose }) => {
         content: pin,
       });
 
-      // InfoWindow 콘텐츠
       const arrivalStr = new Date(place.arrivalTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
       const photoLine = place.photoFiles?.length > 0
         ? `<div style="display:flex;align-items:center;gap:4px;color:#B8860B;font-size:12px;margin-top:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> 사진 ${place.photoFiles.length}장</div>`
@@ -180,7 +175,6 @@ const TravelTracking = ({ onFinish, onClose }) => {
         `,
       });
 
-      // 클릭 시 토글
       marker.addListener('click', () => {
         if (openInfoWindow === infoWindow) {
           infoWindow.close();
@@ -191,13 +185,14 @@ const TravelTracking = ({ onFinish, onClose }) => {
         infoWindow.open({ map: googleMapRef.current, anchor: marker });
         openInfoWindow = infoWindow;
       });
-
-      // hover 시 열기
-      marker.element.addEventListener('mouseenter', () => {
-        if (openInfoWindow && openInfoWindow !== infoWindow) openInfoWindow.close();
-        infoWindow.open({ map: googleMapRef.current, anchor: marker });
-        openInfoWindow = infoWindow;
-      });
+      
+      if (marker.element) {
+        marker.element.addEventListener('mouseenter', () => {
+          if (openInfoWindow && openInfoWindow !== infoWindow) openInfoWindow.close();
+          infoWindow.open({ map: googleMapRef.current, anchor: marker });
+          openInfoWindow = infoWindow;
+        });
+      }
 
       markersRef.current.push(marker);
     });
@@ -216,11 +211,12 @@ const TravelTracking = ({ onFinish, onClose }) => {
     if (path.length < 2) return 0;
     let totalDistance = 0;
     for (let i = 1; i < path.length; i++) {
-      const lat1 = path[i - 1].lat, lon1 = path[i - 1].lng;
-      const lat2 = path[i].lat, lon2 = path[i].lng;
+      const lat1 = path[i - 1].lat;
+      const lat2 = path[i].lat;
+      const lng2 = path[i].lng;
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const dLon = (lng2 - path[i - 1].lng) * Math.PI / 180;
       const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
       totalDistance += R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
@@ -328,39 +324,39 @@ const TravelTracking = ({ onFinish, onClose }) => {
           </button>
           {isListOpen && (
             <div className={styles.placesTimeline}>
-            {visitedPlaces.map((place, index) => (
-              <div key={place.id} className={styles.placeRow}>
-                <div className={styles.timelineCol}>
-                  <div className={styles.timelineDot}>{index + 1}</div>
-                  {index < visitedPlaces.length - 1 && <div className={styles.timelineLine} />}
-                </div>
-                <div className={styles.placeCard} style={{ animationDelay: `${index * 0.07}s` }}>
-                  <div className={styles.placeCardInner}>
-                    <div className={styles.placeCardLeft}>
-                      <span className={styles.placeName}>{place.name}</span>
-                      {place.review && <span className={styles.placeReview}>{place.review}</span>}
-                      <span className={styles.placeTime}>
-                        {new Date(place.arrivalTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                    <div className={styles.placeCardRight}>
-                      {place.photoFiles?.length > 0 && (
-                        <div className={styles.photoBadge}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8860B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" />
-                          </svg>
-                          <span className={styles.photoBadgeCount}>{place.photoFiles.length}</span>
-                        </div>
-                      )}
-                      <button className={styles.removeButton} onClick={() => handleRemovePlace(place.id)} type="button">
-                        <IconTrash />
-                      </button>
+              {visitedPlaces.map((place, index) => (
+                <div key={place.id} className={styles.placeRow}>
+                  <div className={styles.timelineCol}>
+                    <div className={styles.timelineDot}>{index + 1}</div>
+                    {index < visitedPlaces.length - 1 && <div className={styles.timelineLine} />}
+                  </div>
+                  <div className={styles.placeCard} style={{ animationDelay: `${index * 0.07}s` }}>
+                    <div className={styles.placeCardInner}>
+                      <div className={styles.placeCardLeft}>
+                        <span className={styles.placeName}>{place.name}</span>
+                        {place.review && <span className={styles.placeReview}>{place.review}</span>}
+                        <span className={styles.placeTime}>
+                          {new Date(place.arrivalTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <div className={styles.placeCardRight}>
+                        {place.photoFiles?.length > 0 && (
+                          <div className={styles.photoBadge}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8860B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" />
+                            </svg>
+                            <span className={styles.photoBadgeCount}>{place.photoFiles.length}</span>
+                          </div>
+                        )}
+                        <button className={styles.removeButton} onClick={() => handleRemovePlace(place.id)} type="button">
+                          <IconTrash />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -406,11 +402,18 @@ const TravelTracking = ({ onFinish, onClose }) => {
   return document.body ? createPortal(content, document.body) : content;
 };
 
+// ─── PlaceModal ───────────────────────────────────────────────────────────────
 const PlaceModal = ({ onClose, onSave }) => {
   const [name, setName] = useState('');
   const [review, setReview] = useState('');
   const [photos, setPhotos] = useState([]);
   const [previews, setPreviews] = useState([]);
+
+  useEffect(() => {
+    return () => {
+      previews.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [previews]);
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);

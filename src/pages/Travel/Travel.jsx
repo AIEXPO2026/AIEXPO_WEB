@@ -14,7 +14,6 @@ import SplaceIcon from '../../assets/smollPlace-icon.svg';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-// 페이지 진입 즉시 Google Maps 로드 시작
 if (typeof window !== 'undefined' && !window.google && !document.getElementById('gmap-script')) {
   const script = document.createElement('script');
   script.id = 'gmap-script';
@@ -28,73 +27,50 @@ if (typeof window !== 'undefined' && !window.google && !document.getElementById(
 const TravelEmptyState = () => (
   <div className={styles.emptyContainer}>
     <svg width="100%" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg">
-      {/* 지도 배경 */}
       <rect x="180" y="60" width="320" height="210" rx="16" fill="#FAC775" fillOpacity="0.18" stroke="#EF9F27" strokeWidth="0.5" strokeOpacity="0.18"/>
-
-      {/* 지도 격자선 */}
       {[90,120,150,180,210].map(y => (
         <line key={`h${y}`} x1="200" y1={y} x2="480" y2={y} stroke="currentColor" strokeWidth="0.5" opacity="0.12"/>
       ))}
       {[240,290,340,390,440].map(x => (
         <line key={`v${x}`} x1={x} y1="70" x2={x} y2="260" stroke="currentColor" strokeWidth="0.5" opacity="0.12"/>
       ))}
-
-      {/* 점선 여행 경로 */}
       <path d="M250 220 Q280 170 310 190 Q340 210 370 150 Q395 110 430 130"
         fill="none" stroke="#EF9F27" strokeWidth="2" strokeDasharray="6 5" opacity="0.55"/>
-
-      {/* 경로 포인트 */}
       <circle cx="250" cy="220" r="5" fill="#EF9F27" opacity="0.5"/>
       <circle cx="310" cy="190" r="5" fill="#EF9F27" opacity="0.5"/>
       <circle cx="370" cy="150" r="5" fill="#EF9F27" opacity="0.5"/>
-
-      {/* 목적지 핀 */}
       <ellipse cx="430" cy="148" rx="10" ry="4" fill="rgba(0,0,0,0.1)" opacity="0.4"/>
       <path d="M430 90 C418 90 410 99 410 110 C410 128 430 145 430 145 C430 145 450 128 450 110 C450 99 442 90 430 90Z"
         fill="#EF9F27" stroke="#BA7517" strokeWidth="0.8"/>
       <circle cx="430" cy="111" r="6" fill="white" opacity="0.85"/>
-
-      {/* 돋보기 */}
       <circle cx="476" cy="238" r="14" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.35"/>
       <line x1="486" y1="248" x2="496" y2="258" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" opacity="0.35"/>
-
-      {/* 나무 */}
       <g opacity="0.25">
         <polygon points="215,195 225,170 235,195" fill="currentColor"/>
         <rect x="223" y="195" width="4" height="8" fill="currentColor"/>
         <polygon points="205,210 213,190 221,210" fill="currentColor"/>
         <rect x="211" y="210" width="3" height="6" fill="currentColor"/>
       </g>
-
-      {/* 구름 왼쪽 */}
       <g opacity="0.12">
         <ellipse cx="155" cy="155" rx="22" ry="12" fill="currentColor"/>
         <ellipse cx="140" cy="158" rx="14" ry="10" fill="currentColor"/>
         <ellipse cx="170" cy="158" rx="14" ry="10" fill="currentColor"/>
       </g>
-
-      {/* 구름 오른쪽 */}
       <g opacity="0.1">
         <ellipse cx="530" cy="200" rx="18" ry="10" fill="currentColor"/>
         <ellipse cx="517" cy="202" rx="11" ry="8" fill="currentColor"/>
         <ellipse cx="543" cy="202" rx="11" ry="8" fill="currentColor"/>
       </g>
-
-      {/* 별 장식 왼쪽 */}
       <g opacity="0.2">
         <line x1="155" y1="80" x2="175" y2="100" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         <line x1="148" y1="95" x2="162" y2="95" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
         <line x1="170" y1="75" x2="170" y2="88" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
       </g>
-
-      {/* 별 장식 오른쪽 */}
       <g opacity="0.15">
         <line x1="500" y1="72" x2="516" y2="88" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         <line x1="495" y1="84" x2="506" y2="84" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
         <line x1="514" y1="68" x2="514" y2="78" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
       </g>
-
-      {/* 텍스트 */}
       <text x="340" y="310" textAnchor="middle" fontSize="17" fontWeight="500" fill="currentColor" opacity="0.9">
         아직 여행 기록이 없어요
       </text>
@@ -104,14 +80,6 @@ const TravelEmptyState = () => (
     </svg>
   </div>
 );
-
-// ─── 유틸: 경과 시간(ms) → "N시간 M분" 문자열 ────────────────────────────────
-const formatDuration = (ms) => {
-  const totalMinutes = Math.floor(ms / 1000 / 60);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${hours}시간 ${minutes}분`;
-};
 
 // ─── StatCard ─────────────────────────────────────────────────────────────────
 const StatCardComponent = ({ icon, number, label }) => (
@@ -141,18 +109,12 @@ const TravelCardComponent = ({ travel, onEdit }) => {
   return (
     <div className={styles.travelCard}>
       <div className={styles.travelImage}>
-        {travel.thumbnailUrl && (
-          <img src={travel.thumbnailUrl} alt={travel.title} />
-        )}
+        {travel.thumbnailUrl && <img src={travel.thumbnailUrl} alt={travel.title} />}
       </div>
       <div className={styles.travelInfo}>
         <div className={styles.travelHeader}>
           <h3 className={styles.travelTitle}>{travel.title || '여행'}</h3>
-          <button
-            className={styles.editButton}
-            type="button"
-            onClick={() => onEdit(travel)}
-          >
+          <button className={styles.editButton} type="button" onClick={() => onEdit(travel)}>
             <img src={EditIcon} alt="edit" />
           </button>
         </div>
@@ -174,11 +136,7 @@ const TravelCardComponent = ({ travel, onEdit }) => {
           {travel.tags?.map((tag, index) => {
             const colors = getTagColors(tag);
             return (
-              <span
-                key={index}
-                className={styles.tag}
-                style={{ backgroundColor: colors.bg, color: colors.text }}
-              >
+              <span key={index} className={styles.tag} style={{ backgroundColor: colors.bg, color: colors.text }}>
                 #{tag}
               </span>
             );
@@ -191,82 +149,41 @@ const TravelCardComponent = ({ travel, onEdit }) => {
 };
 
 // ─── VisitedPlacesSummary ─────────────────────────────────────────────────────
-const VisitedPlacesSummary = ({
-  visitedPlaces,
-  travelInfo,
-  onClose,
-  onSaveTravel,
-  isSaving,
-}) => (
+const VisitedPlacesSummary = ({ visitedPlaces, travelInfo, onClose, onSaveTravel, isSaving }) => (
   <div className={styles.summaryOverlay} onClick={onClose}>
-    <div
-      className={styles.summaryModal}
-      onClick={(e) => e.stopPropagation()}
-    >
+    <div className={styles.summaryModal} onClick={(e) => e.stopPropagation()}>
       <div className={styles.summaryHeader}>
         <h2 className={styles.summaryTitle}>
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ marginRight: '6px', verticalAlign: 'middle' }}
-          >
-            <polygon points="3 11 22 2 13 21 11 13 3 11" />
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            style={{ marginRight: '6px', verticalAlign: 'middle' }}>
+            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
           </svg>
           여행 경유지 기록
         </h2>
-        <button
-          className={styles.closeButton}
-          onClick={onClose}
-          type="button"
-          disabled={isSaving}
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
+        <button className={styles.closeButton} onClick={onClose} type="button" disabled={isSaving}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
       </div>
-
       <div className={styles.summaryStats}>
         <div className={styles.summaryStat}>
-          <span className={styles.summaryStatValue}>
-            {travelInfo?.duration || '-'}
-          </span>
+          <span className={styles.summaryStatValue}>{travelInfo?.duration || '-'}</span>
           <span className={styles.summaryStatLabel}>여행 시간</span>
         </div>
         <div className={styles.summaryStat}>
-          <span className={styles.summaryStatValue}>
-            {travelInfo?.distance || '-'}
-          </span>
+          <span className={styles.summaryStatValue}>{travelInfo?.distance || '-'}</span>
           <span className={styles.summaryStatLabel}>이동 거리</span>
         </div>
         <div className={styles.summaryStat}>
-          <span className={styles.summaryStatValue}>
-            {visitedPlaces.length}곳
-          </span>
+          <span className={styles.summaryStatValue}>{visitedPlaces.length}곳</span>
           <span className={styles.summaryStatLabel}>방문 장소</span>
         </div>
       </div>
-
       {visitedPlaces.length === 0 ? (
-        <div className={styles.summaryEmpty}>
-          <p>기록된 경유지가 없습니다.</p>
-        </div>
+        <div className={styles.summaryEmpty}><p>기록된 경유지가 없습니다.</p></div>
       ) : (
         <div className={styles.summaryPlaceList}>
           {visitedPlaces.map((place, index) => (
@@ -274,50 +191,28 @@ const VisitedPlacesSummary = ({
               <div className={styles.summaryPlaceIndex}>{index + 1}</div>
               <div className={styles.summaryPlaceContent}>
                 <div className={styles.summaryPlaceName}>{place.name}</div>
-                {place.review && (
-                  <div className={styles.summaryPlaceReview}>
-                    {place.review}
-                  </div>
-                )}
+                {place.review && <div className={styles.summaryPlaceReview}>{place.review}</div>}
                 {place.photoFiles?.length > 0 && (
                   <div className={styles.summaryPlacePhotos}>
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      style={{ marginRight: '4px', verticalAlign: 'middle' }}
-                    >
-                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                      <circle cx="12" cy="13" r="4" />
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      style={{ marginRight: '4px', verticalAlign: 'middle' }}>
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
                     </svg>
                     사진 {place.photoFiles.length}장
                   </div>
                 )}
                 <div className={styles.summaryPlaceTime}>
-                  {new Date(place.arrivalTime).toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}{' '}
-                  도착
+                  {new Date(place.arrivalTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 도착
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
-
       <div className={styles.summaryActions}>
-        <button
-          type="button"
-          className={styles.summaryEditButton}
-          onClick={onSaveTravel}
-          disabled={isSaving}
-        >
+        <button type="button" className={styles.summaryEditButton} onClick={onSaveTravel} disabled={isSaving}>
           {isSaving ? '저장 중...' : '여행 기록 저장하기'}
         </button>
       </div>
@@ -336,10 +231,7 @@ function TravelRecordManagement() {
   const [showSummary, setShowSummary] = useState(false);
   const [finishedTravelData, setFinishedTravelData] = useState(null);
   const [isSavingAttractions, setIsSavingAttractions] = useState(false);
-  // startTravel 응답에서 받은 여행 id를 저장
-  // → finishTravel 응답에 id가 없으므로 여기서 미리 확보해둠
   const [currentTravelId, setCurrentTravelId] = useState(null);
-
   const [totalPlaces, setTotalPlaces] = useState(0);
   const [totalPhotos, setTotalPhotos] = useState(0);
 
@@ -364,14 +256,9 @@ function TravelRecordManagement() {
             const attractions = await getAttractions(travel.id);
             const list = attractions.data ?? [];
             placesCount += list.length;
-            list.forEach((a) => {
-              if (a.photoURL) photosCount += 1;
-            });
+            list.forEach((a) => { if (a.photoURL) photosCount += 1; });
           } catch (err) {
-            console.warn(
-              `여행 ${travel.id}의 방문지 조회 실패:`,
-              err.message,
-            );
+            console.warn(`여행 ${travel.id}의 방문지 조회 실패:`, err.message);
           }
         }
       }
@@ -389,18 +276,10 @@ function TravelRecordManagement() {
   };
 
   // ── 여행 수정 모달 ───────────────────────────────────────────────────────
-  const handleEdit = (travel) => {
-    setEditingTravel(travel);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingTravel(null);
-  };
+  const handleEdit = (travel) => { setEditingTravel(travel); setIsModalOpen(true); };
+  const handleCloseModal = () => { setIsModalOpen(false); setEditingTravel(null); };
 
   const handleSave = async (updatedData) => {
-    // avg_weather: 배열이면 join, 문자열이면 그대로, 비어있으면 '맑음'
     const weatherStr =
       Array.isArray(updatedData.weather) && updatedData.weather.length > 0
         ? updatedData.weather.join(',')
@@ -412,25 +291,16 @@ function TravelRecordManagement() {
 
     try {
       await editTravel(editingTravel.id, {
-        people_count: Number(
-          updatedData.companionCount ?? updatedData.peopleCount ?? 1,
-        ),
-        // mood: 0~4 범위 강제 (MOOD_OPTIONS와 1:1 매핑)
+        people_count: Number(updatedData.companionCount ?? updatedData.peopleCount ?? 1),
         mood: Math.min(Math.max(Number(updatedData.mood ?? 0), 0), 4),
         avg_weather: weatherStr,
-        public_travel: Boolean(
-          updatedData.isPublic ?? updatedData.publicTravel ?? false,
-        ),
+        public_travel: Boolean(updatedData.isPublic ?? updatedData.publicTravel ?? false),
       });
       alert('여행 기록이 수정되었습니다.');
       await fetchTravelData();
       handleCloseModal();
     } catch (err) {
-      console.error(
-        '여행 수정 실패:',
-        err.message,
-        err?.response?.data,
-      );
+      console.error('여행 수정 실패:', err.message, err?.response?.data);
       alert(`수정에 실패했습니다. (${err?.response?.status ?? err.message})`);
     }
   };
@@ -439,19 +309,11 @@ function TravelRecordManagement() {
   const handleStartTracking = async () => {
     if (isTrackingActive) return;
 
-    // 혹시 진행 중인 여행이 있으면 먼저 종료
-    try {
-      await finishTravel();
-    } catch (_) {
-      // 진행 중인 여행 없으면 무시
-    }
+    try { await finishTravel(); } catch (_) {}
 
     setIsTrackingActive(true);
-    setCurrentTravelId(null); // 이전 여행 id 초기화
+    setCurrentTravelId(null);
 
-    // ★ 핵심: startTravel 응답에서 여행 id를 미리 저장
-    // /travel/finish 응답에 id가 없기 때문에,
-    // 여행 시작 시점에 id를 확보해두지 않으면 종료 후 엉뚱한 여행이 수정될 수 있음
     startTravel({
       budget_min: 1000,
       budget_max: 2147483647,
@@ -463,13 +325,10 @@ function TravelRecordManagement() {
       if (id) {
         setCurrentTravelId(id);
       } else {
-        console.warn('[startTravel] 응답에 id 없음 — 종료 후 목록 재조회 fallback 사용');
+        console.warn('[startTravel] 응답에 id 없음 — fallback 사용');
       }
     }).catch((e) => {
-      console.warn(
-        'startTravel 실패:',
-        e?.response?.data?.error?.code ?? e.message,
-      );
+      console.warn('startTravel 실패:', e?.response?.data?.error?.code ?? e.message);
     });
   };
 
@@ -481,75 +340,49 @@ function TravelRecordManagement() {
       console.warn('finishTravel 실패:', err.message, err?.response?.data);
     } finally {
       setIsTrackingActive(false);
-      // currentTravelId: startTravel 응답에서 확보한 id (가장 신뢰할 수 있는 값)
-      // 없으면 handleSummaryProceed에서 목록 재조회 fallback 사용
       setFinishedTravelData({ ...data, travelId: currentTravelId });
       setShowSummary(true);
     }
   };
 
-  // ── 방문지 서버 저장 후 수정 모달 오픈 ──────────────────────────────────
+  // ── 방문지 저장 후 수정 모달 오픈 ───────────────────────────────────────
   const handleSummaryProceed = async () => {
     setIsSavingAttractions(true);
 
     try {
-      // 1. 완료된 여행 ID 확보 (finishTravel 응답에 id 없는 경우 목록에서 재조회)
       let travelId = finishedTravelData?.travelId ?? null;
 
       if (!travelId) {
         const res = await getTravels();
         const travels = res.data ?? [];
-
-        // travelStatus 필드명은 백엔드마다 다를 수 있으므로 여러 케이스 대응
-        // 가능한 값: 'TRAVEL_FINISHED', 'FINISHED', 'COMPLETED', 'END'
-        const FINISHED_STATUSES = new Set([
-          'TRAVEL_FINISHED',
-          'FINISHED',
-          'COMPLETED',
-          'END',
-        ]);
-
+        const FINISHED_STATUSES = new Set(['TRAVEL_FINISHED', 'FINISHED', 'COMPLETED', 'END']);
         const latestFinished = [...travels]
           .reverse()
-          .find(
-            (t) =>
-              FINISHED_STATUSES.has(t.travelStatus) ||
-              FINISHED_STATUSES.has(t.status),
-          );
-
-        // fallback: 완료 상태 판별 불가 시 가장 최근 여행
+          .find((t) => FINISHED_STATUSES.has(t.travelStatus) || FINISHED_STATUSES.has(t.status));
         const target = latestFinished ?? travels[travels.length - 1];
 
         if (!target?.id) {
-          alert(
-            '여행 정보를 불러오지 못했습니다. 목록에서 직접 수정해주세요.',
-          );
-          await fetchTravelData();
+          alert('여행 정보를 불러오지 못했습니다. 목록에서 직접 수정해주세요.');
           setShowSummary(false);
           setFinishedTravelData(null);
+          await fetchTravelData();
           return;
         }
-
         travelId = target.id;
         setTravelData(travels);
       }
 
-      // 2. 방문지(attractions) 서버 저장
       const visitedPlaces = finishedTravelData?.visitedPlaces ?? [];
       const attractionErrors = [];
 
       for (const place of visitedPlaces) {
         try {
-          const durationMs =
-            (place.departureTime ?? Date.now()) - (place.arrivalTime ?? Date.now());
+          const durationMs = (place.departureTime ?? Date.now()) - (place.arrivalTime ?? Date.now());
           const totalSeconds = Math.max(Math.floor(durationMs / 1000), 0);
           const hour = Math.floor(totalSeconds / 3600);
           const minute = Math.floor((totalSeconds % 3600) / 60);
           const second = totalSeconds % 60;
-
-          // 사진은 첫 번째 파일만 전송 (API가 file 하나만 받음)
-          const file =
-            place.photoFiles?.length > 0 ? place.photoFiles[0] : null;
+          const file = place.photoFiles?.length > 0 ? place.photoFiles[0] : null;
 
           await addAttraction(travelId, {
             duration: { hour, minute, second, nano: 0 },
@@ -557,52 +390,43 @@ function TravelRecordManagement() {
             file,
           });
         } catch (err) {
-          console.warn(
-            `방문지 "${place.name}" 저장 실패:`,
-            err.message,
-            err?.response?.data,
-          );
+          console.warn(`방문지 "${place.name}" 저장 실패:`, err.message, err?.response?.data);
           attractionErrors.push(place.name);
         }
       }
 
       if (attractionErrors.length > 0) {
         console.warn('일부 방문지 저장 실패:', attractionErrors);
-        // 치명적 오류는 아니므로 계속 진행
       }
 
-      // 3. 수정 모달 오픈
-      const latestRes = await getTravels();
-      const latestTravels = latestRes.data ?? [];
-      const targetTravel =
-        latestTravels.find((t) => t.id === travelId) ??
-        latestTravels[latestTravels.length - 1];
+      await fetchTravelData();
 
-      if (targetTravel) {
-        setTravelData(latestTravels);
-        setEditingTravel({ ...targetTravel, ...finishedTravelData, id: targetTravel.id });
-        setShowSummary(false);
-        setFinishedTravelData(null);
-        setIsModalOpen(true);
-      } else {
-        alert('여행 정보를 불러오지 못했습니다. 목록에서 직접 수정해주세요.');
-        await fetchTravelData();
-        setShowSummary(false);
-        setFinishedTravelData(null);
-      }
+      setTravelData((prev) => {
+        const targetTravel = prev.find((t) => t.id === travelId) ?? prev[prev.length - 1];
+        if (targetTravel) {
+          setEditingTravel({ ...targetTravel, ...finishedTravelData, id: targetTravel.id });
+          setIsModalOpen(true);
+        } else {
+          alert('여행 정보를 불러오지 못했습니다. 목록에서 직접 수정해주세요.');
+        }
+        return prev;
+      });
+
+      setShowSummary(false);
+      setFinishedTravelData(null);
     } catch (err) {
       console.warn('handleSummaryProceed 실패:', err.message);
       alert('여행 정보를 불러오지 못했습니다. 목록에서 직접 수정해주세요.');
-      await fetchTravelData();
       setShowSummary(false);
       setFinishedTravelData(null);
+      await fetchTravelData();
     } finally {
       setIsSavingAttractions(false);
     }
   };
 
   const handleSummaryClose = () => {
-    if (isSavingAttractions) return; // 저장 중에는 닫기 방지
+    if (isSavingAttractions) return;
     setShowSummary(false);
     setFinishedTravelData(null);
   };
@@ -614,80 +438,44 @@ function TravelRecordManagement() {
         <h1 className={styles.title}>여행기록 관리</h1>
       </div>
 
-      <button
-        type="button"
-        className={styles.banner}
-        onClick={handleStartTracking}
-        disabled={isTrackingActive}
-      >
+      <button type="button" className={styles.banner} onClick={handleStartTracking} disabled={isTrackingActive}>
         <div className={styles.playIconWrapper}>▶</div>
         <div className={styles.bannerContent}>
           <h2 className={styles.bannerTitle}>새로운 여행 시작!</h2>
-          <p className={styles.bannerSubtitle}>
-            위치 추적을 시작하고 새로운 여행을 기록하세요
-          </p>
+          <p className={styles.bannerSubtitle}>위치 추적을 시작하고 새로운 여행을 기록하세요</p>
         </div>
         <div className={styles.arrowIcon}>›</div>
       </button>
 
       <div className={styles.statsContainer}>
-        <StatCardComponent
-          icon={MapIcon}
-          number={travelData.length}
-          label="총 여행"
-        />
-        <StatCardComponent
-          icon={PlaceIcon}
-          number={totalPlaces}
-          label="방문 장소"
-        />
-        <StatCardComponent
-          icon={ImgIcon}
-          number={totalPhotos}
-          label="남긴 사진"
-        />
+        <StatCardComponent icon={MapIcon} number={travelData.length} label="총 여행" />
+        <StatCardComponent icon={PlaceIcon} number={totalPlaces} label="방문 장소" />
+        <StatCardComponent icon={ImgIcon} number={totalPhotos} label="남긴 사진" />
       </div>
 
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>내 여행 기록</h2>
         {loading ? (
-          <div className={styles.statusContainer}>
-            <p>로딩 중...</p>
-          </div>
+          <div className={styles.statusContainer}><p>로딩 중...</p></div>
         ) : error ? (
-          <div className={styles.statusContainer}>
-            <p className={styles.errorText}>{error}</p>
-          </div>
+          <div className={styles.statusContainer}><p className={styles.errorText}>{error}</p></div>
         ) : travelData.length === 0 ? (
           <TravelEmptyState />
         ) : (
           <div className={styles.travelList}>
             {travelData.map((travel) => (
-              <TravelCardComponent
-                key={travel.id}
-                travel={travel}
-                onEdit={handleEdit}
-              />
+              <TravelCardComponent key={travel.id} travel={travel} onEdit={handleEdit} />
             ))}
           </div>
         )}
       </div>
 
       {isModalOpen && (
-        <TravelModal
-          travel={editingTravel}
-          onClose={handleCloseModal}
-          onSave={handleSave}
-        />
+        <TravelModal travel={editingTravel} onClose={handleCloseModal} onSave={handleSave} />
       )}
-
       {isTrackingActive && (
-        <TravelTracking
-          onFinish={handleFinishTracking}
-          onClose={() => setIsTrackingActive(false)}
-        />
+        <TravelTracking onFinish={handleFinishTracking} onClose={() => setIsTrackingActive(false)} />
       )}
-
       {showSummary && finishedTravelData && (
         <VisitedPlacesSummary
           visitedPlaces={finishedTravelData.visitedPlaces || []}
