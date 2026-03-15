@@ -2,31 +2,80 @@ import { useState } from 'react';
 import styles from './TravelModal.module.css';
 
 const IconCamera = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-    <circle cx="12" cy="13" r="4"></circle>
+  <svg
+    width="40"
+    height="40"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+    <circle cx="12" cy="13" r="4" />
   </svg>
 );
 
 const MoodIcon = ({ type }) => {
   const icons = {
-    great: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 3 4 3 4-3 4-3"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>,
-    good:  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>,
-    normal:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>,
-    bad:   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>,
-    worst: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 17s-1.5-3-4-3-4 3-4 3"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>,
+    great: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 13s1.5 3 4 3 4-3 4-3" />
+        <line x1="9" y1="9" x2="9.01" y2="9" />
+        <line x1="15" y1="9" x2="15.01" y2="9" />
+      </svg>
+    ),
+    good: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+        <line x1="9" y1="9" x2="9.01" y2="9" />
+        <line x1="15" y1="9" x2="15.01" y2="9" />
+      </svg>
+    ),
+    normal: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="8" y1="14" x2="16" y2="14" />
+        <line x1="9" y1="9" x2="9.01" y2="9" />
+        <line x1="15" y1="9" x2="15.01" y2="9" />
+      </svg>
+    ),
+    bad: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M16 16s-1.5-2-4-2-4 2-4 2" />
+        <line x1="9" y1="9" x2="9.01" y2="9" />
+        <line x1="15" y1="9" x2="15.01" y2="9" />
+      </svg>
+    ),
+    worst: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M16 17s-1.5-3-4-3-4 3-4 3" />
+        <line x1="9" y1="9" x2="9.01" y2="9" />
+        <line x1="15" y1="9" x2="15.01" y2="9" />
+      </svg>
+    ),
   };
   return icons[type] || null;
 };
 
 const MOOD_OPTIONS = [
-  { value: 2, label: '매우 좋음', icon: 'great' },
+  { value: 0, label: '매우 좋음', icon: 'great' },
   { value: 1, label: '좋음',     icon: 'good'  },
-  { value: 0, label: '보통',     icon: 'normal'},
+  { value: 2, label: '보통',     icon: 'normal'},
   { value: 3, label: '나쁨',     icon: 'bad'   },
   { value: 4, label: '매우 나쁨', icon: 'worst' },
 ];
 
+const WEATHER_OPTIONS = [
+  '맑음', '흐림', '비', '눈', '선선함', '추움', '더움', '쾌적함',
+];
+
+// ─── TravelEditModal ──────────────────────────────────────────────────────────
 const TravelEditModal = ({ travel, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     title:          travel?.title || '',
@@ -34,80 +83,114 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
     endDate:        travel?.endDate || '',
     companions:     travel?.companions || '',
     companionCount: travel?.companionCount ?? travel?.peopleCount ?? 1,
-    mood:           travel?.mood ?? 1,       
-    tags:           travel?.tags || [],
-    weather:        travel?.weather?.length > 0 ? travel.weather : ['맑음'], 
-    review:         travel?.review || '',
-    placeReviews:   travel?.placeReviews || [],
-    isPublic:       travel?.isPublic ?? travel?.publicTravel ?? false,
-    thumbnailUrl:   travel?.thumbnailUrl || null,
-    thumbnailFile:  null,
+    mood:    travel?.mood ?? 0,
+    tags:    travel?.tags || [],
+    weather:
+      Array.isArray(travel?.weather) && travel.weather.length > 0
+        ? travel.weather
+        : travel?.avg_weather
+        ? travel.avg_weather.split(',').map((w) => w.trim()).filter(Boolean)
+        : travel?.avgWeather
+        ? travel.avgWeather.split(',').map((w) => w.trim()).filter(Boolean)
+        : ['맑음'],
+    review:       travel?.review || '',
+    placeReviews: travel?.placeReviews || [],
+    isPublic:     travel?.isPublic ?? travel?.publicTravel ?? false,
+    thumbnailUrl:  travel?.thumbnailUrl || null,
+    thumbnailFile: null,
   });
 
   const [newTag, setNewTag] = useState('');
-  const [thumbnailPreview, setThumbnailPreview] = useState(travel?.thumbnailUrl || null);
-
-  const weatherOptions = ['맑음', '흐림', '비', '눈', '선선함', '추움', '더움', '쾌적함'];
+  const [thumbnailPreview, setThumbnailPreview] = useState(
+    travel?.thumbnailUrl || null,
+  );
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
   const handleWeatherToggle = (weather) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       weather: prev.weather.includes(weather)
-        ? prev.weather.filter(w => w !== weather)
+        ? prev.weather.filter((w) => w !== weather)
         : [...prev.weather, weather],
     }));
   };
 
   const handleMoodSelect = (value) => {
-    setFormData(prev => ({ ...prev, mood: value }));
+    setFormData((prev) => ({ ...prev, mood: value }));
   };
 
   const handleAddTag = () => {
     const trimmedTag = newTag.trim();
     if (!trimmedTag) return;
-    if (formData.tags.length >= 10) { alert('태그는 최대 10개까지 추가할 수 있습니다.'); return; }
-    if (formData.tags.includes(trimmedTag)) { alert('이미 추가된 태그입니다.'); return; }
-    setFormData(prev => ({ ...prev, tags: [...prev.tags, trimmedTag] }));
+    if (formData.tags.length >= 10) {
+      alert('태그는 최대 10개까지 추가할 수 있습니다.');
+      return;
+    }
+    if (formData.tags.includes(trimmedTag)) {
+      alert('이미 추가된 태그입니다.');
+      return;
+    }
+    setFormData((prev) => ({
+      ...prev,
+      tags: [...prev.tags, trimmedTag],
+    }));
     setNewTag('');
   };
 
   const handleRemoveTag = (tagToRemove) => {
-    setFormData(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tagToRemove) }));
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tagToRemove),
+    }));
   };
 
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert('5MB 이하의 이미지만 업로드 가능합니다.'); e.target.value = ''; return; }
-    if (!file.type.startsWith('image/')) { alert('이미지 파일만 업로드 가능합니다.'); e.target.value = ''; return; }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('5MB 이하의 이미지만 업로드 가능합니다.');
+      e.target.value = '';
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      e.target.value = '';
+      return;
+    }
     const reader = new FileReader();
     reader.onloadend = () => setThumbnailPreview(reader.result);
     reader.readAsDataURL(file);
-    setFormData(prev => ({ ...prev, thumbnailFile: file }));
+    setFormData((prev) => ({ ...prev, thumbnailFile: file }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+
+    // 날짜 유효성
     if (formData.startDate && formData.endDate) {
       if (new Date(formData.startDate) > new Date(formData.endDate)) {
         alert('종료일은 시작일보다 늦어야 합니다.');
         return;
       }
     }
-    // 날씨 미선택 방어 (백엔드: avgWeather 공백 불가)
+
+    // 날씨 미선택 방어
     if (!formData.weather || formData.weather.length === 0) {
       alert('날씨를 하나 이상 선택해주세요.');
       return;
     }
-    onSave({ ...formData });
+
+    // mood 범위 방어
+    const mood = Math.min(Math.max(Number(formData.mood), 0), 4);
+
+    onSave({ ...formData, mood });
   };
 
   return (
@@ -115,7 +198,14 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 className={styles.title}>여행 기록 수정</h2>
-          <button className={styles.closeButton} onClick={onClose} type="button" aria-label="닫기">✕</button>
+          <button
+            className={styles.closeButton}
+            onClick={onClose}
+            type="button"
+            aria-label="닫기"
+          >
+            ✕
+          </button>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -133,25 +223,55 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
                   </div>
                 )}
               </div>
-              <input type="file" accept="image/*" onChange={handleThumbnailChange} className={styles.fileInput} id="thumbnail" />
-              <label htmlFor="thumbnail" className={styles.fileLabel}>사진 선택</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailChange}
+                className={styles.fileInput}
+                id="thumbnail"
+              />
+              <label htmlFor="thumbnail" className={styles.fileLabel}>
+                사진 선택
+              </label>
             </div>
           </div>
 
           {/* 제목 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>여행 제목 *</label>
-            <input type="text" name="title" value={formData.title} onChange={handleInputChange}
-              className={styles.input} placeholder="여행 제목을 입력하세요" required maxLength={50} />
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className={styles.input}
+              placeholder="여행 제목을 입력하세요"
+              required
+              maxLength={50}
+            />
           </div>
 
           {/* 기간 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>여행 기간 *</label>
             <div className={styles.dateRange}>
-              <input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} className={styles.dateInput} required />
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleInputChange}
+                className={styles.dateInput}
+                required
+              />
               <span className={styles.dateSeparator}>~</span>
-              <input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} className={styles.dateInput} required />
+              <input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleInputChange}
+                className={styles.dateInput}
+                required
+              />
             </div>
           </div>
 
@@ -159,14 +279,29 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
           <div className={styles.formGroup}>
             <label className={styles.label}>동행인</label>
             <div className={styles.companionWrapper}>
-              <input type="text" name="companions" value={formData.companions} onChange={handleInputChange}
-                className={styles.input} placeholder="예: 가족, 친구, 혼자 등" maxLength={30} />
-              <input type="number" name="companionCount" value={formData.companionCount} onChange={handleInputChange}
-                className={styles.companionCount} placeholder="인원" min="1" max="99" />
+              <input
+                type="text"
+                name="companions"
+                value={formData.companions}
+                onChange={handleInputChange}
+                className={styles.input}
+                placeholder="예: 가족, 친구, 혼자 등"
+                maxLength={30}
+              />
+              <input
+                type="number"
+                name="companionCount"
+                value={formData.companionCount}
+                onChange={handleInputChange}
+                className={styles.companionCount}
+                placeholder="인원"
+                min="1"
+                max="99"
+              />
             </div>
           </div>
 
-          {/* 여행 분위기 (mood) — 백엔드 integer 필드 */}
+          {/* 여행 분위기 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>여행 분위기</label>
             <div className={styles.moodGrid}>
@@ -175,7 +310,9 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
                   key={value}
                   type="button"
                   onClick={() => handleMoodSelect(value)}
-                  className={`${styles.moodButton} ${formData.mood === value ? styles.weatherActive : ''}`}
+                  className={`${styles.moodButton} ${
+                    formData.mood === value ? styles.weatherActive : ''
+                  }`}
                 >
                   <MoodIcon type={icon} />
                   <span>{label}</span>
@@ -188,10 +325,16 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
           <div className={styles.formGroup}>
             <label className={styles.label}>날씨 (중복 선택 가능)</label>
             <div className={styles.weatherGrid}>
-              {weatherOptions.map((weather) => (
-                <button key={weather} type="button"
+              {WEATHER_OPTIONS.map((weather) => (
+                <button
+                  key={weather}
+                  type="button"
                   onClick={() => handleWeatherToggle(weather)}
-                  className={`${styles.weatherButton} ${formData.weather.includes(weather) ? styles.weatherActive : ''}`}
+                  className={`${styles.weatherButton} ${
+                    formData.weather.includes(weather)
+                      ? styles.weatherActive
+                      : ''
+                  }`}
                 >
                   {weather}
                 </button>
@@ -201,19 +344,46 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
 
           {/* 태그 */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>여행 테마 ({formData.tags.length}/10)</label>
+            <label className={styles.label}>
+              여행 테마 ({formData.tags.length}/10)
+            </label>
             <div className={styles.tagInputWrapper}>
-              <input type="text" value={newTag} onChange={(e) => setNewTag(e.target.value)}
-                onKeyPress={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); } }}
-                className={styles.tagInput} placeholder="테마 입력 후 추가 (예: 힐링, 자연)" maxLength={10} />
-              <button type="button" onClick={handleAddTag} className={styles.addTagButton} disabled={formData.tags.length >= 10}>추가</button>
+              <input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
+                className={styles.tagInput}
+                placeholder="테마 입력 후 추가 (예: 힐링, 자연)"
+                maxLength={10}
+              />
+              <button
+                type="button"
+                onClick={handleAddTag}
+                className={styles.addTagButton}
+                disabled={formData.tags.length >= 10}
+              >
+                추가
+              </button>
             </div>
             {formData.tags.length > 0 && (
               <div className={styles.tagList}>
                 {formData.tags.map((tag, index) => (
                   <div key={index} className={styles.tag}>
                     #{tag}
-                    <button type="button" onClick={() => handleRemoveTag(tag)} className={styles.removeTagButton} aria-label={`${tag} 태그 삭제`}>✕</button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className={styles.removeTagButton}
+                      aria-label={`${tag} 태그 삭제`}
+                    >
+                      ✕
+                    </button>
                   </div>
                 ))}
               </div>
@@ -223,23 +393,48 @@ const TravelEditModal = ({ travel, onClose, onSave }) => {
           {/* 후기 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>여행 후기</label>
-            <textarea name="review" value={formData.review} onChange={handleInputChange}
-              className={styles.textarea} placeholder="여행에 대한 전반적인 후기를 작성해주세요!" rows="4" maxLength={1000} />
-            <span className={styles.charCount}>{formData.review.length}/1000</span>
+            <textarea
+              name="review"
+              value={formData.review}
+              onChange={handleInputChange}
+              className={styles.textarea}
+              placeholder="여행에 대한 전반적인 후기를 작성해주세요!"
+              rows="4"
+              maxLength={1000}
+            />
+            <span className={styles.charCount}>
+              {formData.review.length}/1000
+            </span>
           </div>
 
           {/* 공개 여부 */}
           <div className={styles.formGroup}>
             <label className={styles.checkboxLabel}>
-              <input type="checkbox" name="isPublic" checked={formData.isPublic} onChange={handleInputChange} className={styles.checkbox} />
+              <input
+                type="checkbox"
+                name="isPublic"
+                checked={formData.isPublic}
+                onChange={handleInputChange}
+                className={styles.checkbox}
+              />
               <span>공개 여행으로 설정</span>
             </label>
-            <p className={styles.hint}>공개 시 다른 사용자들이 내 여행 기록을 볼 수 있습니다. (기본: 비공개)</p>
+            <p className={styles.hint}>
+              공개 시 다른 사용자들이 내 여행 기록을 볼 수 있습니다. (기본: 비공개)
+            </p>
           </div>
 
           <div className={styles.buttonGroup}>
-            <button type="button" onClick={onClose} className={styles.cancelButton}>취소</button>
-            <button type="submit" className={styles.saveButton}>저장</button>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelButton}
+            >
+              취소
+            </button>
+            <button type="submit" className={styles.saveButton}>
+              저장
+            </button>
           </div>
         </form>
       </div>
