@@ -2,10 +2,11 @@ import apiClient, { unwrapApiResponse } from './axios';
 
 const AI_TIMEOUT = 60000; // 60초 — OpenAI 호출 포함 AI 서버 응답 대기
 
-// 여행지 추천
-export const getRecommendations = async () => {
-  const response = await apiClient.get('/recommend', { timeout: AI_TIMEOUT });
-  return unwrapApiResponse(response);
+// 여행지 추천 - GET /recommend?countryTheme=ALL&sortType=DEFAULT&page=0
+export const getRecommendations = async (countryTheme = 'ALL', sortType = 'DEFAULT', page = 0) => {
+  const response = await apiClient.get('/recommend', { params: { countryTheme, sortType, page } });
+  const data = unwrapApiResponse(response);
+  return data?.content ?? [];
 };
 
 // 여행지 랭킹
