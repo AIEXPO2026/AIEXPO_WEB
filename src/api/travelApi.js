@@ -44,13 +44,13 @@ export const editTravel = async (id, travelData) => {
 };
 
 // ─── 방문지 목록 조회 ─────────────────────────────────────────────────────────
+// 응답: { status, data: AttractionItem[], error }
 export const getAttractions = async (travelId) => {
   const response = await apiClient.get(`/travel/${travelId}/attractions`);
-  return response.data;
+  return response.data; // { status, data: [...], error }
 };
 
 // ─── 방문지 추가 ──────────────────────────────────────────────────────────────
-
 export const addAttraction = async (travelId, { duration, detail, file }) => {
   if (!travelId) throw new Error('addAttraction: travelId가 없습니다.');
 
