@@ -245,7 +245,6 @@ function TravelRecordManagement() {
       setLoading(true);
       setError(null);
 
-      // [수정] getTravels()는 { status, data: [...], error } 를 반환
       const res = await getTravels();
       const travels = res.data ?? [];
       setTravelData(travels);
@@ -255,7 +254,6 @@ function TravelRecordManagement() {
       for (const travel of travels) {
         if (travel.id) {
           try {
-            // [수정] getAttractions()도 { status, data: [...], error } 를 반환
             const attractionsRes = await getAttractions(travel.id);
             const list = attractionsRes.data ?? [];
             placesCount += list.length;
@@ -283,8 +281,6 @@ function TravelRecordManagement() {
   const handleCloseModal = () => { setIsModalOpen(false); setEditingTravel(null); };
 
   const handleSave = async (updatedData) => {
-    // [수정] weather 정규화는 travelApi.js의 editTravel 내부에서도 하므로
-    // 여기서는 avg_weather 문자열만 만들어서 넘기면 됨
     const weatherStr =
       Array.isArray(updatedData.weather) && updatedData.weather.length > 0
         ? updatedData.weather.join(',')
@@ -314,14 +310,12 @@ function TravelRecordManagement() {
   const handleStartTracking = async () => {
     if (isTrackingActive) return;
 
-    // 혹시 진행 중인 여행이 있으면 먼저 종료
     try { await finishTravel(); } catch (_) {}
 
     setIsTrackingActive(true);
     setCurrentTravelId(null);
 
     try {
-      // startTravel 응답엔 id가 없으므로, 시작 후 목록을 조회해서 최신 여행 id를 가져옴
       await startTravel({
         budget_min: 1000,
         budget_max: 2147483647,
@@ -330,7 +324,6 @@ function TravelRecordManagement() {
         people_count: 1,
       });
 
-      // [수정] getTravels()로 목록을 다시 조회해 가장 마지막 여행의 id를 사용
       const travelsRes = await getTravels();
       const travels = travelsRes.data ?? [];
       const latest = travels[travels.length - 1];
@@ -365,7 +358,6 @@ function TravelRecordManagement() {
       let travelId = finishedTravelData?.travelId ?? null;
 
       if (!travelId) {
-        // [수정] travelId가 없을 때 fallback: 목록에서 마지막 여행 id를 사용
         const travelsRes = await getTravels();
         const travels = travelsRes.data ?? [];
         const FINISHED_STATUSES = new Set(['TRAVEL_FINISHED', 'FINISHED', 'COMPLETED', 'END']);
