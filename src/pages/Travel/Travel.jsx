@@ -244,6 +244,7 @@ function TravelRecordManagement() {
     try {
       setLoading(true);
       setError(null);
+
       const res = await getTravels();
       const travels = res.data ?? [];
       setTravelData(travels);
@@ -253,8 +254,8 @@ function TravelRecordManagement() {
       for (const travel of travels) {
         if (travel.id) {
           try {
-            const attractions = await getAttractions(travel.id);
-            const list = attractions.data ?? [];
+            const attractionsRes = await getAttractions(travel.id);
+            const list = attractionsRes.data ?? [];
             placesCount += list.length;
             list.forEach((a) => { if (a.photoURL) photosCount += 1; });
           } catch (err) {
@@ -314,22 +315,26 @@ function TravelRecordManagement() {
     setIsTrackingActive(true);
     setCurrentTravelId(null);
 
-    startTravel({
-      budget_min: 1000,
-      budget_max: 2147483647,
-      start_date: new Date().toISOString().split('T')[0],
-      end_date: new Date().toISOString().split('T')[0],
-      people_count: 1,
-    }).then((res) => {
-      const id = res?.data?.id ?? res?.id ?? null;
-      if (id) {
-        setCurrentTravelId(id);
+    try {
+      await startTravel({
+        budget_min: 1000,
+        budget_max: 2147483647,
+        start_date: new Date().toISOString().split('T')[0],
+        end_date: new Date().toISOString().split('T')[0],
+        people_count: 1,
+      });
+
+      const travelsRes = await getTravels();
+      const travels = travelsRes.data ?? [];
+      const latest = travels[travels.length - 1];
+      if (latest?.id) {
+        setCurrentTravelId(latest.id);
       } else {
-        console.warn('[startTravel] 응답에 id 없음 — fallback 사용');
+        console.warn('[handleStartTracking] 최신 여행 id를 찾을 수 없음');
       }
-    }).catch((e) => {
+    } catch (e) {
       console.warn('startTravel 실패:', e?.response?.data?.error?.code ?? e.message);
-    });
+    }
   };
 
   // ── 여행 추적 종료 ───────────────────────────────────────────────────────
@@ -353,8 +358,8 @@ function TravelRecordManagement() {
       let travelId = finishedTravelData?.travelId ?? null;
 
       if (!travelId) {
-        const res = await getTravels();
-        const travels = res.data ?? [];
+        const travelsRes = await getTravels();
+        const travels = travelsRes.data ?? [];
         const FINISHED_STATUSES = new Set(['TRAVEL_FINISHED', 'FINISHED', 'COMPLETED', 'END']);
         const latestFinished = [...travels]
           .reverse()
