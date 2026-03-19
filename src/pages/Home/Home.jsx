@@ -215,10 +215,18 @@ function Home() {
           className={styles.bannerCard}
           onMouseDown={handleDragStart}
           onMouseUp={handleDragEnd}
+          onMouseLeave={() => { dragStartX.current = null; }}
           onTouchStart={handleDragStart}
           onTouchEnd={handleDragEnd}
         >
-          <img className={styles.bannerImage} src={BANNER_SLIDES[currentSlide].image} alt={BANNER_SLIDES[currentSlide].alt} />
+          <div
+            className={styles.bannerTrack}
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {BANNER_SLIDES.map((slide, i) => (
+              <img key={i} className={styles.bannerSlide} src={slide.image} alt={slide.alt} draggable={false} />
+            ))}
+          </div>
           <div className={styles.bannerOverlay}>
             <div className={styles.bannerIndicator}>
               {BANNER_SLIDES.map((_, i) => (
